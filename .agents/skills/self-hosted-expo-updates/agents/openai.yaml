@@ -1,0 +1,4 @@
+interface:
+  display_name: "Self-hosted Expo Updates"
+  short_description: "Ship signed Expo OTA updates from infrastructure you control"
+  default_prompt: "Use $self-hosted-expo-updates to configure, export, publish, test, or roll back compatible Expo Updates through a custom server implementing the Expo Updates protocol."

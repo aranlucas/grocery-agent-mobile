@@ -1,9 +1,9 @@
 import { Slider as ExpoSlider } from "@expo/ui";
-import type { AccessibilityProps } from "react-native";
 import { accessibilityModifiers, controlSizeModifiers } from "@/components/ui/native-accessibility";
 import { UIHost } from "@/components/ui/native-host";
+import type { NativeAccessibility } from "@/components/ui/native-accessibility";
 import { cn } from "@/lib/utils";
-export interface SliderProps extends AccessibilityProps {
+export interface SliderProps extends NativeAccessibility {
   className?: string;
   value?: number;
   min?: number;

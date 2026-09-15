@@ -40,6 +40,7 @@
     },
     "plugins": [
       "expo-router",
+      "@clerk/expo",
       ["@sentry/react-native", { "organization": "lucas-hl", "project": "grocery-mobile" }],
       [
         "expo-splash-screen",
@@ -52,7 +53,9 @@
       ],
       "expo-asset",
       "expo-font",
+      "expo-image",
       "expo-web-browser",
+      "expo-status-bar",
       [
         "expo-system-ui",
         {
@@ -75,7 +78,8 @@
     },
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": true,
+      "noxcturnalTransformWorker": true
     }
   }
 }

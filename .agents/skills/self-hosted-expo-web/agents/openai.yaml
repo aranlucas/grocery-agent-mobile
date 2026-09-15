@@ -1,0 +1,4 @@
+interface:
+  display_name: "Self-hosted Expo Web"
+  short_description: "Export and host Expo web apps and API routes on infrastructure you control"
+  default_prompt: "Use $self-hosted-expo-web to export an Expo web app, serve it locally or on a static host, or deploy Expo Router API routes to a Node, Bun, Workers, or container runtime."

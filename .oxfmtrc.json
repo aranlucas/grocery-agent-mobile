@@ -9,5 +9,11 @@
   "trailingComma": "all",
   "bracketSameLine": false,
   "singleAttributePerLine": false,
-  "ignorePatterns": ["src/lib/grocery-gateway.d.ts", "src/uniwind-types.d.ts", "pnpm-lock.yaml"]
+  "ignorePatterns": [
+    "AGENTS.md",
+    ".agents/**",
+    "src/lib/grocery-gateway.d.ts",
+    "src/uniwind-types.d.ts",
+    "pnpm-lock.yaml"
+  ]
 }

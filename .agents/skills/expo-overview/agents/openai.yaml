@@ -1,0 +1,4 @@
+interface:
+  display_name: "Expo Overview"
+  short_description: "Entry point and router for Expo, local native builds, self-hosted delivery, and open CI workflows"
+  default_prompt: "Use $expo-overview first when a task mentions Expo, Expo Go, an expo-* package, native builds, OTA updates, hosting, or store delivery, or the project has an `expo` dependency in package.json. Classify the goal and route to the matching Expo, local, self-hosted, or open CI skill."

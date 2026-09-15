@@ -1,0 +1,28 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index 6bd6d5acf6ac3da78232170a6ea8c2b0f6e5504e..a13e63a0e1f413c7eb28661d0d80568ee4c80f36 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -27,3 +27,4 @@ ext {
+   composeVersion = "1.7.0"
+   activityComposeVersion = "1.9.0"
+   lifecycleVersion = "2.8.0"
++  savedStateComposeVersion = "1.3.0"
+@@ -146,3 +147,5 @@ dependencies {
+   implementation "androidx.activity:activity-compose:$activityComposeVersion"
+   implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion"
+   implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
++  // SDK 58 no longer supplies the Compose SavedState adapter transitively.
++  implementation "androidx.savedstate:savedstate-compose:$savedStateComposeVersion"
+diff --git a/package.json b/package.json
+index 47f037d0f629eb0c35f83aee8fb2534db9f82879..4d3772d7c52a12f08784c535dbca94aa7297d525 100644
+--- a/package.json
++++ b/package.json
+@@ -131,7 +131,7 @@
+   "peerDependencies": {
+     "@clerk/expo-google-signin": ">=0.1.0",
+     "@clerk/expo-passkeys": ">=0.0.6",
+-    "expo": ">=54 <58",
++    "expo": ">=54 <59",
+     "expo-apple-authentication": ">=7.0.0",
+     "expo-auth-session": ">=5",
+     "expo-constants": ">=12",

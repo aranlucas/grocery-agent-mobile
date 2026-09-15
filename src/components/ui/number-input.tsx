@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, TextInput, Pressable, useColorScheme } from "react-native";
+import { View, TextInput, Pressable, useColorScheme, type TextInputInstance } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Minus, Plus } from "lucide-react-native";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ export interface NumberInputProps
   step?: number;
 }
 
-export const NumberInput = React.forwardRef<React.ElementRef<typeof TextInput>, NumberInputProps>(
+export const NumberInput = React.forwardRef<TextInputInstance, NumberInputProps>(
   function NumberInput(
     {
       variant,

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, TextInput, useColorScheme } from "react-native";
+import { View, TextInput, useColorScheme, type TextInputInstance } from "react-native";
 import { cn } from "@/lib/utils";
 import { useThemeColors } from "@/components/ui/theme-provider";
 
@@ -17,7 +17,7 @@ export function InputOTP({
   className,
   ...props
 }: InputOTPProps) {
-  const refs = useRef<(TextInput | null)[]>([]);
+  const refs = useRef<(TextInputInstance | null)[]>([]);
   const [focused, setFocused] = useState(-1);
   const dark = useColorScheme() === "dark";
   const colors = useThemeColors();

@@ -17,3 +17,6 @@ allowBuilds:
   esbuild: true
   "utf-8-validate": true
   "@shopify/react-native-skia": true
+
+patchedDependencies:
+  "@clerk/expo@4.6.8": patches/@clerk__expo@4.6.8.patch

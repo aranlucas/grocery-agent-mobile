@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, TextInput, Pressable, Text, useColorScheme } from "react-native";
+import {
+  View,
+  TextInput,
+  Pressable,
+  Text,
+  useColorScheme,
+  type TextInputInstance,
+} from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { useThemeColors } from "@/components/ui/theme-provider";
@@ -40,68 +47,67 @@ function getStrength(value: string): number {
 const strengthColors = ["bg-destructive", "bg-orange-500", "bg-yellow-500", "bg-green-500"];
 const strengthLabels = ["Weak", "Fair", "Good", "Strong"];
 
-export const PasswordInput = React.forwardRef<
-  React.ElementRef<typeof TextInput>,
-  PasswordInputProps
->(function PasswordInput({ variant, size, className, showStrength, onChangeText, ...props }, ref) {
-  const [visible, setVisible] = useState(false);
-  const [value, setValue] = useState("");
-  const strength = getStrength(value);
-  const dark = useColorScheme() === "dark";
-  const colors = useThemeColors();
-  const caret = colors.foreground;
+export const PasswordInput = React.forwardRef<TextInputInstance, PasswordInputProps>(
+  function PasswordInput({ variant, size, className, showStrength, onChangeText, ...props }, ref) {
+    const [visible, setVisible] = useState(false);
+    const [value, setValue] = useState("");
+    const strength = getStrength(value);
+    const dark = useColorScheme() === "dark";
+    const colors = useThemeColors();
+    const caret = colors.foreground;
 
-  return (
-    <View className="gap-2">
-      <View className={cn(passwordVariants({ variant, size }), className)}>
-        <TextInput
-          ref={ref}
-          className="flex-1 text-foreground p-0 text-base"
-          placeholderTextColor={colors.mutedForeground}
-          keyboardAppearance={dark ? "dark" : "light"}
-          selectionColor={caret}
-          cursorColor={caret}
-          secureTextEntry={!visible}
-          onChangeText={(text) => {
-            setValue(text);
-            onChangeText?.(text);
-          }}
-          accessibilityLabel="Password"
-          {...props}
-        />
-        <Pressable
-          onPress={() => setVisible(!visible)}
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel={visible ? "Hide password" : "Show password"}
-          className="ms-2 min-h-8 min-w-8 items-center justify-center"
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          {visible ? (
-            <Eye size={20} color={colors.mutedForeground} />
-          ) : (
-            <EyeOff size={20} color={colors.mutedForeground} />
-          )}
-        </Pressable>
-      </View>
-      {showStrength && value.length > 0 && (
-        <View className="flex-row items-center gap-2">
-          <View className="flex-1 flex-row gap-1">
-            {[0, 1, 2, 3].map((i) => (
-              <View
-                key={i}
-                className={cn(
-                  "h-1 flex-1 rounded-full",
-                  i < strength ? strengthColors[strength - 1] : "bg-muted",
-                )}
-              />
-            ))}
-          </View>
-          <Text className="text-xs text-muted-foreground">
-            {strengthLabels[strength - 1] ?? ""}
-          </Text>
+    return (
+      <View className="gap-2">
+        <View className={cn(passwordVariants({ variant, size }), className)}>
+          <TextInput
+            ref={ref}
+            className="flex-1 text-foreground p-0 text-base"
+            placeholderTextColor={colors.mutedForeground}
+            keyboardAppearance={dark ? "dark" : "light"}
+            selectionColor={caret}
+            cursorColor={caret}
+            secureTextEntry={!visible}
+            onChangeText={(text) => {
+              setValue(text);
+              onChangeText?.(text);
+            }}
+            accessibilityLabel="Password"
+            {...props}
+          />
+          <Pressable
+            onPress={() => setVisible(!visible)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={visible ? "Hide password" : "Show password"}
+            className="ms-2 min-h-8 min-w-8 items-center justify-center"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            {visible ? (
+              <Eye size={20} color={colors.mutedForeground} />
+            ) : (
+              <EyeOff size={20} color={colors.mutedForeground} />
+            )}
+          </Pressable>
         </View>
-      )}
-    </View>
-  );
-});
+        {showStrength && value.length > 0 && (
+          <View className="flex-row items-center gap-2">
+            <View className="flex-1 flex-row gap-1">
+              {[0, 1, 2, 3].map((i) => (
+                <View
+                  key={i}
+                  className={cn(
+                    "h-1 flex-1 rounded-full",
+                    i < strength ? strengthColors[strength - 1] : "bg-muted",
+                  )}
+                />
+              ))}
+            </View>
+            <Text className="text-xs text-muted-foreground">
+              {strengthLabels[strength - 1] ?? ""}
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  },
+);
