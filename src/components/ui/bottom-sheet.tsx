@@ -1,7 +1,8 @@
-import React, { forwardRef, useCallback } from "react";
-import { View, useColorScheme } from "react-native";
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import React, { forwardRef } from "react";
+import { View } from "react-native";
+import { BottomSheetModal, BottomSheetView } from "@expo/ui/community/bottom-sheet";
 import { cn } from "@/lib/utils";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export interface BottomSheetProps {
   className?: string;
@@ -11,27 +12,14 @@ export interface BottomSheetProps {
 
 export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
   ({ className, children, snapPoints = ["25%", "50%"], ...props }, ref) => {
-    const dark = useColorScheme() === "dark";
-    const renderBackdrop = useCallback(
-      (backdropProps: React.ComponentProps<typeof BottomSheetBackdrop>) => (
-        <BottomSheetBackdrop
-          {...backdropProps}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          opacity={0.5}
-        />
-      ),
-      [],
-    );
+    const background = useThemeColor("--color-card", "#ffffff");
 
     return (
       <BottomSheetModal
         ref={ref}
         snapPoints={snapPoints}
         enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: dark ? "#0a0a0a" : "#ffffff" }}
-        handleIndicatorStyle={{ backgroundColor: dark ? "#52525b" : "#a1a1aa" }}
+        backgroundStyle={{ backgroundColor: background }}
         {...props}
       >
         <BottomSheetView>

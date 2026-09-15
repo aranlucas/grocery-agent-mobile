@@ -1,66 +1,27 @@
-import React from "react";
-import { Pressable, Text, ActivityIndicator } from "react-native";
-import { cva, type VariantProps } from "class-variance-authority";
+import { RNHostView, Row, Text as NativeText } from "@expo/ui";
+import { View, type PressableProps } from "react-native";
+import { useState, type ReactNode } from "react";
+import { useResolveClassNames } from "uniwind";
+import { UIHost } from "@/components/ui/native-host";
+import { NativeButton } from "@/components/ui/native-button";
+import { Spinner } from "@/components/ui/spinner";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { cn } from "@/lib/utils";
 
-const buttonVariants = cva("min-h-14 min-w-14 flex-row items-center justify-center rounded-md", {
-  variants: {
-    variant: {
-      default: "bg-primary",
-      secondary: "bg-secondary",
-      outline: "border border-input bg-transparent",
-      ghost: "bg-transparent",
-      destructive: "bg-destructive",
-      link: "bg-transparent",
-    },
-    size: {
-      sm: "px-3 py-1.5 gap-1.5",
-      md: "px-4 py-2.5 gap-2",
-      lg: "px-6 py-3.5 gap-2.5",
-      icon: "p-0",
-    },
-  },
-  defaultVariants: { variant: "default", size: "md" },
-});
-
-const spinnerColorVariables = {
-  default: "--color-primary-foreground",
-  secondary: "--color-secondary-foreground",
-  outline: "--color-foreground",
-  ghost: "--color-foreground",
-  destructive: "--color-destructive-foreground",
-  link: "--color-primary",
-} as const;
-
-const buttonTextVariants = cva("text-center font-medium", {
-  variants: {
-    variant: {
-      default: "text-primary-foreground",
-      secondary: "text-secondary-foreground",
-      outline: "text-foreground",
-      ghost: "text-foreground",
-      destructive: "text-destructive-foreground",
-      link: "text-primary underline",
-    },
-    size: { sm: "text-sm", md: "text-base", lg: "text-lg", icon: "text-sm" },
-  },
-  defaultVariants: { variant: "default", size: "md" },
-});
-
-export interface ButtonProps
-  extends React.ComponentPropsWithoutRef<typeof Pressable>, VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends Omit<PressableProps, "onPress" | "children" | "style"> {
+  variant?: "default" | "secondary" | "outline" | "ghost" | "destructive" | "link";
+  size?: "sm" | "md" | "lg" | "icon";
   className?: string;
   textClassName?: string;
   children?: string;
-  icon?: React.ReactNode;
-  iconAfter?: React.ReactNode;
+  icon?: ReactNode;
+  iconAfter?: ReactNode;
   loading?: boolean;
+  onPress?: () => void;
 }
-
 export function Button({
-  variant,
-  size,
+  variant = "default",
+  size = "md",
   className,
   textClassName,
   children,
@@ -68,33 +29,89 @@ export function Button({
   iconAfter,
   loading,
   disabled,
-  ...props
+  onPress,
+  accessibilityLabel,
+  accessibilityHint,
+  accessibilityRole,
+  accessibilityState,
+  testID,
 }: ButtonProps) {
-  const isDisabled = disabled || loading;
-  const resolvedVariant = variant ?? "default";
-  const spinnerColor = useThemeColor(
-    spinnerColorVariables[resolvedVariant],
-    resolvedVariant === "default" || resolvedVariant === "destructive" ? "#ffffff" : "#17201a",
+  const [width, setWidth] = useState<number>();
+  const isDisabled = Boolean(disabled || loading);
+  const filled = variant === "default" || variant === "secondary" || variant === "destructive";
+  const tone =
+    variant === "destructive" ? "destructive" : variant === "secondary" ? "secondary" : "primary";
+  const background = useThemeColor(`--color-${tone}`, "#15803d");
+  const foreground = useThemeColor(
+    filled ? `--color-${tone}-foreground` : "--color-primary",
+    filled ? "#ffffff" : "#15803d",
   );
-
+  const customStyle = useResolveClassNames(className ?? "");
+  const customTextStyle = useResolveClassNames(textClassName ?? "");
+  const textColor = typeof customTextStyle.color === "string" ? customTextStyle.color : foreground;
   return (
-    <Pressable
-      className={cn(
-        buttonVariants({ variant, size }),
-        isDisabled && "opacity-50",
-        "active:opacity-80",
-        className,
-      )}
-      accessibilityRole="button"
-      accessible={true}
-      disabled={isDisabled}
-      {...props}
+    <UIHost
+      className={cn("min-h-14 min-w-14", isDisabled && "opacity-50", className)}
+      matchContents
+      onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
+      accessible={false}
     >
-      {loading ? <ActivityIndicator size="small" color={spinnerColor} /> : (icon ?? null)}
-      {children ? (
-        <Text className={cn(buttonTextVariants({ variant, size }), textClassName)}>{children}</Text>
-      ) : null}
-      {!loading && iconAfter ? iconAfter : null}
-    </Pressable>
+      <NativeButton
+        variant={variant}
+        onPress={onPress}
+        disabled={isDisabled}
+        width={customStyle.flex || customStyle.flexGrow || customStyle.width ? width : undefined}
+        background={
+          typeof customStyle.backgroundColor === "string"
+            ? customStyle.backgroundColor
+            : filled
+              ? background
+              : "transparent"
+        }
+        foreground={textColor}
+        testID={testID}
+        accessibilityLabel={accessibilityLabel ?? children}
+        accessibilityHint={accessibilityHint}
+        accessibilityRole={accessibilityRole}
+        accessibilityState={accessibilityState}
+      >
+        <Row spacing={8} alignment="center">
+          {loading || icon ? (
+            <RNHostView matchContents>
+              <View
+                accessible={false}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                {loading ? <Spinner size="sm" color={textColor} /> : icon}
+              </View>
+            </RNHostView>
+          ) : null}
+          {children ? (
+            <NativeText
+              numberOfLines={1}
+              textStyle={{
+                fontSize: customTextStyle.fontSize ?? (size === "lg" ? 18 : 16),
+                fontWeight: "600",
+                color: textColor,
+              }}
+            >
+              {children}
+            </NativeText>
+          ) : null}
+          {!loading && iconAfter ? (
+            <RNHostView matchContents>
+              <View
+                accessible={false}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                {iconAfter}
+              </View>
+            </RNHostView>
+          ) : null}
+        </Row>
+      </NativeButton>
+    </UIHost>
   );
 }

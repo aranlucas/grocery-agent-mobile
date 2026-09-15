@@ -197,7 +197,7 @@ export default function SharedListScreen() {
             return (
               <Chip
                 accessibilityState={{ checked: selected }}
-                role="radio"
+                accessibilityRole="radio"
                 key={list.id}
                 onPress={() => setSelectedListId(list.id)}
                 selected={selected}

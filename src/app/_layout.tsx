@@ -2,7 +2,6 @@ import "@/global.css";
 import { ClerkLoaded, ClerkLoading, ClerkProvider, Show } from "@clerk/expo";
 import { resourceCache } from "@clerk/expo/resource-cache";
 import { tokenCache } from "@clerk/expo/token-cache";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useMemo } from "react";
@@ -59,71 +58,66 @@ function RootLayout() {
     <UniwindGestureHandlerRootView className="flex-1">
       <SafeAreaProvider>
         <KeyboardProvider>
-          <BottomSheetModalProvider>
-            <StatusBar style="auto" />
-            {configured instanceof Error ? (
-              <ConfigurationError message={configured.message} />
-            ) : (
-              <ClerkProvider
-                publishableKey={configured.clerkKey}
-                tokenCache={tokenCache}
-                __experimental_resourceCache={resourceCache}
-              >
-                <QueryProvider>
-                  <ClerkLoading>
-                    <View className="flex-1 items-center justify-center bg-background">
-                      <Spinner size="lg" />
-                    </View>
-                  </ClerkLoading>
-                  <ClerkLoaded>
-                    <Show when="signed-out">
-                      <SignInScreen />
-                    </Show>
-                    <Show when="signed-in">
-                      <GroceryCopilotSession runtimeUrl={configured.runtimeUrl}>
-                        <ThemeProvider value={navigationTheme}>
-                          <Stack
-                            screenOptions={{
-                              contentStyle: { backgroundColor: background },
-                              headerBackButtonDisplayMode: "minimal",
-                              headerStyle: { backgroundColor: background },
-                              headerTintColor: foreground,
-                              headerTitleAlign: "center",
-                              headerTitleStyle: { fontWeight: "800" },
-                            }}
-                          >
-                            <Stack.Screen name="index" options={{ title: "Grocery Agent" }} />
-                            <Stack.Screen name="chat" options={{ title: "Grocery Agent" }} />
-                            <Stack.Screen name="list" options={{ title: "Your grocery plan" }} />
-                            <Stack.Screen name="saved-lists" options={{ title: "Saved lists" }} />
-                            <Stack.Screen name="saved-list" options={{ title: "Edit list" }} />
-                            <Stack.Screen
-                              name="saved-recipes"
-                              options={{ title: "Saved recipes" }}
-                            />
-                            <Stack.Screen name="saved-recipe" options={{ title: "Edit recipe" }} />
-                            <Stack.Screen
-                              name="households"
-                              options={{ title: "Shared households" }}
-                            />
-                            <Stack.Screen name="shared-list" options={{ title: "Shared list" }} />
-                            <Stack.Screen name="chat-history" options={{ title: "Chat history" }} />
-                            <Stack.Screen name="account" options={{ title: "Account" }} />
-                            <Stack.Screen
-                              name="report"
-                              options={{ title: "Report a problem", presentation: "modal" }}
-                            />
-                            <Stack.Screen name="sso-callback" options={{ headerShown: false }} />
-                            <Stack.Screen name="kroger-callback" options={{ headerShown: false }} />
-                          </Stack>
-                        </ThemeProvider>
-                      </GroceryCopilotSession>
-                    </Show>
-                  </ClerkLoaded>
-                </QueryProvider>
-              </ClerkProvider>
-            )}
-          </BottomSheetModalProvider>
+          <StatusBar style="auto" />
+          {configured instanceof Error ? (
+            <ConfigurationError message={configured.message} />
+          ) : (
+            <ClerkProvider
+              publishableKey={configured.clerkKey}
+              tokenCache={tokenCache}
+              __experimental_resourceCache={resourceCache}
+            >
+              <QueryProvider>
+                <ClerkLoading>
+                  <View className="flex-1 items-center justify-center bg-background">
+                    <Spinner size="lg" />
+                  </View>
+                </ClerkLoading>
+                <ClerkLoaded>
+                  <Show when="signed-out">
+                    <SignInScreen />
+                  </Show>
+                  <Show when="signed-in">
+                    <GroceryCopilotSession runtimeUrl={configured.runtimeUrl}>
+                      <ThemeProvider value={navigationTheme}>
+                        <Stack
+                          screenOptions={{
+                            contentStyle: { backgroundColor: background },
+                            headerBackButtonDisplayMode: "minimal",
+                            headerStyle: { backgroundColor: background },
+                            headerTintColor: foreground,
+                            headerTitleAlign: "center",
+                            headerTitleStyle: { fontWeight: "800" },
+                          }}
+                        >
+                          <Stack.Screen name="index" options={{ title: "Grocery Agent" }} />
+                          <Stack.Screen name="chat" options={{ title: "Grocery Agent" }} />
+                          <Stack.Screen name="list" options={{ title: "Your grocery plan" }} />
+                          <Stack.Screen name="saved-lists" options={{ title: "Saved lists" }} />
+                          <Stack.Screen name="saved-list" options={{ title: "Edit list" }} />
+                          <Stack.Screen name="saved-recipes" options={{ title: "Saved recipes" }} />
+                          <Stack.Screen name="saved-recipe" options={{ title: "Edit recipe" }} />
+                          <Stack.Screen
+                            name="households"
+                            options={{ title: "Shared households" }}
+                          />
+                          <Stack.Screen name="shared-list" options={{ title: "Shared list" }} />
+                          <Stack.Screen name="chat-history" options={{ title: "Chat history" }} />
+                          <Stack.Screen name="account" options={{ title: "Account" }} />
+                          <Stack.Screen
+                            name="report"
+                            options={{ title: "Report a problem", presentation: "modal" }}
+                          />
+                          <Stack.Screen name="sso-callback" options={{ headerShown: false }} />
+                          <Stack.Screen name="kroger-callback" options={{ headerShown: false }} />
+                        </Stack>
+                      </ThemeProvider>
+                    </GroceryCopilotSession>
+                  </Show>
+                </ClerkLoaded>
+              </QueryProvider>
+            </ClerkProvider>
+          )}
         </KeyboardProvider>
       </SafeAreaProvider>
     </UniwindGestureHandlerRootView>

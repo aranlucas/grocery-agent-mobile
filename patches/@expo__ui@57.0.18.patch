@@ -1,0 +1,166 @@
+diff --git a/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt b/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt
+index e90edd3fd682f1a53a0950526ae63fe20f3efd24..e040140d1d85e6c4172daaf3c413b45832e8eabb 100644
+--- a/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt
++++ b/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt
+@@ -7,6 +7,7 @@ import android.app.Dialog
+ import android.content.Context
+ import android.graphics.Color
+ import android.view.KeyEvent
++import android.view.View
+ import android.view.inputmethod.InputMethodManager
+ import androidx.compose.material3.BottomSheetDefaults
+ import androidx.compose.material3.ExperimentalMaterial3Api
+@@ -18,6 +19,8 @@ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.DisposableEffect
+ import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.rememberCoroutineScope
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.ui.platform.LocalView
+ import androidx.compose.ui.window.DialogWindowProvider
+ import expo.modules.kotlin.records.Field
+@@ -100,10 +103,18 @@ fun FunctionalComposableScope.ModalBottomSheetContent(
+ ) {
+   val sheetState = rememberModalBottomSheetState(props.skipPartiallyExpanded)
+   val scope = rememberCoroutineScope()
++  val sheetWindowView = remember { mutableStateOf<View?>(null) }
++  val hideKeyboard = {
++    sheetWindowView.value?.let { sheetView ->
++      val imm = sheetView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
++      imm?.hideSoftInputFromWindow(sheetView.windowToken, 0)
++    }
++  }
+ 
+   hide.handle {
+     try {
+       withContext(scope.coroutineContext) {
++        hideKeyboard()
+         sheetState.hide()
+       }
+     } catch (_: CancellationException) {
+@@ -141,7 +152,10 @@ fun FunctionalComposableScope.ModalBottomSheetContent(
+ 
+   ModalBottomSheet(
+     sheetState = sheetState,
+-    onDismissRequest = onDismissRequest,
++    onDismissRequest = {
++      hideKeyboard()
++      onDismissRequest()
++    },
+     containerColor = resolvedContainerColor,
+     contentColor = resolvedContentColor,
+     scrimColor = resolvedScrimColor,
+@@ -161,6 +175,22 @@ fun FunctionalComposableScope.ModalBottomSheetContent(
+     ),
+     modifier = ModifierRegistry.applyModifiers(props.modifiers, appContext, composableScope, globalEventDispatcher)
+   ) {
++    val windowView = LocalView.current
++    DisposableEffect(windowView) {
++      // Dismiss the IME while the dialog still has a valid window token.
++      sheetWindowView.value = windowView
++      onDispose {
++        sheetWindowView.value = null
++        // The activity can restore focus to an underlying Compose field when its
++        // dialog window detaches. Clear that restored focus before the IME reopens.
++        val activity = appContext.currentActivity
++        activity?.window?.decorView?.post {
++          activity.currentFocus?.takeIf { it.onCheckIsTextEditor() }?.clearFocus()
++          val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
++          imm?.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
++        }
++      }
++    }
+     ForwardKeyEventsToActivity(appContext.currentActivity)
+     Children(UIComposableScope(), filter = { !isSlotView(it) })
+   }
+diff --git a/android/src/main/java/expo/modules/ui/ModifierRegistry.kt b/android/src/main/java/expo/modules/ui/ModifierRegistry.kt
+index d442c5e1d253ffd816c07dc9b9818e52c176b391..07dc28f6412978cb8e93b5932e1b4e47946ec165 100644
+--- a/android/src/main/java/expo/modules/ui/ModifierRegistry.kt
++++ b/android/src/main/java/expo/modules/ui/ModifierRegistry.kt
+@@ -63,6 +63,13 @@ import androidx.compose.ui.layout.onVisibilityChanged
+ import androidx.compose.ui.layout.positionInWindow
+ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.semantics.Role
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.stateDescription
++import androidx.compose.ui.semantics.error
++import androidx.compose.ui.semantics.role
++import androidx.compose.ui.semantics.toggleableState
++import androidx.compose.ui.state.ToggleableState
++import androidx.compose.ui.semantics.selected
+ import androidx.compose.ui.semantics.contentType
+ import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.unit.DpOffset
+@@ -657,9 +664,20 @@ object ModifierRegistry {
+ 
+     register("semantics") { map, _, _, _ ->
+       val params = recordFromMap<SemanticsParams>(map)
+-      params.contentType.toContentType()?.let { ct ->
+-        Modifier.semantics { contentType = ct }
+-      } ?: Modifier
++      Modifier.semantics {
++        params.contentType.toContentType()?.let { contentType = it }
++        params.contentDescription?.let { contentDescription = it }
++        params.stateDescription?.let { stateDescription = it }
++        params.error?.let { error(it) }
++        params.selected?.let { selected = it }
++        params.checked?.let { toggleableState = if (it) ToggleableState.On else ToggleableState.Off }
++        when (params.role) {
++          "radio" -> role = Role.RadioButton
++          "checkbox" -> role = Role.Checkbox
++          "switch" -> role = Role.Switch
++          "button" -> role = Role.Button
++        }
++      }
+     }
+ 
+     register("clip") { map, _, _, _ ->
+diff --git a/android/src/main/java/expo/modules/ui/SemanticsModifier.kt b/android/src/main/java/expo/modules/ui/SemanticsModifier.kt
+index fd8cfe541f75d03ea8138847185439d75160a6c5..407e548e8703e9f540636c148507bf255c199f84 100644
+--- a/android/src/main/java/expo/modules/ui/SemanticsModifier.kt
++++ b/android/src/main/java/expo/modules/ui/SemanticsModifier.kt
+@@ -7,7 +7,13 @@ import expo.modules.kotlin.types.OptimizedRecord
+ 
+ @OptimizedRecord
+ internal data class SemanticsParams(
+-  @Field val contentType: String? = null
++  @Field val contentType: String? = null,
++  @Field val contentDescription: String? = null,
++  @Field val stateDescription: String? = null,
++  @Field val error: String? = null,
++  @Field val selected: Boolean? = null,
++  @Field val role: String? = null,
++  @Field val checked: Boolean? = null
+ ) : Record
+ 
+ internal fun String?.toContentType(): ContentType? = when (this) {
+diff --git a/build/jetpack-compose/modifiers/index.d.ts b/build/jetpack-compose/modifiers/index.d.ts
+index e09bd93f552fefcd6c18c758a13719061267013b..f3a0b8126af8f172bccace2024e9bf54b00e8a70 100644
+--- a/build/jetpack-compose/modifiers/index.d.ts
++++ b/build/jetpack-compose/modifiers/index.d.ts
+@@ -307,6 +307,12 @@ export declare const testID: (tag: string) => import("./createModifier").Modifie
+  */
+ export declare const semantics: (params: {
+     contentType?: string;
++    contentDescription?: string;
++    stateDescription?: string;
++    error?: string;
++    selected?: boolean;
++    role?: string;
++    checked?: boolean;
+ }) => import("./createModifier").ModifierConfig;
+ type MaterialShapeName = 'cookie4Sided' | 'cookie6Sided' | 'cookie7Sided' | 'cookie9Sided' | 'cookie12Sided' | 'clover4Leaf' | 'clover8Leaf' | 'softBurst' | 'boom' | 'oval' | 'pill' | 'triangle' | 'diamond' | 'pentagon' | 'sunny' | 'verySunny' | 'fan' | 'pixelCircle' | 'pixelTriangle' | 'ghostish' | 'bun' | 'heart' | 'arch' | 'slanted' | 'puffy' | 'puffyDiamond';
+ type CornerRadii = {
+diff --git a/src/jetpack-compose/modifiers/index.ts b/src/jetpack-compose/modifiers/index.ts
+index 398f80ae24f7744a5e0ff9fd7098684946d98a16..e25af5a0874e93ef3fcc97c66add887b2aad8bfd 100644
+--- a/src/jetpack-compose/modifiers/index.ts
++++ b/src/jetpack-compose/modifiers/index.ts
+@@ -446,7 +446,7 @@ export const testID = (tag: string) => createModifier('testID', { testID: tag })
+ /**
+  * Applies semantic properties. Wraps `Modifier.semantics { ... }`.
+  */
+-export const semantics = (params: { contentType?: string }) => createModifier('semantics', params);
++export const semantics = (params: { contentType?: string; contentDescription?: string; stateDescription?: string; error?: string; selected?: boolean; role?: string; checked?: boolean }) => createModifier('semantics', params);
+ 
+ // =============================================================================
+ // Clip Modifier & Shapes

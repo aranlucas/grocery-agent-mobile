@@ -1,0 +1,147 @@
+name: Release Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: Mark this version as a prerelease
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-android
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    env:
+      EXPO_NO_TELEMETRY: "1"
+      EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      EXPO_PUBLIC_COPILOTKIT_RUNTIME_URL: ${{ vars.EXPO_PUBLIC_COPILOTKIT_RUNTIME_URL }}
+      EXPO_PUBLIC_GROCERY_MARKETING_URL: ${{ vars.EXPO_PUBLIC_GROCERY_MARKETING_URL }}
+      EXPO_PUBLIC_SENTRY_DSN: ${{ vars.EXPO_PUBLIC_SENTRY_DSN }}
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.3.4
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - name: Validate release configuration
+        id: release
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync, readFileSync } from 'node:fs';
+
+          const { expo } = JSON.parse(readFileSync('app.json', 'utf8'));
+          const { version } = JSON.parse(readFileSync('package.json', 'utf8'));
+          if (!/^\d+\.\d+\.\d+$/.test(version) || expo.version !== version) {
+            throw new Error('app.json and package.json must have the same x.y.z version.');
+          }
+          if (!process.env.EXPO_TOKEN) {
+            throw new Error('Set the EXPO_TOKEN repository secret for the existing EAS project.');
+          }
+          if (!process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_live_')) {
+            throw new Error('Set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY to a production pk_live_ key.');
+          }
+          for (const name of ['EXPO_PUBLIC_COPILOTKIT_RUNTIME_URL', 'EXPO_PUBLIC_GROCERY_MARKETING_URL']) {
+            const url = new URL(process.env[name] || '');
+            if (url.protocol !== 'https:' || /development|localhost|127\.0\.0\.1/i.test(url.hostname)) {
+              throw new Error(`${name} must be an HTTPS production URL.`);
+            }
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ntag=grocery-v${version}\n`);
+          NODE
+      - name: Require an unused release version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          if git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"; then
+            echo "::error::Tag $RELEASE_TAG already exists. Bump the app version before releasing."
+            exit 1
+          fi
+          # Fetch successfully before checking; API/auth failures must stop the release.
+          gh api --paginate "repos/$GH_REPO/releases" --jq '.[].tag_name' > "$RUNNER_TEMP/release-tags"
+          if grep -Fxq "$RELEASE_TAG" "$RUNNER_TEMP/release-tags"; then
+            echo "::error::Release $RELEASE_TAG already exists, including drafts."
+            exit 1
+          fi
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+      - name: Install NDK
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.1.12297006"'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check and test release commit
+        run: pnpm check && pnpm test
+      - name: Build signed release APK
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          # Match the existing local production APK build; signing is managed by EAS.
+          SENTRY_DISABLE_AUTO_UPLOAD: "true"
+          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          mkdir -p dist
+          pnpm dlx eas-cli@21.0.0 build \
+            --platform android \
+            --profile production-apk \
+            --local \
+            --non-interactive \
+            --output "$PWD/dist/grocery-agent-$RELEASE_VERSION.apk"
+      - name: Check APK and write checksum
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        working-directory: dist
+        run: |
+          apk="grocery-agent-$RELEASE_VERSION.apk"
+          test -s "$apk"
+          unzip -tq "$apk"
+          sha256sum "$apk" > "$apk.sha256"
+      - name: Publish to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          apk="dist/grocery-agent-$RELEASE_VERSION.apk"
+          # Keep the release hidden until both assets have uploaded successfully.
+          gh release create "$RELEASE_TAG" "$apk" "$apk.sha256" \
+            --target "$GITHUB_SHA" \
+            --title "Grocery Agent $RELEASE_VERSION" \
+            --generate-notes \
+            --prerelease="$PRERELEASE" \
+            --draft
+          gh release edit "$RELEASE_TAG" --draft=false
+          release_url=$(gh release view "$RELEASE_TAG" --json url --jq .url)
+          printf '### Android release\n\n[%s](%s)\n\nCommit: %s\n' \
+            "$RELEASE_TAG" "$release_url" "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"

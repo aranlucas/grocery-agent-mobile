@@ -26,26 +26,6 @@ vi.mock("expo-image", async () => {
   };
 });
 
-vi.mock("@rn-primitives/checkbox", async () => {
-  const React = await import("react");
-  const { Pressable, View } = await import("react-native");
-  return {
-    Root: ({ checked, children, onCheckedChange, ...props }: Record<string, any>) =>
-      React.createElement(
-        Pressable,
-        {
-          ...props,
-          accessibilityRole: "checkbox",
-          accessibilityState: { checked, disabled: Boolean(props.disabled) },
-          onPress: () => onCheckedChange(!checked),
-        },
-        children,
-      ),
-    Indicator: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(View, null, children),
-  };
-});
-
 vi.mock("lucide-react-native", () => ({
   Check: () => null,
   X: () => null,

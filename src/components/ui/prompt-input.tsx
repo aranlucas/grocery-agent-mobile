@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
-import { View, TextInput, Pressable, useColorScheme } from "react-native";
+import { View, useColorScheme } from "react-native";
+import {
+  NativeInput,
+  type NativeInputProps,
+  type NativeInputRef,
+} from "@/components/ui/native-input";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { ArrowUp, Square } from "lucide-react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { cn } from "@/lib/utils";
@@ -73,45 +79,31 @@ export function PromptInput({
 }
 
 export interface PromptInputTextareaProps extends Omit<
-  React.ComponentPropsWithoutRef<typeof TextInput>,
+  NativeInputProps,
   "multiline" | "value" | "onChangeText"
 > {
-  className?: string;
-  /** Max height before the textarea scrolls (default 120). */
   maxHeight?: number;
 }
 
-export const PromptInputTextarea = React.forwardRef<
-  React.ElementRef<typeof TextInput>,
-  PromptInputTextareaProps
->(function PromptInputTextarea({ className, maxHeight = 120, style, ...props }, ref) {
-  const { text, setText, dark } = usePromptInput();
-  const [height, setHeight] = useState(0);
-  const foreground = useThemeColor("--color-foreground", dark ? "#f7f8f2" : "#17201a");
-  const placeholder = useThemeColor("--color-muted-foreground", dark ? "#a9b4aa" : "#667067");
-  return (
-    <TextInput
-      ref={ref}
-      multiline
-      value={text}
-      onChangeText={setText}
-      onContentSizeChange={(e) => setHeight(e.nativeEvent.contentSize.height)}
-      // Grows with content up to maxHeight, then scrolls. Font size is inline
-      // so the cursor stays centered on iOS (same convention as input.tsx).
-      style={[
-        { fontSize: 16, maxHeight, height: Math.min(Math.max(24, height), maxHeight) },
-        style,
-      ]}
-      className={cn("p-0 text-foreground placeholder:text-muted-foreground", className)}
-      placeholder="How can I help you today?"
-      placeholderTextColor={placeholder}
-      keyboardAppearance={dark ? "dark" : "light"}
-      selectionColor={foreground}
-      cursorColor={foreground}
-      {...props}
-    />
-  );
-});
+export const PromptInputTextarea = React.forwardRef<NativeInputRef, PromptInputTextareaProps>(
+  function PromptInputTextarea({ className, maxHeight = 120, ...props }, ref) {
+    const { text, setText } = usePromptInput();
+    return (
+      <NativeInput
+        ref={ref}
+        multiline
+        style={{ padding: 0 }}
+        value={text}
+        onChangeText={setText}
+        numberOfLines={Math.max(1, Math.min(3, Math.floor(maxHeight / 24)))}
+        className={cn("w-full", className)}
+        placeholder="How can I help you today?"
+        accessibilityLabel="Message"
+        {...props}
+      />
+    );
+  },
+);
 
 export interface PromptInputToolbarProps extends React.ComponentPropsWithoutRef<typeof View> {
   className?: string;
@@ -126,56 +118,34 @@ export function PromptInputSpacer() {
   return <View className="flex-1" />;
 }
 
-export interface PromptInputButtonProps extends React.ComponentPropsWithoutRef<typeof Pressable> {
-  className?: string;
+export type PromptInputButtonProps = ButtonProps;
+export function PromptInputButton(props: PromptInputButtonProps) {
+  return <Button variant="ghost" size="icon" {...props} />;
 }
 
-/** Ghost icon button for toolbar actions (+, mic, model selector, …). */
-export function PromptInputButton({ className, ...props }: PromptInputButtonProps) {
-  return (
-    <Pressable
-      className={cn(
-        "h-14 min-w-14 flex-row items-center justify-center gap-1 rounded-full px-2 active:bg-muted",
-        className,
-      )}
-      accessible={true}
-      accessibilityRole="button"
-      {...props}
-    />
-  );
-}
-
-export interface PromptInputSendProps extends React.ComponentPropsWithoutRef<typeof Pressable> {
-  className?: string;
-  /** Shown when there is no text (e.g. a voice/waveform button); default hides into the send arrow. */
+export interface PromptInputSendProps extends ButtonProps {
   emptyFallback?: React.ReactNode;
 }
-
 export function PromptInputSend({ className, emptyFallback, ...props }: PromptInputSendProps) {
   const { text, send, streaming } = usePromptInput();
   const canSend = text.trim().length > 0;
   const foreground = useThemeColor("--color-primary-foreground", "#ffffff");
   if (!canSend && !streaming && emptyFallback) return <>{emptyFallback}</>;
   return (
-    <Pressable
+    <Button
       onPress={send}
       disabled={!canSend && !streaming}
-      className={cn(
-        "h-14 w-14 items-center justify-center rounded-full bg-primary",
-        !canSend && !streaming && "opacity-40",
-        className,
-      )}
-      accessible={true}
-      accessibilityRole="button"
+      className={className}
+      size="icon"
       accessibilityLabel={streaming ? "Stop generating" : "Send message"}
-      accessibilityState={{ disabled: !canSend && !streaming }}
+      icon={
+        streaming ? (
+          <Square size={14} color={foreground} fill={foreground} />
+        ) : (
+          <ArrowUp size={20} color={foreground} strokeWidth={2.5} />
+        )
+      }
       {...props}
-    >
-      {streaming ? (
-        <Square size={14} color={foreground} fill={foreground} />
-      ) : (
-        <ArrowUp size={20} color={foreground} strokeWidth={2.5} />
-      )}
-    </Pressable>
+    />
   );
 }

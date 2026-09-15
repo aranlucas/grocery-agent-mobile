@@ -39,10 +39,6 @@ vi.mock("@copilotkit/react-native/headless", () => ({
   CopilotKitProvider: ({ children }: PropsWithChildren) => children,
 }));
 
-vi.mock("@gorhom/bottom-sheet", () => ({
-  BottomSheetModalProvider: ({ children }: PropsWithChildren) => children,
-}));
-
 vi.mock("@sentry/react-native", () => ({
   init: vi.fn(),
   wrap: <T,>(component: T) => component,
@@ -128,13 +124,6 @@ vi.mock("@/components/query-provider", () => ({
   QueryProvider: ({ children }: PropsWithChildren) => children,
 }));
 vi.mock("@/components/sign-in-screen", () => ({ SignInScreen: () => null }));
-vi.mock("@/components/ui/button", async () => {
-  const React = await import("react");
-  const { Text } = await import("react-native");
-  return {
-    Button: ({ children }: PropsWithChildren) => React.createElement(Text, null, children),
-  };
-});
 vi.mock("@/components/ui/card", async () => {
   const React = await import("react");
   const { Text, View } = await import("react-native");
@@ -217,7 +206,8 @@ describe("grocery navigation", () => {
   it("links the dashboard to the chat route", async () => {
     await render(<GroceryHomeScreen />);
 
-    expect(homeLinks).toContain("/chat");
+    await fireEvent.press(screen.getByRole("button", { name: "Plan with Grocery Agent" }));
+    expect(push).toHaveBeenCalledWith("/chat");
     expect(homeLinks).toContain("/saved-lists");
     expect(homeLinks).toContain("/saved-recipes");
   });

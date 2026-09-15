@@ -51,7 +51,7 @@ export function SaveResourceDialog({
   const submit = handleSubmit(({ title, householdId }) => onConfirm(title.trim(), householdId));
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
-      <AlertDialogContent className="w-88 max-w-sm">
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Save {resource}</AlertDialogTitle>
           <AlertDialogDescription>

@@ -1,7 +1,8 @@
-import React from "react";
-import { View, Pressable, Text, Modal } from "react-native";
-import Animated from "react-native-reanimated";
-import { entering, exiting } from "@/components/ui/animate";
+import React, { useEffect, useRef } from "react";
+import { View, Text, ScrollView, useWindowDimensions } from "react-native";
+import { BottomSheetModal } from "@expo/ui/community/bottom-sheet";
+import { Button, type ButtonProps } from "@/components/ui/button";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { cn } from "@/lib/utils";
 
 export interface AlertDialogProps {
@@ -11,28 +12,30 @@ export interface AlertDialogProps {
 }
 
 export function AlertDialog({ open, onOpenChange, children }: AlertDialogProps) {
+  const background = useThemeColor("--color-card", "#ffffff");
+  const { height, width } = useWindowDimensions();
+  const sheet = useRef<BottomSheetModal>(null);
+  useEffect(() => {
+    if (open) sheet.current?.present();
+    else sheet.current?.dismiss();
+  }, [open]);
   return (
-    <Modal
-      visible={open}
-      transparent
-      animationType="none"
-      onRequestClose={() => onOpenChange(false)}
+    <BottomSheetModal
+      ref={sheet}
+      onClose={() => onOpenChange(false)}
+      enablePanDownToClose
+      backgroundStyle={{ backgroundColor: background }}
     >
-      <Animated.View
-        entering={entering.fadeIn}
-        exiting={exiting.fadeOut}
-        className="flex-1 items-center justify-center bg-black/50"
+      <ScrollView
+        className="self-center"
+        style={{ width: Math.min(width, 640), maxHeight: height * 0.8 }}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
+        contentContainerClassName="items-center"
       >
-        <Animated.View
-          accessibilityViewIsModal
-          className="w-full items-center px-6"
-          entering={entering.zoomIn}
-          exiting={exiting.zoomOut}
-        >
-          {children}
-        </Animated.View>
-      </Animated.View>
-    </Modal>
+        {children}
+      </ScrollView>
+    </BottomSheetModal>
   );
 }
 
@@ -47,7 +50,7 @@ export function AlertDialogContent({
   return (
     <View
       accessibilityRole="alert"
-      className={cn("w-full max-w-sm rounded-lg bg-card p-6 shadow-xl", className)}
+      className={cn("w-full max-w-3xl bg-card p-4 sm:p-6", className)}
       {...props}
     >
       {children}
@@ -90,56 +93,10 @@ export function AlertDialogFooter({
   );
 }
 
-export function AlertDialogAction({
-  className,
-  children,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof Pressable> & {
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Pressable
-      className={cn(
-        "min-h-14 items-center justify-center rounded-md bg-primary px-4 py-2.5",
-        className,
-      )}
-      accessible={true}
-      accessibilityRole="button"
-      {...props}
-    >
-      {typeof children === "string" ? (
-        <Text className="text-sm font-medium text-primary-foreground">{children}</Text>
-      ) : (
-        children
-      )}
-    </Pressable>
-  );
+export function AlertDialogAction(props: ButtonProps) {
+  return <Button {...props} />;
 }
 
-export function AlertDialogCancel({
-  className,
-  children,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof Pressable> & {
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Pressable
-      className={cn(
-        "min-h-14 items-center justify-center rounded-md border border-input px-4 py-2.5",
-        className,
-      )}
-      accessible={true}
-      accessibilityRole="button"
-      {...props}
-    >
-      {typeof children === "string" ? (
-        <Text className="text-sm font-medium text-foreground">{children}</Text>
-      ) : (
-        children
-      )}
-    </Pressable>
-  );
+export function AlertDialogCancel(props: ButtonProps) {
+  return <Button variant="outline" {...props} />;
 }

@@ -62,17 +62,16 @@ export default function GroceryHomeScreen() {
             </View>
           </CardHeader>
           <CardFooter className="p-5">
-            <Link href="/chat" asChild>
-              <Button
-                className="flex-1 bg-card"
-                iconAfter={<Icon as={ArrowRight} className="size-5 text-secondary" />}
-                size="lg"
-                textClassName="font-extrabold text-secondary"
-                variant="outline"
-              >
-                Plan with Grocery Agent
-              </Button>
-            </Link>
+            <Button
+              onPress={() => router.push("/chat")}
+              className="flex-1 bg-card"
+              iconAfter={<Icon as={ArrowRight} className="size-5 text-secondary" />}
+              size="lg"
+              textClassName="font-extrabold text-secondary"
+              variant="outline"
+            >
+              Plan with Grocery Agent
+            </Button>
           </CardFooter>
         </Card>
 

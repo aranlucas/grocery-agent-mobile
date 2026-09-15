@@ -20,6 +20,13 @@ function FormHarness({ onSubmit }: { onSubmit: (values: Values) => void }) {
         rules={{ validate: (value) => value.trim().length > 0 || "Enter a list name." }}
       />
       <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Reset form"
+        onPress={() => form.reset({ name: "Fresh list" })}
+      >
+        <Text>Reset</Text>
+      </Pressable>
+      <Pressable
         accessibilityLabel="Submit form"
         accessibilityRole="button"
         onPress={() => {
@@ -53,5 +60,18 @@ describe("FormInput", () => {
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
     expect(onSubmit.mock.calls[0]?.[0]).toEqual({ name: "  Weekend  " });
+  });
+  it("updates the native field after an external form reset and accepts subsequent edits", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+    await render(<FormHarness onSubmit={onSubmit} />);
+    await user.type(screen.getByLabelText("List name"), "Old list");
+    await user.press(screen.getByRole("button", { name: "Reset form" }));
+    await waitFor(() => expect(screen.getByDisplayValue("Fresh list")).toBeTruthy());
+    expect(onSubmit).not.toHaveBeenCalled();
+    await user.type(screen.getByLabelText("List name"), " updated");
+    await user.press(screen.getByRole("button", { name: "Submit form" }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(onSubmit.mock.calls[0]?.[0]).toEqual({ name: "Fresh list updated" });
   });
 });

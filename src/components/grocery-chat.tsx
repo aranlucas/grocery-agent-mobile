@@ -8,7 +8,7 @@ import {
   type NativeScrollEvent,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { ChevronDown, ChevronRight, Sparkles } from "lucide-react-native";
+import { Sparkles } from "lucide-react-native";
 import { useForm } from "react-hook-form";
 import { ADD_TO_CART_MESSAGE, AddToCartDialog } from "@/components/add-to-cart-dialog";
 import { GroceryStateCard } from "@/components/grocery-state-card";
@@ -17,7 +17,7 @@ import { KrogerConnectionCard } from "@/components/kroger-connection-card";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Disclosure } from "@/components/ui/disclosure";
 import { FormField } from "@/components/ui/form";
 import { Icon } from "@/components/ui/icon";
 import { KeyboardView } from "@/components/ui/keyboard-view";
@@ -39,7 +39,6 @@ import {
 import { useKrogerConnection } from "@/hooks/use-kroger-connection";
 import type { DisplayMessage } from "@/lib/grocery-state";
 import { GROCERY_SUGGESTIONS } from "@/lib/grocery-suggestions";
-import { cn } from "@/lib/utils";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ANDROID_HEADER_HEIGHT = 56;
@@ -402,29 +401,18 @@ function ReasoningSection({
       : `Thought for ${formatReasoningDuration(elapsedSeconds)}`;
 
   return (
-    <Collapsible className="w-full gap-1 self-stretch" onOpenChange={setExpanded} open={expanded}>
-      <CollapsibleTrigger
-        accessibilityLabel={expanded ? "Hide reasoning" : "Show reasoning"}
-        accessibilityState={{ expanded }}
-        className="min-h-14 flex-row items-center gap-1 self-start active:opacity-65"
-      >
-        <View className="size-4 items-center justify-center">
-          {expanded ? (
-            <Icon as={ChevronDown} className="size-4 text-muted-foreground" />
-          ) : (
-            <Icon as={ChevronRight} className="size-4 text-muted-foreground" />
-          )}
-        </View>
-        <Text className="text-muted-foreground" variant="small">
-          {reasoningLabel}
-        </Text>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="ml-2 self-start border-l border-border py-1 pl-3.5">
+    <Disclosure
+      className="w-full"
+      onOpenChange={setExpanded}
+      open={expanded}
+      label={reasoningLabel}
+    >
+      <View className="ml-2 self-start border-l border-border py-1 pl-3.5">
         <Text className="leading-5" variant="muted">
           {content}
         </Text>
-      </CollapsibleContent>
-    </Collapsible>
+      </View>
+    </Disclosure>
   );
 }
 
@@ -442,31 +430,14 @@ function ToolCallSection({
   const [expanded, setExpanded] = useState(false);
   const label = toolLabel(name);
   return (
-    <Collapsible className="w-full gap-1 self-stretch" onOpenChange={setExpanded} open={expanded}>
-      <CollapsibleTrigger
-        accessibilityLabel={`${expanded ? "Hide" : "Show"} details for ${label}`}
-        accessibilityState={{ expanded }}
-        className="min-h-14 flex-row items-center gap-1 active:opacity-65"
-      >
-        <View className="size-4 items-center justify-center">
-          {expanded ? (
-            <Icon as={ChevronDown} className="size-4 text-muted-foreground" />
-          ) : (
-            <Icon as={ChevronRight} className="size-4 text-muted-foreground" />
-          )}
-        </View>
-        <Text className="shrink text-muted-foreground" numberOfLines={1} variant="small">
-          {label}
-        </Text>
-        <Text
-          className={cn("ml-auto text-muted-foreground", status === "failed" && "text-destructive")}
-          variant="small"
-        >
-          {status === "running" ? "Running" : status === "failed" ? "Failed" : "Done"}
-        </Text>
-      </CollapsibleTrigger>
+    <Disclosure
+      className="w-full"
+      onOpenChange={setExpanded}
+      open={expanded}
+      label={`${label} · ${status === "running" ? "Running" : status === "failed" ? "Failed" : "Done"}`}
+    >
       {expanded ? (
-        <CollapsibleContent className="ml-2 max-h-39 border-l border-border py-1 pl-3.5">
+        <View className="ml-2 max-h-39 border-l border-border py-1 pl-3.5">
           <ScrollView nestedScrollEnabled>
             <Text className="mb-0.5 font-semibold text-muted-foreground" variant="small">
               Input
@@ -485,9 +456,9 @@ function ToolCallSection({
               </>
             ) : null}
           </ScrollView>
-        </CollapsibleContent>
+        </View>
       ) : null}
-    </Collapsible>
+    </Disclosure>
   );
 }
 
