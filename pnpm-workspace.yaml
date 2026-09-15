@@ -9,7 +9,9 @@ syncInjectedDepsAfterScripts:
 allowBuilds:
   "@clerk/shared": true
   "@sentry/cli": false
+  "@scarf/scarf": false
   bufferutil: true
+  browser-tabs-lock: false
   core-js: true
   "core-js-pure": true
   esbuild: true
