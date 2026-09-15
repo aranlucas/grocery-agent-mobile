@@ -50,13 +50,13 @@
 
 **Files:**
 
-- Modify: `apps/grocery-mobile/package.json:6-75`
-- Modify: `apps/grocery-mobile/vitest.config.mts:1-14`
-- Create: `apps/grocery-mobile/tsconfig.test.json`
-- Create: `apps/grocery-mobile/src/styles.d.ts`
-- Create: `apps/grocery-mobile/test/setup.ts`
-- Create: `apps/grocery-mobile/test/render.tsx`
-- Create: `apps/grocery-mobile/src/app/navigation.test.tsx`
+- Modify: `./package.json:6-75`
+- Modify: `./vitest.config.mts:1-14`
+- Create: `./tsconfig.test.json`
+- Create: `./src/styles.d.ts`
+- Create: `./test/setup.ts`
+- Create: `./test/render.tsx`
+- Create: `./src/app/navigation.test.tsx`
 - Modify: `pnpm-lock.yaml`
 
 **Interfaces:**
@@ -71,8 +71,8 @@
 Run from the repository root:
 
 ```sh
-pnpm --filter grocery-mobile exec expo install @react-native-community/netinfo expo-dev-client
-pnpm --filter grocery-mobile add -D \
+pnpm exec expo install @react-native-community/netinfo expo-dev-client
+pnpm add -D \
   @babel/core@7.29.7 \
   @react-native/babel-preset@0.86.0 \
   @testing-library/react-native@14.0.1 \
@@ -86,7 +86,7 @@ Expected: `package.json` and `pnpm-lock.yaml` change; do **not** add Jest, `reac
 
 - [ ] **Step 2: Add a dedicated test TypeScript project**
 
-Create `apps/grocery-mobile/tsconfig.test.json`:
+Create `./tsconfig.test.json`:
 
 ```json
 {
@@ -222,9 +222,9 @@ The test must render `RootLayout`, `GroceryHomeScreen`, and `GroceryChatScreen`;
 Run:
 
 ```sh
-pnpm --filter grocery-mobile test -- src/app/navigation.test.tsx
-pnpm --filter grocery-mobile test
-pnpm --filter grocery-mobile typecheck
+pnpm test -- src/app/navigation.test.tsx
+pnpm test
+pnpm typecheck
 ```
 
 Expected: navigation test passes, all seven existing logic test files still pass, and both TypeScript projects pass.
@@ -232,10 +232,10 @@ Expected: navigation test passes, all seven existing logic test files still pass
 - [ ] **Step 7: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/package.json apps/grocery-mobile/vitest.config.mts \
-  apps/grocery-mobile/tsconfig.test.json apps/grocery-mobile/src/styles.d.ts \
-  apps/grocery-mobile/test \
-  apps/grocery-mobile/src/app/navigation.test.tsx pnpm-lock.yaml
+git add ./package.json ./vitest.config.mts \
+  ./tsconfig.test.json ./src/styles.d.ts \
+  ./test \
+  ./src/app/navigation.test.tsx pnpm-lock.yaml
 git commit -m "test(grocery-mobile): add native component harness"
 ```
 
@@ -245,14 +245,14 @@ git commit -m "test(grocery-mobile): add native component harness"
 
 **Files:**
 
-- Create: `apps/grocery-mobile/scripts/android-export.mjs`
-- Modify: `apps/grocery-mobile/package.json:6-21`
+- Create: `./scripts/android-export.mjs`
+- Modify: `./package.json:6-21`
 - Modify: `.github/workflows/ci.yml:34-55`
-- Test: `apps/grocery-mobile/test/configuration.test.ts`
+- Test: `./test/configuration.test.ts`
 
 **Interfaces:**
 
-- Produces: `pnpm --filter grocery-mobile build:android`
+- Produces: `pnpm build:android`
 - Produces: generic `build` alias consumed by Turbo/CI
 - Produces: dev-client Metro on port `8081`
 
@@ -366,7 +366,7 @@ Keep the credentialed `build:preview:*`, `build:production:*`, and release scrip
 Update only the comment above `.github/workflows/ci.yml`'s Turbo build command:
 
 ```yaml
-# Legacy apps/mobile uses credentialed native release commands, so CI excludes
+# Legacy standalone mobile repo uses credentialed native release commands, so CI excludes
 # it. Grocery Mobile exposes a deterministic Expo export through `build`.
 run: pnpm exec turbo build --filter='!agents' --filter='!mobile'
 ```
@@ -378,8 +378,8 @@ Do not change `.github/workflows/android-apk.yml`.
 Run:
 
 ```sh
-pnpm --filter grocery-mobile test -- test/configuration.test.ts
-pnpm --filter grocery-mobile build:android
+pnpm test -- test/configuration.test.ts
+pnpm build:android
 pnpm exec turbo run build --filter='!agents' --filter='!mobile' --concurrency=2
 ```
 
@@ -392,8 +392,8 @@ Temporarily create a conflicting ignored `.env.production.local`, rerun `build:a
 - [ ] **Step 7: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/scripts/android-export.mjs apps/grocery-mobile/package.json \
-  apps/grocery-mobile/test/configuration.test.ts .github/workflows/ci.yml
+git add ./scripts/android-export.mjs ./package.json \
+  ./test/configuration.test.ts .github/workflows/ci.yml
 git commit -m "ci(grocery-mobile): verify Android export"
 ```
 
@@ -403,11 +403,11 @@ git commit -m "ci(grocery-mobile): verify Android export"
 
 **Files:**
 
-- Create: `apps/grocery-mobile/src/lib/query-keys.ts`
-- Modify: `apps/grocery-mobile/src/components/query-provider.tsx:1-23`
-- Modify: `apps/grocery-mobile/src/components/grocery-copilot-session.tsx:13-74`
-- Create: `apps/grocery-mobile/src/components/query-provider.test.tsx`
-- Create: `apps/grocery-mobile/src/components/grocery-copilot-session.test.tsx`
+- Create: `./src/lib/query-keys.ts`
+- Modify: `./src/components/query-provider.tsx:1-23`
+- Modify: `./src/components/grocery-copilot-session.tsx:13-74`
+- Create: `./src/components/query-provider.test.tsx`
+- Create: `./src/components/grocery-copilot-session.test.tsx`
 
 **Interfaces:**
 
@@ -538,21 +538,21 @@ Do not replace operation-level `runAuthenticated` token refresh with this cached
 - [ ] **Step 6: Run focused and native build gates**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/components/query-provider.test.tsx \
   src/components/grocery-copilot-session.test.tsx
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile build:android
+pnpm typecheck
+pnpm build:android
 ```
 
 - [ ] **Step 7: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/lib/query-keys.ts \
-  apps/grocery-mobile/src/components/query-provider.tsx \
-  apps/grocery-mobile/src/components/query-provider.test.tsx \
-  apps/grocery-mobile/src/components/grocery-copilot-session.tsx \
-  apps/grocery-mobile/src/components/grocery-copilot-session.test.tsx
+git add ./src/lib/query-keys.ts \
+  ./src/components/query-provider.tsx \
+  ./src/components/query-provider.test.tsx \
+  ./src/components/grocery-copilot-session.tsx \
+  ./src/components/grocery-copilot-session.test.tsx
 git commit -m "feat(grocery-mobile): harden native query lifecycle"
 ```
 
@@ -562,12 +562,12 @@ git commit -m "feat(grocery-mobile): harden native query lifecycle"
 
 **Files:**
 
-- Modify: `apps/grocery-mobile/src/hooks/use-kroger-connection.ts:13-104`
-- Modify: `apps/grocery-mobile/src/lib/connections.ts`
-- Modify: `apps/grocery-mobile/src/lib/connections.test.ts`
-- Modify: `apps/grocery-mobile/src/app/kroger-callback.tsx:12-61`
-- Create: `apps/grocery-mobile/src/hooks/use-kroger-connection.test.tsx`
-- Create: `apps/grocery-mobile/src/app/kroger-callback.test.tsx`
+- Modify: `./src/hooks/use-kroger-connection.ts:13-104`
+- Modify: `./src/lib/connections.ts`
+- Modify: `./src/lib/connections.test.ts`
+- Modify: `./src/app/kroger-callback.tsx:12-61`
+- Create: `./src/hooks/use-kroger-connection.test.tsx`
+- Create: `./src/app/kroger-callback.test.tsx`
 
 **Interfaces:**
 
@@ -672,23 +672,23 @@ Write the component test to prove cache update occurs before navigation and a re
 - [ ] **Step 6: Run focused tests and build**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/hooks/use-kroger-connection.test.tsx \
   src/lib/connections.test.ts \
   src/app/kroger-callback.test.tsx
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile build:android
+pnpm typecheck
+pnpm build:android
 ```
 
 - [ ] **Step 7: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/hooks/use-kroger-connection.ts \
-  apps/grocery-mobile/src/hooks/use-kroger-connection.test.tsx \
-  apps/grocery-mobile/src/lib/connections.ts \
-  apps/grocery-mobile/src/lib/connections.test.ts \
-  apps/grocery-mobile/src/app/kroger-callback.tsx \
-  apps/grocery-mobile/src/app/kroger-callback.test.tsx
+git add ./src/hooks/use-kroger-connection.ts \
+  ./src/hooks/use-kroger-connection.test.tsx \
+  ./src/lib/connections.ts \
+  ./src/lib/connections.test.ts \
+  ./src/app/kroger-callback.tsx \
+  ./src/app/kroger-callback.test.tsx
 git commit -m "fix(grocery-mobile): preserve Kroger connection lifecycle"
 ```
 
@@ -698,11 +698,11 @@ git commit -m "fix(grocery-mobile): preserve Kroger connection lifecycle"
 
 **Files:**
 
-- Create: `apps/grocery-mobile/src/lib/copilot-operation.ts`
-- Create: `apps/grocery-mobile/src/lib/copilot-operation.test.ts`
-- Modify: `apps/grocery-mobile/src/hooks/use-grocery-agent.ts:13-163`
-- Create: `apps/grocery-mobile/src/hooks/use-grocery-agent.test.tsx`
-- Modify: `apps/grocery-mobile/src/components/grocery-agent-provider.tsx`
+- Create: `./src/lib/copilot-operation.ts`
+- Create: `./src/lib/copilot-operation.test.ts`
+- Modify: `./src/hooks/use-grocery-agent.ts:13-163`
+- Create: `./src/hooks/use-grocery-agent.test.tsx`
+- Modify: `./src/components/grocery-agent-provider.tsx`
 
 **Interfaces:**
 
@@ -838,20 +838,20 @@ Keep existing thread/suggestion APIs intact.
 - [ ] **Step 9: Run focused tests**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/lib/copilot-operation.test.ts \
   src/hooks/use-grocery-agent.test.tsx
-pnpm --filter grocery-mobile typecheck
+pnpm typecheck
 ```
 
 - [ ] **Step 10: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/lib/copilot-operation.ts \
-  apps/grocery-mobile/src/lib/copilot-operation.test.ts \
-  apps/grocery-mobile/src/hooks/use-grocery-agent.ts \
-  apps/grocery-mobile/src/hooks/use-grocery-agent.test.tsx \
-  apps/grocery-mobile/src/components/grocery-agent-provider.tsx
+git add ./src/lib/copilot-operation.ts \
+  ./src/lib/copilot-operation.test.ts \
+  ./src/hooks/use-grocery-agent.ts \
+  ./src/hooks/use-grocery-agent.test.tsx \
+  ./src/components/grocery-agent-provider.tsx
 git commit -m "fix(grocery-mobile): serialize agent send lifecycle"
 ```
 
@@ -861,9 +861,9 @@ git commit -m "fix(grocery-mobile): serialize agent send lifecycle"
 
 **Files:**
 
-- Modify: `apps/grocery-mobile/src/hooks/use-grocery-agent.ts`
-- Modify: `apps/grocery-mobile/src/hooks/use-grocery-agent.test.tsx`
-- Modify: `apps/grocery-mobile/src/components/grocery-agent-provider.tsx`
+- Modify: `./src/hooks/use-grocery-agent.ts`
+- Modify: `./src/hooks/use-grocery-agent.test.tsx`
+- Modify: `./src/components/grocery-agent-provider.tsx`
 
 **Interfaces:**
 
@@ -919,16 +919,16 @@ return outcome;
 - [ ] **Step 6: Run sequential lifecycle tests**
 
 ```sh
-pnpm --filter grocery-mobile test -- src/hooks/use-grocery-agent.test.tsx
-pnpm --filter grocery-mobile typecheck
+pnpm test -- src/hooks/use-grocery-agent.test.tsx
+pnpm typecheck
 ```
 
 - [ ] **Step 7: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/hooks/use-grocery-agent.ts \
-  apps/grocery-mobile/src/hooks/use-grocery-agent.test.tsx \
-  apps/grocery-mobile/src/components/grocery-agent-provider.tsx
+git add ./src/hooks/use-grocery-agent.ts \
+  ./src/hooks/use-grocery-agent.test.tsx \
+  ./src/components/grocery-agent-provider.tsx
 git commit -m "fix(grocery-mobile): rollback failed thread transitions"
 ```
 
@@ -938,9 +938,9 @@ git commit -m "fix(grocery-mobile): rollback failed thread transitions"
 
 **Files:**
 
-- Modify: `apps/grocery-mobile/src/components/ui/checkbox.tsx:1-58`
-- Modify: `apps/grocery-mobile/src/components/ui/chip.tsx:39-95`
-- Modify: `apps/grocery-mobile/src/components/ui/collapsible.tsx:6-58`
+- Modify: `./src/components/ui/checkbox.tsx:1-58`
+- Modify: `./src/components/ui/chip.tsx:39-95`
+- Modify: `./src/components/ui/collapsible.tsx:6-58`
 - Create: corresponding `.test.tsx` files
 
 **Interfaces:**
@@ -1003,7 +1003,7 @@ Do not let a trailing props spread overwrite the internal toggle. Preserve `acce
 - [ ] **Step 7: Run focused tests**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/components/ui/checkbox.test.tsx \
   src/components/ui/chip.test.tsx \
   src/components/ui/collapsible.test.tsx
@@ -1012,12 +1012,12 @@ pnpm --filter grocery-mobile test -- \
 - [ ] **Step 8: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/components/ui/checkbox.tsx \
-  apps/grocery-mobile/src/components/ui/checkbox.test.tsx \
-  apps/grocery-mobile/src/components/ui/chip.tsx \
-  apps/grocery-mobile/src/components/ui/chip.test.tsx \
-  apps/grocery-mobile/src/components/ui/collapsible.tsx \
-  apps/grocery-mobile/src/components/ui/collapsible.test.tsx
+git add ./src/components/ui/checkbox.tsx \
+  ./src/components/ui/checkbox.test.tsx \
+  ./src/components/ui/chip.tsx \
+  ./src/components/ui/chip.test.tsx \
+  ./src/components/ui/collapsible.tsx \
+  ./src/components/ui/collapsible.test.tsx
 git commit -m "fix(grocery-mobile): converge selection primitives"
 ```
 
@@ -1101,21 +1101,21 @@ Use `useReducedMotion()`. When true, set a static visible opacity and do not cal
 - [ ] **Step 8: Run focused tests and Android export**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/components/ui/avatar.test.tsx \
   src/components/ui/button.test.tsx \
   src/components/ui/badge.test.tsx \
   src/components/ui/skeleton.test.tsx
-pnpm --filter grocery-mobile build:android
+pnpm build:android
 ```
 
 - [ ] **Step 9: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/components/ui/avatar* \
-  apps/grocery-mobile/src/components/ui/button* \
-  apps/grocery-mobile/src/components/ui/badge* \
-  apps/grocery-mobile/src/components/ui/skeleton*
+git add ./src/components/ui/avatar* \
+  ./src/components/ui/button* \
+  ./src/components/ui/badge* \
+  ./src/components/ui/skeleton*
 git commit -m "fix(grocery-mobile): harden feedback primitives"
 ```
 
@@ -1170,7 +1170,7 @@ Keep its existing controlled API and Android Back path. Add modal semantics to `
 Run:
 
 ```sh
-rg -n '@rn-primitives/portal|PortalHost' apps/grocery-mobile/src
+rg -n '@rn-primitives/portal|PortalHost' ./src
 ```
 
 Expected before cleanup: only `_layout.tsx` imports/uses `PortalHost`; no final UI primitive imports the portal package.
@@ -1180,7 +1180,7 @@ Expected before cleanup: only `_layout.tsx` imports/uses `PortalHost`; no final 
 Remove `PortalHost` from `_layout.tsx` and `@rn-primitives/portal` from `package.json` with:
 
 ```sh
-pnpm --filter grocery-mobile remove @rn-primitives/portal
+pnpm remove @rn-primitives/portal
 ```
 
 Retain `GestureHandlerRootView` and `BottomSheetModalProvider`.
@@ -1188,20 +1188,20 @@ Retain `GestureHandlerRootView` and `BottomSheetModalProvider`.
 - [ ] **Step 7: Run overlay, type, and native build gates**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/components/ui/action-sheet.test.tsx \
   src/components/ui/alert-dialog.test.tsx
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile build:android
+pnpm typecheck
+pnpm build:android
 ```
 
 - [ ] **Step 8: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/components/ui/action-sheet* \
-  apps/grocery-mobile/src/components/ui/alert-dialog* \
-  apps/grocery-mobile/src/app/_layout.tsx \
-  apps/grocery-mobile/package.json pnpm-lock.yaml
+git add ./src/components/ui/action-sheet* \
+  ./src/components/ui/alert-dialog* \
+  ./src/app/_layout.tsx \
+  ./package.json pnpm-lock.yaml
 git commit -m "fix(grocery-mobile): simplify overlay provider stack"
 ```
 
@@ -1261,15 +1261,15 @@ Replace all household query/invalidation literals with `groceryQueryKeys.househo
 - [ ] **Step 5: Run focused tests**
 
 ```sh
-pnpm --filter grocery-mobile test -- src/app/households.test.tsx
-pnpm --filter grocery-mobile typecheck
+pnpm test -- src/app/households.test.tsx
+pnpm typecheck
 ```
 
 - [ ] **Step 6: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/app/households.tsx \
-  apps/grocery-mobile/src/app/households.test.tsx
+git add ./src/app/households.tsx \
+  ./src/app/households.test.tsx
 git commit -m "fix(grocery-mobile): validate household mutations"
 ```
 
@@ -1317,16 +1317,16 @@ Set list selectors to `role="radio"`; rely on Chip to map `selected` to checked 
 - [ ] **Step 6: Run focused tests and native build**
 
 ```sh
-pnpm --filter grocery-mobile test -- src/app/shared-list.test.tsx
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile build:android
+pnpm test -- src/app/shared-list.test.tsx
+pnpm typecheck
+pnpm build:android
 ```
 
 - [ ] **Step 7: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/app/shared-list.tsx \
-  apps/grocery-mobile/src/app/shared-list.test.tsx
+git add ./src/app/shared-list.tsx \
+  ./src/app/shared-list.test.tsx
 git commit -m "fix(grocery-mobile): harden shared list mutations"
 ```
 
@@ -1423,22 +1423,22 @@ Do not change `GroceryMessage`, NativeMarkdown, ReasoningSection, ToolCallSectio
 - [ ] **Step 10: Run chat tests**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/components/grocery-chat-composer.test.tsx \
   src/components/grocery-chat.test.tsx \
   src/components/ui/prompt-input.test.tsx \
   src/app/chat-history.test.tsx
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile build:android
+pnpm typecheck
+pnpm build:android
 ```
 
 - [ ] **Step 11: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/components/grocery-chat-composer* \
-  apps/grocery-mobile/src/components/grocery-chat* \
-  apps/grocery-mobile/src/components/ui/prompt-input.test.tsx \
-  apps/grocery-mobile/src/app/chat-history*
+git add ./src/components/grocery-chat-composer* \
+  ./src/components/grocery-chat* \
+  ./src/components/ui/prompt-input.test.tsx \
+  ./src/app/chat-history*
 git commit -m "feat(grocery-mobile): finish chat lifecycle UX"
 ```
 
@@ -1473,25 +1473,25 @@ Do not alter SignInScreen's Clerk state machine or GroceryHeader navigation beha
 - [ ] **Step 3: Delete the legacy file and prove no import remains**
 
 ```sh
-test ! -e apps/grocery-mobile/src/components/ui.tsx
-! rg -n 'from "@/components/ui"' apps/grocery-mobile/src
+test ! -e ./src/components/ui.tsx
+! rg -n 'from "@/components/ui"' ./src
 ```
 
 - [ ] **Step 4: Run type and navigation checks**
 
 ```sh
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile test -- src/app/navigation.test.tsx
+pnpm typecheck
+pnpm test -- src/app/navigation.test.tsx
 ```
 
 - [ ] **Step 5: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/components/brand-mark.tsx \
-  apps/grocery-mobile/src/components/grocery-header.tsx \
-  apps/grocery-mobile/src/components/configuration-error.tsx \
-  apps/grocery-mobile/src/components/sign-in-screen.tsx \
-  apps/grocery-mobile/src/components/ui.tsx
+git add ./src/components/brand-mark.tsx \
+  ./src/components/grocery-header.tsx \
+  ./src/components/configuration-error.tsx \
+  ./src/components/sign-in-screen.tsx \
+  ./src/components/ui.tsx
 git commit -m "refactor(grocery-mobile): isolate BrandMark"
 ```
 
@@ -1548,20 +1548,20 @@ Assert `$3.50`, zero value, optional prefix/strikethrough, Account and GrocerySt
 - [ ] **Step 5: Run commerce tests**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/components/ui/price.test.tsx \
   src/app/account.test.tsx \
   src/components/grocery-state-card.test.tsx
-pnpm --filter grocery-mobile typecheck
+pnpm typecheck
 ```
 
 - [ ] **Step 6: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/src/components/ui/price* \
-  apps/grocery-mobile/src/app/account* \
-  apps/grocery-mobile/src/components/grocery-state-card* \
-  apps/grocery-mobile/src/app/list.tsx
+git add ./src/components/ui/price* \
+  ./src/app/account* \
+  ./src/components/grocery-state-card* \
+  ./src/app/list.tsx
 git commit -m "refactor(grocery-mobile): reuse commerce primitives"
 ```
 
@@ -1571,8 +1571,8 @@ git commit -m "refactor(grocery-mobile): reuse commerce primitives"
 
 **Files:**
 
-- Modify: `apps/grocery-mobile/app.json:9`
-- Modify: `apps/grocery-mobile/test/configuration.test.ts`
+- Modify: `./app.json:9`
+- Modify: `./test/configuration.test.ts`
 
 **Interfaces:**
 
@@ -1603,17 +1603,17 @@ Do not add theme tokens or a settings screen; existing `global.css` tokens and `
 - [ ] **Step 3: Run appearance/token/build checks**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   test/configuration.test.ts \
   src/components/ui/button.test.tsx \
   src/components/ui/badge.test.tsx
-pnpm --filter grocery-mobile build:android
+pnpm build:android
 ```
 
 - [ ] **Step 4: Suggested checkpoint commit (only with explicit authorization)**
 
 ```sh
-git add apps/grocery-mobile/app.json apps/grocery-mobile/test/configuration.test.ts
+git add ./app.json ./test/configuration.test.ts
 git commit -m "feat(grocery-mobile): follow system appearance"
 ```
 
@@ -1637,7 +1637,7 @@ Run targeted searches for the six tuple prefixes and inspect every result:
 
 ```sh
 rg -n 'clerk-grocery-token|kroger-connection-callback|grocery-households|grocery-lists|grocery-list|clerk-user.*kroger-connection' \
-  apps/grocery-mobile/src
+  ./src
 ```
 
 Expected: tuple definitions exist only in `src/lib/query-keys.ts`; consumers call key factories.
@@ -1645,7 +1645,7 @@ Expected: tuple definitions exist only in `src/lib/query-keys.ts`; consumers cal
 - [ ] **Step 2: Run focused suites in dependency order**
 
 ```sh
-pnpm --filter grocery-mobile test -- \
+pnpm test -- \
   src/app/navigation.test.tsx \
   src/components/query-provider.test.tsx \
   src/components/grocery-copilot-session.test.tsx \
@@ -1676,11 +1676,11 @@ pnpm --filter grocery-mobile test -- \
 - [ ] **Step 3: Run the package gates**
 
 ```sh
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile lint
-pnpm --filter grocery-mobile test
-pnpm --filter grocery-mobile fmt:check
-pnpm --filter grocery-mobile build:android
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm fmt:check
+pnpm build:android
 ```
 
 Expected: all commands exit 0; the Android wrapper verifies metadata and a non-empty bundle.
@@ -1688,8 +1688,8 @@ Expected: all commands exit 0; the Android wrapper verifies metadata and a non-e
 - [ ] **Step 4: Run diagnostics without corrupting the project**
 
 ```sh
-pnpm --dir apps/grocery-mobile dlx expo-doctor@1.20.1
-pnpm --dir apps/grocery-mobile dlx @aniui/cli@0.5.0 doctor || true
+pnpm --dir . dlx expo-doctor@1.20.1
+pnpm --dir . dlx @aniui/cli@0.5.0 doctor || true
 ```
 
 Record AniUI CLI output. Ignore only the already-established hardcoded-layout failures; any real dependency, registry, or source error is actionable. Do not run `aniui init` or add duplicate root files.
@@ -1750,8 +1750,8 @@ Store exact values for finally-style restoration. Do not assume animation scales
 - [ ] **Step 2: Clean-prebuild and install the dev client**
 
 ```sh
-pnpm --filter grocery-mobile exec expo prebuild --platform android --clean
-pnpm --filter grocery-mobile android -- --device Pixel_API_35
+pnpm exec expo prebuild --platform android --clean
+pnpm android -- --device Pixel_API_35
 adb -s emulator-5554 shell am start -W -n dev.agents.grocery/.MainActivity
 ```
 

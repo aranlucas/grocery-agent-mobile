@@ -17,7 +17,7 @@ check-off, polling sync. No realtime infrastructure, no push notifications.
 - Agent: the required grocery library tools include `save_current_list`,
   which saves personally by default or to an explicitly selected household,
   plus list/get/update operations over the same repository as HTTP.
-- Mobile: new Expo Router screens in `apps/grocery-mobile` reusing the
+- Mobile: new Expo Router screens in this standalone repository reusing the
   existing component patterns (`ui.tsx`, theme tokens) — RNR migration
   (COMPONENT_PLAN.md) happens independently; do not block on it.
 - Sync: refetch on screen focus + a 30s foreground interval. Last-write-wins
@@ -77,7 +77,7 @@ check-off attribution.
 3. Contract update if `GroceryState` gains fields — regenerate
    `packages/types` schemas rather than hand-editing generated files.
 
-## Milestone 4 — Mobile (apps/grocery-mobile)
+## Milestone 4 — Mobile (standalone repository)
 
 1. `src/lib/household-api.ts`: typed fetch client for the endpoints above,
    using the same authenticated-request helper pattern as `lib/auth.ts`

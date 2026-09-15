@@ -8,7 +8,7 @@ deferred until the local flow is verified end to end.
 
 ## Current state
 
-- [x] Create a focused `apps/grocery-mobile` Expo application.
+- [x] Create a focused standalone Grocery Agent Expo application.
 - [x] Add Clerk Google and email authentication.
 - [x] Require Kroger before entering grocery planning.
 - [x] Add Kroger OAuth handoff and app callback handling.
@@ -23,8 +23,7 @@ deferred until the local flow is verified end to end.
 
 1. [ ] Add `expo-dev-client` to Grocery Agent and make its Android command use
        `expo run:android`, so the app never depends on Expo Go.
-2. [ ] Remove the old `apps/mobile` port from the grocery workflow and use one
-       canonical Metro port and native package for local development.
+2. [ ] Use one canonical Metro port and native package for local development.
 3. [ ] Resolve Clerk authentication before mounting `CopilotKitProvider`, then
        send `Authorization` and `x-clerk-user-id` on the initial runtime `/info`
        request. Keep token refresh immediately before every agent run.
@@ -38,8 +37,8 @@ deferred until the local flow is verified end to end.
 8. [ ] Capture clean emulator screenshots and confirm no native-module,
        JavaScript, Android runtime, or authenticated gateway errors in logs.
 9. [ ] Run the final package and repository gates:
-       `pnpm --filter grocery-mobile typecheck`, lint, format check, tests,
-       Expo Doctor/export, React Doctor, then `pnpm check && pnpm test`.
+       `pnpm typecheck`, lint, format check, tests, Expo Doctor/export, React
+       Doctor, then `pnpm check && pnpm test`.
 
 ## Completion criteria
 

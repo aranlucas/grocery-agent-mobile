@@ -6,7 +6,7 @@ function readLocalRootEnv() {
   if (process.env.EAS_BUILD || process.env.CI) return {};
 
   try {
-    const contents = fs.readFileSync(path.resolve(__dirname, "../../.env"), "utf8");
+    const contents = fs.readFileSync(path.resolve(__dirname, ".env"), "utf8");
     return Object.fromEntries(
       contents
         .split(/\r?\n/u)

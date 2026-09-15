@@ -18,19 +18,18 @@
     "build:production:ios": "pnpm dlx eas-cli build --profile production --platform ios",
     "build:production-apk:android": "node ./scripts/android-release.mjs build",
     "publish:production-apk:android": "node ./scripts/android-release.mjs publish",
-    "lint": "oxlint --threads=2 .",
+    "lint": "oxlint --threads=2 src test scripts plugins packages",
     "fmt": "oxfmt --threads=2 . '!src/lib/grocery-gateway.d.ts'",
-    "fmt:check": "oxfmt --threads=2 --check . '!src/lib/grocery-gateway.d.ts'",
+    "fmt:check": "oxfmt --threads=2 --check src test scripts plugins packages package.json app.config.js app.json metro.config.js tsconfig.json tsconfig.test.json vitest.config.mts pnpm-workspace.yaml .oxfmtrc.json '!src/lib/grocery-gateway.d.ts'",
     "typecheck": "GOMAXPROCS=2 tsc --noEmit -p tsconfig.json && GOMAXPROCS=2 tsc --noEmit -p tsconfig.test.json",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "generate:gateway": "openapi-typescript ../../agents/api/openapi/grocery-gateway.yaml -o src/lib/grocery-gateway.d.ts",
-    "api:check": "pnpm generate:gateway && pnpm exec oxfmt --threads=2 src/lib/grocery-gateway.d.ts && git diff --exit-code -- src/lib/grocery-gateway.d.ts"
+    "check": "oxlint src test scripts plugins packages --threads=2 && oxfmt --check src test scripts plugins packages package.json app.config.js app.json metro.config.js tsconfig.json tsconfig.test.json vitest.config.mts pnpm-workspace.yaml .oxfmtrc.json && tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json"
   },
   "dependencies": {
     "@agents/types": "workspace:*",
     "@clerk/expo": "^4.6.5",
-    "@copilotkit/react-native": "^1.70.1",
+    "@copilotkit/react-native": "1.70.1",
     "@expo/material-symbols": "^0.1.1",
     "@expo/metro-runtime": "~57.0.15",
     "@gorhom/bottom-sheet": "^5.2.14",
@@ -97,6 +96,10 @@
     "@vitest/coverage-v8": "5.0.0",
     "bufferutil": "4.1.0",
     "concurrently": "^10.0.5",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
+    "oxlint-tailwindcss": "1.10.2",
+    "oxlint-tsgolint": "^7.0.2001",
     "pnpm-sync-dependencies-meta-injected": "^0.0.15",
     "supports-color": "11.0.0",
     "test-renderer": "1.2.0",
@@ -105,5 +108,6 @@
     "vite": "8.2.2",
     "vitest": "^5.0.0",
     "vitest-native": "0.13.0"
-  }
+  },
+  "packageManager": "pnpm@12.3.4"
 }

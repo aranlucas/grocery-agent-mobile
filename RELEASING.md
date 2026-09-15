@@ -1,8 +1,9 @@
 # Android APK releases
 
 Grocery Agent APKs are built and signed on a local development machine, tested as the exact
-release artifact, and then uploaded to a tagged GitHub Release. The existing repository GitHub
-Actions APK workflow builds `apps/mobile`; it does not release this app.
+release artifact, and then uploaded to a tagged GitHub Release. The repository GitHub Actions APK
+workflow builds this standalone app and uploads a non-release artifact; the local publish command
+remains the guarded path for GitHub Releases.
 
 ## One-time setup
 
@@ -16,7 +17,7 @@ Actions APK workflow builds `apps/mobile`; it does not release this app.
 
 ## Build, verify, and publish
 
-From `apps/grocery-mobile`, replace `1.0.0` with the release version:
+From this repository root, replace `1.0.0` with the release version:
 
 ```sh
 pnpm build:production-apk:android -- 1.0.0

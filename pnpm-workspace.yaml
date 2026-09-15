@@ -1,0 +1,16 @@
+packages:
+  - "packages/*"
+
+minimumReleaseAge: 0
+
+syncInjectedDepsAfterScripts:
+  - fmt
+
+allowBuilds:
+  "@clerk/shared": true
+  "@sentry/cli": false
+  bufferutil: true
+  core-js: true
+  "core-js-pure": true
+  esbuild: true
+  "utf-8-validate": true

@@ -157,12 +157,12 @@ Add a deterministic grocery-mobile Android export/build command backed by Expo A
 Final automated gates:
 
 ```sh
-pnpm --filter grocery-mobile typecheck
-pnpm --filter grocery-mobile lint
-pnpm --filter grocery-mobile test
-pnpm --filter grocery-mobile fmt:check
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm fmt:check
 pnpm dlx @aniui/cli doctor
-pnpm --filter grocery-mobile build:android
+pnpm build:android
 pnpm check
 pnpm test
 ```
