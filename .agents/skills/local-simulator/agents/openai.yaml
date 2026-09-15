@@ -1,0 +1,4 @@
+interface:
+  display_name: "Local Simulator"
+  short_description: "Run and test Expo apps on local iOS Simulators and Android emulators"
+  default_prompt: "Use $local-simulator to build, install, drive, screenshot, and diagnose an Expo app on a local iOS Simulator or Android emulator with adb, simctl, and the project’s existing test tooling."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Local Update Insights"
+  short_description: "Analyze Expo update artifacts and rollout telemetry with local tooling"
+  default_prompt: "Use $local-update-insights to inspect Expo update manifests and bundles, compare runtime compatibility, or analyze locally collected Sentry/OpenTelemetry rollout events."

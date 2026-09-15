@@ -12,3 +12,8 @@ ios/
 credentials.json
 *.tsbuildinfo
 *.iml
+# @generated expo skills start
+.agents/skills/devtools-bidirectional
+.agents/skills/devtools-event-client
+.agents/skills/devtools-instrumentation
+# @generated expo skills end

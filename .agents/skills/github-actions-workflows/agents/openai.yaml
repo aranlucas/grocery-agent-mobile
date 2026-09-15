@@ -1,0 +1,4 @@
+interface:
+  display_name: "Open CI Workflows"
+  short_description: "Build and validate Expo apps with GitHub Actions or self-hosted runners"
+  default_prompt: "Use $github-actions-workflows to create or review open CI workflows for Expo: checks, CNG prebuilds, Gradle/Xcode builds, web exports, artifacts, signing gates, and release automation."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Local App Release"
+  short_description: "Build and release Expo apps with local Android, Xcode, and fastlane toolchains"
+  default_prompt: "Use $local-app-release to build or release an Expo or React Native app locally, verify APK/AAB/IPA artifacts, configure signing, or prepare store metadata without a hosted build service."

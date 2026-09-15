@@ -1,0 +1,4 @@
+interface:
+  display_name: "Open-source Observability"
+  short_description: "Measure Expo app performance and errors with OpenTelemetry, Sentry, and local backends"
+  default_prompt: "Use $open-source-observability to instrument or review Expo/React Native performance, errors, and custom events using the existing Sentry SDK, OpenTelemetry, local logs, or an OTLP-compatible backend."

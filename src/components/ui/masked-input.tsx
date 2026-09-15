@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { TextInput, useColorScheme } from "react-native";
+import { TextInput, useColorScheme, type TextInputInstance } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { useThemeColors } from "@/components/ui/theme-provider";
@@ -55,7 +55,7 @@ export interface MaskedInputProps
 }
 
 export const MaskedInput = React.forwardRef<
-  React.ElementRef<typeof TextInput>,
+  TextInputInstance,
   MaskedInputProps & { value?: string }
 >(function MaskedInput(
   {

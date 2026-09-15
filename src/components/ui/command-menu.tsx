@@ -5,6 +5,7 @@ import {
   TextInput,
   Pressable,
   SectionList,
+  type TextInputInstance,
   useWindowDimensions,
   Keyboard,
 } from "react-native";
@@ -52,7 +53,7 @@ export function CommandMenu({
   const [search, setSearch] = useState("");
   const colors = useThemeColors();
   const { height: winH } = useWindowDimensions();
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const kb = useSharedValue(0);
 
   const filtered = useMemo(() => {
