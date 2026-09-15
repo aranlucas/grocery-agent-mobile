@@ -116,7 +116,10 @@ function messageToolCalls(message: Record<string, unknown>): ToolCall[] {
     if (!call || !fn || typeof fn.name !== "string") return [];
     return [
       {
-        id: typeof call.id === "string" ? call.id : `${message.id ?? "tool"}-${index}`,
+        id:
+          typeof call.id === "string"
+            ? call.id
+            : `${typeof message.id === "string" ? message.id : "tool"}-${index}`,
         name: fn.name,
         parameters: decodedValue(fn.arguments),
       },

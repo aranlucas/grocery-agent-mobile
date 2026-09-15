@@ -12,6 +12,7 @@ import {
   Keyboard,
 } from "react-native";
 import { cn } from "@/lib/utils";
+import { useThemeColors } from "@/components/ui/theme-provider";
 import { X, ChevronDown } from "lucide-react-native";
 
 export interface ComboboxOption {
@@ -48,6 +49,7 @@ export interface ComboboxProps extends React.ComponentPropsWithoutRef<typeof Vie
 
 // Inline chip for multi-select display
 function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  const colors = useThemeColors();
   return (
     <View className="me-1.5 mb-1 flex-row items-center rounded-full bg-secondary py-0.5 ps-2.5 pe-1">
       <Text className="me-1 text-xs text-secondary-foreground">{label}</Text>
@@ -58,7 +60,7 @@ function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
         accessibilityRole="button"
         accessibilityLabel={`Remove ${label}`}
       >
-        <X size={12} color="#71717a" strokeWidth={2.5} />
+        <X size={12} color={colors.mutedForeground} strokeWidth={2.5} />
       </Pressable>
     </View>
   );
@@ -89,7 +91,8 @@ export function Combobox({
   const [search, setSearch] = useState("");
   const [kbHeight, setKbHeight] = useState(0);
   const dark = useColorScheme() === "dark";
-  const caret = dark ? "#fafafa" : "#18181b";
+  const colors = useThemeColors();
+  const caret = colors.foreground;
 
   // RN Modal doesn't resize for the keyboard on Android (and the sheet is
   // bottom-anchored), so track the keyboard height and pad the sheet up.
@@ -117,17 +120,20 @@ export function Combobox({
   );
 
   // Filter logic
-  const filterFn = (opts: ComboboxOption[]) =>
-    opts.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()));
+  const filterFn = useCallback(
+    (opts: ComboboxOption[]) =>
+      opts.filter((o) => o.label.toLowerCase().includes(search.toLowerCase())),
+    [search],
+  );
 
-  const filteredOptions = useMemo(() => filterFn(allOptions), [allOptions, search]);
+  const filteredOptions = useMemo(() => filterFn(allOptions), [allOptions, filterFn]);
 
   const filteredSections = useMemo(() => {
     if (!groups) return [];
     return groups
       .map((g) => ({ title: g.label, data: filterFn(g.options) }))
       .filter((s) => s.data.length > 0);
-  }, [groups, search]);
+  }, [groups, filterFn]);
 
   const handleSelect = (val: string) => {
     if (multiple) {
@@ -231,10 +237,10 @@ export function Combobox({
               accessibilityRole="button"
               accessibilityLabel="Clear selection"
             >
-              <X size={14} color="#71717a" strokeWidth={2} />
+              <X size={14} color={colors.mutedForeground} strokeWidth={2} />
             </Pressable>
           )}
-          <ChevronDown size={16} color="#71717a" strokeWidth={2} />
+          <ChevronDown size={16} color={colors.mutedForeground} strokeWidth={2} />
         </View>
       </Pressable>
 
@@ -273,7 +279,7 @@ export function Combobox({
               <TextInput
                 className="min-h-10 rounded-md border border-input bg-background px-3 text-base text-foreground"
                 placeholder={searchPlaceholder}
-                placeholderTextColor={dark ? "#a1a1aa" : "#71717a"}
+                placeholderTextColor={colors.mutedForeground}
                 keyboardAppearance={dark ? "dark" : "light"}
                 selectionColor={caret}
                 cursorColor={caret}

@@ -66,7 +66,9 @@ export default function SavedListScreen() {
           await api.addItems(listId, [{ name: mutation.name }]);
           return undefined;
         case "toggle":
-          await api.updateItem(listId, mutation.itemId, { checked: mutation.checked });
+          await api.updateItem(listId, mutation.itemId, {
+            checked: mutation.checked,
+          });
           return undefined;
         case "delete":
           await api.deleteItem(listId, mutation.itemId);
@@ -136,7 +138,9 @@ export default function SavedListScreen() {
           control={control}
           label="List title"
           name="title"
-          rules={{ validate: (value) => value.trim().length > 0 || "Add a title." }}
+          rules={{
+            validate: (value) => value.trim().length > 0 || "Add a title.",
+          }}
         />
         <Button
           accessibilityLabel="Save list title"
@@ -165,7 +169,11 @@ export default function SavedListScreen() {
                       accessibilityLabel={`${checked ? "Uncheck" : "Check"} ${item.name}`}
                       checked={checked}
                       onCheckedChange={(next) =>
-                        mutateList.mutate({ type: "toggle", itemId: item.id, checked: next })
+                        mutateList.mutate({
+                          type: "toggle",
+                          itemId: item.id,
+                          checked: next,
+                        })
                       }
                     />
                     <View className="flex-1 gap-0.5 py-3">
@@ -208,7 +216,9 @@ export default function SavedListScreen() {
           onSubmitEditing={() => void addItem()}
           placeholder="Add an item"
           returnKeyType="done"
-          rules={{ validate: (value) => value.trim().length > 0 || "Add an item." }}
+          rules={{
+            validate: (value) => value.trim().length > 0 || "Add an item.",
+          }}
         />
         <Button
           accessibilityLabel="Add grocery item"

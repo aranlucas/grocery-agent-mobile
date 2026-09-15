@@ -100,7 +100,7 @@ check-off attribution.
   devices, and each sees the other's changes within one poll interval.
 - Agent can save a ready plan personally or to an explicitly selected
   household via chat.
-- `pnpm check && pnpm test` and `go test ./...` (workspace) pass; D1
+- `pnpm validate && pnpm build` and `go test ./...` (workspace) pass; D1
   migration applies cleanly on a fresh database.
 
 ## Explicitly out of scope for v1

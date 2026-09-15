@@ -40,14 +40,26 @@ export function SegmentedControl<T extends string | number = string>({
 }: SegmentedControlProps<T>) {
   const items: SegmentedOption<T>[] = options.map((o, i) =>
     isOptionObject(o)
-      ? { value: o.value, label: o.label ?? String(o.value), disabled: o.disabled }
+      ? {
+          value: o.value,
+          label: o.label ?? String(o.value),
+          disabled: o.disabled,
+        }
       : { value: o, label: labels?.[i] ?? String(o) },
   );
 
   return (
     <View
       className={cn("rounded-lg bg-muted", className)}
-      style={[{ height: heights[size], padding: 4, flexDirection: "row", borderRadius: 8 }, style]}
+      style={[
+        {
+          height: heights[size],
+          padding: 4,
+          flexDirection: "row",
+          borderRadius: 8,
+        },
+        style,
+      ]}
       accessibilityRole="tablist"
       {...rest}
     >

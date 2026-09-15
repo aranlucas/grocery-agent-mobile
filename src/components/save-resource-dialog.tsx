@@ -65,7 +65,9 @@ export function SaveResourceDialog({
             control={control}
             name="title"
             placeholder={kind === "list" ? "Weekly groceries" : "Recipe title"}
-            rules={{ validate: (value) => value.trim().length > 0 || "Add a title." }}
+            rules={{
+              validate: (value) => value.trim().length > 0 || "Add a title.",
+            }}
           />
           <View className="gap-2">
             <Text className="font-semibold" variant="small">

@@ -1,5 +1,7 @@
 # Grocery Mobile Component Convergence Implementation Plan
 
+> Historical plan: the mobile test suite, fixtures and test tooling were removed in September 2026. Use the current README for validation commands; test instructions below describe the original implementation.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Finish the already-committed AniUI/Uniwind migration by hardening native data and chat lifecycles, correcting shared-component behavior and accessibility, completing the remaining reuse targets, and verifying the final application on Android with ADB.

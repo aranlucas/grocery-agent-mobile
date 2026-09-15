@@ -1,0 +1,59 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "import", "react"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2026": true
+  },
+  "options": {
+    "typeAware": true,
+    "reportUnusedDisableDirectives": "error"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/style-prop-object": "off",
+    "react/memo-dependencies": "off",
+    "react/exhaustive-effect-dependencies": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/await-thenable": "error",
+    "eslint/no-debugger": "error"
+  },
+  "ignorePatterns": [
+    "src/lib/grocery-gateway.d.ts",
+    "src/uniwind-types.d.ts",
+    ".expo/**",
+    "android/**",
+    "ios/**",
+    "dist/**",
+    "coverage/**",
+    "node_modules/**"
+  ],
+  "overrides": [
+    {
+      "files": ["src/components/ui/**"],
+      "rules": {
+        "react/immutability": "off",
+        "react/capitalized-calls": "off",
+        "import/namespace": "off"
+      }
+    },
+    {
+      "files": [
+        "src/components/ui/form.tsx",
+        "src/hooks/use-grocery-agent.ts",
+        "src/app/households.tsx",
+        "src/app/shared-list.tsx"
+      ],
+      "rules": {
+        "react/refs": "off"
+      }
+    }
+  ]
+}

@@ -75,7 +75,11 @@ function GroceryListContent() {
       byQuery.set(match.query.trim().toLocaleLowerCase(), match);
       byUPC.set(match.upc, match);
     }
-    return { matchesByName: byName, matchesByQuery: byQuery, matchesByUPC: byUPC };
+    return {
+      matchesByName: byName,
+      matchesByQuery: byQuery,
+      matchesByUPC: byUPC,
+    };
   }, [state.product_matches]);
   const pantry = useMemo(
     () => pantryNames(state.shopping_profile?.pantry ?? []),
@@ -135,7 +139,9 @@ function GroceryListContent() {
     onSuccess: async (saved) => {
       setSaveOpen(false);
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: groceryQueryKeys.lists(userId, null) }),
+        queryClient.invalidateQueries({
+          queryKey: groceryQueryKeys.lists(userId, null),
+        }),
         saved.household_id
           ? queryClient.invalidateQueries({
               queryKey: groceryQueryKeys.lists(userId, saved.household_id),
@@ -148,7 +154,10 @@ function GroceryListContent() {
   if (!list.length && !cart.length && !state.meal_plan) {
     return (
       <EmptyState
-        action={{ label: "Start planning", onPress: () => router.replace("/chat") }}
+        action={{
+          label: "Start planning",
+          onPress: () => router.replace("/chat"),
+        }}
         className="w-full max-w-3xl flex-1 self-center bg-background"
         description="Ask Grocery Agent for a recipe, meal plan, or budget-friendly list."
         icon={<Icon as={Sparkles} className="size-9 text-primary" />}

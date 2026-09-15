@@ -4,12 +4,12 @@ import Animated, {
   cancelAnimation,
   useSharedValue,
   useAnimatedStyle,
-  useReducedMotion,
   withRepeat,
   withSequence,
   withTiming,
   withDelay,
 } from "react-native-reanimated";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
 function Dot({ delay, reduceMotion }: { delay: number; reduceMotion: boolean }) {
@@ -31,7 +31,9 @@ function Dot({ delay, reduceMotion }: { delay: number; reduceMotion: boolean }) 
     return () => cancelAnimation(translateY);
   }, [delay, reduceMotion, translateY]);
 
-  const style = useAnimatedStyle(() => ({ transform: [{ translateY: translateY.value }] }));
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
 
   return <Animated.View style={style} className="h-2 w-2 rounded-full bg-muted-foreground" />;
 }

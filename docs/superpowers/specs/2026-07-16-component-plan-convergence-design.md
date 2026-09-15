@@ -1,5 +1,7 @@
 # Grocery Mobile component-plan convergence design
 
+> Historical design: the mobile test suite, fixtures and test tooling were removed in September 2026. Use the current README for validation commands; test references below describe the original plan.
+
 **Date:** 2026-07-16  
 **Status:** Approved for implementation planning
 

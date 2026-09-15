@@ -51,7 +51,10 @@ export function Tabs({
 
 const listVariants = cva("", {
   variants: {
-    variant: { filled: "rounded-lg bg-muted p-1", line: "border-b border-border" },
+    variant: {
+      filled: "rounded-lg bg-muted p-1",
+      line: "border-b border-border",
+    },
     orientation: {
       horizontal: "flex-row",
       vertical: "flex-col border-b-0 border-e border-border rounded-none",
@@ -77,7 +80,11 @@ export function TabsList({ className, ...props }: TabsListProps) {
 
 const triggerSize = cva("will-change-variable items-center justify-center", {
   variants: {
-    size: { sm: "min-h-8 py-1 px-2.5", md: "min-h-10 py-2 px-3", lg: "min-h-12 py-2.5 px-4" },
+    size: {
+      sm: "min-h-8 py-1 px-2.5",
+      md: "min-h-10 py-2 px-3",
+      lg: "min-h-12 py-2.5 px-4",
+    },
   },
   defaultVariants: { size: "md" },
 });

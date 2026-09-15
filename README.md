@@ -15,7 +15,7 @@ pnpm web
 Validate the app with:
 
 ```bash
-pnpm check && pnpm test
+pnpm validate
 ```
 
 Copy `.env.example` to `.env.local` and configure the Clerk publishable key, CopilotKit runtime, Sentry DSN, and public grocery marketing URL. Native builds use the Expo configuration in `app.json` and `eas.json`; Expo Go does not provide the complete native-client experience.
@@ -24,9 +24,9 @@ Copy `.env.example` to `.env.local` and configure the Clerk publishable key, Cop
 
 ## Android releases
 
-The **Release Android APK** workflow in `.github/workflows/release-android.yml` runs only when manually dispatched through **Actions → Release Android APK → Run workflow** or the GitHub CLI. Select the branch to build (or pass a branch/tag with `gh workflow run --ref`) and optionally mark the release as a prerelease. Pushes to `main` and pull requests run the separate check/test CI workflow; they do not build or publish APKs.
+The **Release Android APK** workflow in `.github/workflows/release-android.yml` runs only when manually dispatched through **Actions → Release Android APK → Run workflow** or the GitHub CLI. Select the branch to build (or pass a branch/tag with `gh workflow run --ref`) and optionally mark the release as a prerelease. Pushes to `main` and pull requests run the separate validation and export CI workflow; they do not build or publish APKs.
 
-The release workflow checks and tests the selected commit, builds a signed APK on the GitHub runner using the existing EAS `production-apk` profile, and publishes these assets in the repository's **Releases** tab:
+The release workflow validates the selected commit, builds a signed APK on the GitHub runner using the existing EAS `production-apk` profile, and publishes these assets in the repository's **Releases** tab:
 
 - `grocery-agent-<version>.apk`
 - `grocery-agent-<version>.apk.sha256`
@@ -49,8 +49,16 @@ The EAS project must already have Android signing credentials configured for `pr
 
 GitHub provides the release token automatically through `github.token` with `contents: write`; no GitHub personal access token is needed. Sentry source-map auto-upload is disabled for this workflow. The workflow creates a draft while uploading and publishes it only after both assets succeed. If publishing fails after draft creation, inspect that draft in **Releases** and either finish publishing it or remove the failed draft (and its tag, if created) before retrying the same version.
 
+## Validation
+
+Run `pnpm fmt` to apply the repository's oxfmt configuration, then `pnpm validate` before committing. Validation runs type-aware oxlint with warnings treated as failures, a repository-wide formatting check, strict TypeScript checks, and Expo SDK dependency validation. `pnpm lint:fix` applies safe oxlint fixes. The automated test suite and test tooling have been removed.
+
+CI runs `pnpm validate` and `pnpm build` to verify both Android and iOS JavaScript exports. The manual APK release workflow runs the same validation before building and publishing. Both workflows use the pnpm version declared by `packageManager`; see [pnpm's action setup documentation](https://github.com/pnpm/action-setup#version).
+
+The lint configuration accounts for native APIs: React Native permits style arrays, Expo UI/Reanimated expose mutable native state, and React Native Reusables uses platform-specific namespace exports checked by TypeScript. Narrow overrides cover those native components and React Hook Form ref adapters. Hook rules, promise handling and unused suppression checks remain enforced. React Compiler optimization diagnostics for memo/effect inference are separate from these correctness gates.
+
 ## Native architecture review
 
 See [the review of Ferran's React Native post and replies](docs/native-platform-review.md) for the app's current matches, gaps, and suggested priorities.
 
-See [the Expo UI migration notes](docs/expo-ui-migration.md) for native controls, form adapters, popup behavior, and verification. The versioned Expo UI Android accessibility and keyboard patch requires the `expo-ui` module to build from source, as configured in `package.json`; rebuild the native app after changing this patch.
+See [the Expo UI migration notes](docs/expo-ui-migration.md) for native controls, form adapters, popup behavior, and verification. Expo UI uses the unmodified stable package. See [the AniUI update notes](docs/aniui-update.md) for the tracked upstream revision and app-specific adaptations.

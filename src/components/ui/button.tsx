@@ -3,6 +3,7 @@ import { View, type PressableProps } from "react-native";
 import { useState, type ReactNode } from "react";
 import { useResolveClassNames } from "uniwind";
 import { UIHost } from "@/components/ui/native-host";
+import { accessibilityHostProps } from "@/components/ui/native-accessibility";
 import { NativeButton } from "@/components/ui/native-button";
 import { Spinner } from "@/components/ui/spinner";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -55,6 +56,19 @@ export function Button({
       matchContents
       onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
       accessible={false}
+      {...accessibilityHostProps(
+        {
+          accessibilityLabel: accessibilityLabel ?? children,
+          accessibilityHint,
+          accessibilityRole: accessibilityRole ?? "button",
+          accessibilityState: {
+            ...accessibilityState,
+            disabled: isDisabled,
+            busy: !!loading,
+          },
+        },
+        onPress,
+      )}
     >
       <NativeButton
         variant={variant}

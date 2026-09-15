@@ -1,6 +1,6 @@
 import { NativePicker } from "./native-picker";
 import { useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { UIHost } from "@/components/ui/native-host";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
@@ -36,7 +36,7 @@ export function Select({
   );
   return (
     <View className={cn("gap-2", className)}>
-      {label ? <Text variant="small">{label}</Text> : null}
+      {label && Platform.OS !== "android" ? <Text variant="small">{label}</Text> : null}
       {searchable ? (
         <Input
           value={search}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, ScrollView, useWindowDimensions } from "react-native";
+import { Keyboard, View, Text, ScrollView, useWindowDimensions } from "react-native";
 import { BottomSheetModal } from "@expo/ui/community/bottom-sheet";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -16,13 +16,17 @@ export function AlertDialog({ open, onOpenChange, children }: AlertDialogProps) 
   const { height, width } = useWindowDimensions();
   const sheet = useRef<BottomSheetModal>(null);
   useEffect(() => {
+    Keyboard.dismiss();
     if (open) sheet.current?.present();
     else sheet.current?.dismiss();
   }, [open]);
   return (
     <BottomSheetModal
       ref={sheet}
-      onClose={() => onOpenChange(false)}
+      onClose={() => {
+        Keyboard.dismiss();
+        onOpenChange(false);
+      }}
       enablePanDownToClose
       backgroundStyle={{ backgroundColor: background }}
     >

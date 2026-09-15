@@ -2,6 +2,7 @@ import "@/global.css";
 import { ClerkLoaded, ClerkLoading, ClerkProvider, Show } from "@clerk/expo";
 import { resourceCache } from "@clerk/expo/resource-cache";
 import { tokenCache } from "@clerk/expo/token-cache";
+import { PortalHost } from "@rn-primitives/portal";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useMemo } from "react";
@@ -106,7 +107,10 @@ function RootLayout() {
                           <Stack.Screen name="account" options={{ title: "Account" }} />
                           <Stack.Screen
                             name="report"
-                            options={{ title: "Report a problem", presentation: "modal" }}
+                            options={{
+                              title: "Report a problem",
+                              presentation: "modal",
+                            }}
                           />
                           <Stack.Screen name="sso-callback" options={{ headerShown: false }} />
                           <Stack.Screen name="kroger-callback" options={{ headerShown: false }} />
@@ -118,6 +122,7 @@ function RootLayout() {
               </QueryProvider>
             </ClerkProvider>
           )}
+          <PortalHost />
         </KeyboardProvider>
       </SafeAreaProvider>
     </UniwindGestureHandlerRootView>

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as ContextMenuPrimitive from "@rn-primitives/context-menu";
 import Animated from "react-native-reanimated";
 import { entering, exiting } from "@/components/ui/animate";
@@ -45,10 +46,11 @@ export interface ContextMenuContentProps extends React.ComponentPropsWithoutRef<
 }
 
 export function ContextMenuContent({ className, children, ...props }: ContextMenuContentProps) {
+  const insets = useSafeAreaInsets();
   return (
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Overlay className="absolute inset-0" />
-      <ContextMenuPrimitive.Content avoidCollisions>
+      <ContextMenuPrimitive.Content avoidCollisions insets={insets}>
         <Animated.View entering={entering.fadeIn} exiting={exiting.fadeOut}>
           <View
             className={cn(
@@ -80,7 +82,7 @@ export function ContextMenuItem({
   return (
     <ContextMenuPrimitive.Item asChild>
       <Pressable
-        className={cn("min-h-11 flex-row items-center rounded-md px-3 py-2.5", className)}
+        className={cn("flex-row items-center rounded-md px-3 py-2.5 min-h-14", className)}
         accessible={true}
         accessibilityRole="menuitem"
         {...props}

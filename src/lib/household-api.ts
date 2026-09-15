@@ -64,7 +64,10 @@ export function createHouseholdApi({
   userId,
   fetcher = globalThis.fetch,
 }: HouseholdApiOptions) {
-  const client = createClient<paths>({ baseUrl: baseUrl.replace(/\/$/u, ""), fetch: fetcher });
+  const client = createClient<paths>({
+    baseUrl: baseUrl.replace(/\/$/u, ""),
+    fetch: fetcher,
+  });
 
   async function request<TResult>(
     execute: (headers: Record<string, string>) => Promise<ApiResult<TResult>>,

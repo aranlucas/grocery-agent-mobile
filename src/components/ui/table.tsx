@@ -3,7 +3,10 @@ import { View, Text, ScrollView, type StyleProp, type ViewStyle } from "react-na
 import { cn } from "@/lib/utils";
 
 type TableContextValue = { truncate: boolean; defaultColumnWidth: number };
-const TableContext = createContext<TableContextValue>({ truncate: false, defaultColumnWidth: 150 });
+const TableContext = createContext<TableContextValue>({
+  truncate: false,
+  defaultColumnWidth: 150,
+});
 
 export type TableViewProps = React.ComponentPropsWithoutRef<typeof View> & {
   className?: string;

@@ -90,7 +90,9 @@ export function SignInScreen() {
         return;
       }
 
-      const verified = await signUp.verifications.verifyEmailCode({ code: values.code.trim() });
+      const verified = await signUp.verifications.verifyEmailCode({
+        code: values.code.trim(),
+      });
       if (verified.error) throw verified.error;
       if (signUp.status !== "complete" || !signUp.createdSessionId) {
         throw new Error("That code could not be verified. Please try again.");
@@ -141,7 +143,10 @@ export function SignInScreen() {
                   label="Email address"
                   name="email"
                   rules={{
-                    pattern: { message: "Enter a valid email address.", value: EMAIL_PATTERN },
+                    pattern: {
+                      message: "Enter a valid email address.",
+                      value: EMAIL_PATTERN,
+                    },
                     required: "Enter your email address.",
                   }}
                   autoCapitalize="none"
@@ -155,7 +160,10 @@ export function SignInScreen() {
                   label="Password"
                   name="password"
                   rules={{
-                    minLength: { message: "Use at least 8 characters.", value: 8 },
+                    minLength: {
+                      message: "Use at least 8 characters.",
+                      value: 8,
+                    },
                     required: "Enter your password.",
                   }}
                   autoCapitalize="none"
@@ -215,7 +223,7 @@ export function SignInScreen() {
                 loading={oauthBusy}
                 size="lg"
                 variant="outline"
-                onPress={authenticateWithGoogle}
+                onPress={() => void authenticateWithGoogle()}
               >
                 Continue with Google
               </Button>

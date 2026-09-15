@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as HoverCardPrimitive from "@rn-primitives/hover-card";
 import Animated from "react-native-reanimated";
 import { entering, exiting } from "@/components/ui/animate";
@@ -32,8 +33,10 @@ export interface HoverCardTriggerProps extends React.ComponentPropsWithoutRef<ty
 export function HoverCardTrigger({ className, children, ...props }: HoverCardTriggerProps) {
   return (
     <HoverCardPrimitive.Trigger asChild>
+      {/* Keep the inline anchor measurable; expand its touch area without shifting the overlay. */}
       <Pressable
-        className={cn("min-h-12 min-w-12", className)}
+        hitSlop={16}
+        className={cn("", className)}
         accessible={true}
         accessibilityRole="button"
         {...props}
@@ -60,10 +63,17 @@ export function HoverCardContent({
   align = "center",
   ...props
 }: HoverCardContentProps) {
+  const insets = useSafeAreaInsets();
   return (
     <HoverCardPrimitive.Portal>
       <HoverCardPrimitive.Overlay className="absolute inset-0" />
-      <HoverCardPrimitive.Content side={side} sideOffset={sideOffset} align={align} avoidCollisions>
+      <HoverCardPrimitive.Content
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+        avoidCollisions
+        insets={insets}
+      >
         <Animated.View entering={entering.fadeIn} exiting={exiting.fadeOut}>
           <View
             className={cn("w-64 rounded-lg border border-border bg-card p-4 shadow-lg", className)}

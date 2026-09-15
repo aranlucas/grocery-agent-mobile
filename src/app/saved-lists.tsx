@@ -49,7 +49,12 @@ export default function SavedListsScreen() {
             accessibilityRole="button"
             className="active:opacity-80"
             key={list.id}
-            onPress={() => router.push({ pathname: "/saved-list", params: { listId: list.id } })}
+            onPress={() =>
+              router.push({
+                pathname: "/saved-list",
+                params: { listId: list.id },
+              })
+            }
           >
             <Card className="p-0">
               <CardHeader className="flex-row items-center gap-3 p-4">
@@ -69,7 +74,10 @@ export default function SavedListsScreen() {
         ))
       ) : queryError instanceof Error ? null : (
         <EmptyState
-          action={{ label: "Create a list", onPress: () => router.replace("/chat") }}
+          action={{
+            label: "Create a list",
+            onPress: () => router.replace("/chat"),
+          }}
           className="min-h-72"
           description="Lists you explicitly save from chat will appear here."
           icon={<Icon as={ListChecks} className="size-8 text-primary" />}

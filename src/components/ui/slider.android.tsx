@@ -1,6 +1,10 @@
 import { Slider as NativeSlider } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
-import { accessibilityModifiers, controlSizeModifiers } from "@/components/ui/native-accessibility";
+import {
+  accessibilityHostProps,
+  accessibilityModifiers,
+  controlSizeModifiers,
+} from "@/components/ui/native-accessibility";
 import { UIHost } from "@/components/ui/native-host";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { cn } from "@/lib/utils";
@@ -24,6 +28,32 @@ export function Slider({
       className={cn("min-h-14 w-full", className)}
       matchContents={{ vertical: true }}
       testID={testID}
+      {...accessibilityHostProps({
+        ...accessibility,
+        accessibilityRole: "adjustable",
+        accessibilityState: { ...accessibility.accessibilityState, disabled },
+        accessibilityValue: {
+          min,
+          max,
+          now: value,
+          ...accessibility.accessibilityValue,
+        },
+        accessibilityActions: [{ name: "increment" }, { name: "decrement" }],
+        onAccessibilityAction: (event) => {
+          if (disabled) return;
+          const action = event.nativeEvent.actionName;
+          if (action === "increment" || action === "decrement") {
+            const increment = step > 0 ? step : (max - min) / 20;
+            onValueChange?.(
+              Math.min(
+                max,
+                Math.max(min, value + (action === "increment" ? increment : -increment)),
+              ),
+            );
+          }
+          accessibility.onAccessibilityAction?.(event);
+        },
+      })}
     >
       <NativeSlider
         value={value}

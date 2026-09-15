@@ -16,6 +16,4 @@ allowBuilds:
   "core-js-pure": true
   esbuild: true
   "utf-8-validate": true
-
-patchedDependencies:
-  "@expo/ui@57.0.18": patches/@expo__ui@57.0.18.patch
+  "@shopify/react-native-skia": true

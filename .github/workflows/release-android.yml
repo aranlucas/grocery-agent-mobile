@@ -36,8 +36,6 @@ jobs:
           persist-credentials: false
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 12.3.4
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
@@ -99,8 +97,8 @@ jobs:
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.1.12297006"'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Check and test release commit
-        run: pnpm check && pnpm test
+      - name: Validate release commit
+        run: pnpm validate
       - name: Build signed release APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

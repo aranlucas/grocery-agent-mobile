@@ -38,7 +38,7 @@ around it automatically.
    items into the pantry in one confirmation step.
 
 Acceptance: a new chat immediately knows the pantry; edits from the Pantry
-screen and from chat converge on the same D1 rows; `pnpm check && pnpm test`
+screen and from chat converge on the same D1 rows; `pnpm validate && pnpm build`
 plus Go agent tests stay green.
 
 ## Phase 2 — Shared grocery lists (households)

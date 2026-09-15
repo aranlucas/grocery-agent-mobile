@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as DropdownMenuPrimitive from "@rn-primitives/dropdown-menu";
 import Animated from "react-native-reanimated";
 import { entering, exiting } from "@/components/ui/animate";
 import { cn } from "@/lib/utils";
+import { PortalOverlay } from "./portal-overlay";
 
 export interface DropdownMenuProps {
   children: React.ReactNode;
@@ -26,8 +28,10 @@ export function DropdownMenuTrigger({
 }) {
   return (
     <DropdownMenuPrimitive.Trigger asChild>
+      {/* Keep the inline anchor measurable; expand its touch area without shifting the overlay. */}
       <Pressable
-        className={cn("min-h-12 min-w-12", className)}
+        hitSlop={16}
+        className={cn("", className)}
         accessible={true}
         accessibilityRole="button"
         {...props}
@@ -54,27 +58,32 @@ export function DropdownMenuContent({
   align = "start",
   ...props
 }: DropdownMenuContentProps) {
+  const insets = useSafeAreaInsets();
+  const { open, onOpenChange } = DropdownMenuPrimitive.useRootContext();
   return (
     <DropdownMenuPrimitive.Portal>
-      <DropdownMenuPrimitive.Overlay className="absolute inset-0" />
-      <DropdownMenuPrimitive.Content
-        side={side}
-        sideOffset={sideOffset}
-        align={align}
-        avoidCollisions
-      >
-        <Animated.View entering={entering.fadeIn} exiting={exiting.fadeOut}>
-          <View
-            className={cn(
-              "min-w-52 rounded-lg border border-border bg-card p-1 shadow-lg",
-              className,
-            )}
-            {...props}
-          >
-            {children}
-          </View>
-        </Animated.View>
-      </DropdownMenuPrimitive.Content>
+      <PortalOverlay open={open} onClose={() => onOpenChange(false)}>
+        <DropdownMenuPrimitive.Overlay className="absolute inset-0" />
+        <DropdownMenuPrimitive.Content
+          side={side}
+          sideOffset={sideOffset}
+          align={align}
+          avoidCollisions
+          insets={insets}
+        >
+          <Animated.View entering={entering.fadeIn} exiting={exiting.fadeOut}>
+            <View
+              className={cn(
+                "min-w-52 rounded-lg border border-border bg-card p-1 shadow-lg",
+                className,
+              )}
+              {...props}
+            >
+              {children}
+            </View>
+          </Animated.View>
+        </DropdownMenuPrimitive.Content>
+      </PortalOverlay>
     </DropdownMenuPrimitive.Portal>
   );
 }
@@ -94,7 +103,7 @@ export function DropdownMenuItem({
   return (
     <DropdownMenuPrimitive.Item asChild>
       <Pressable
-        className={cn("min-h-11 flex-row items-center rounded-md px-3 py-2.5", className)}
+        className={cn("flex-row items-center rounded-md px-3 py-2.5 min-h-14", className)}
         accessible={true}
         accessibilityRole="menuitem"
         {...props}

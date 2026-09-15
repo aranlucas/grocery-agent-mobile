@@ -32,7 +32,9 @@ export function Drawer({ open, onOpenChange, side = "left", children }: DrawerPr
       opacity.value = 0;
       return;
     }
-    translate.value = withTiming(side === "left" ? -300 : 300, { duration: duration.normal });
+    translate.value = withTiming(side === "left" ? -300 : 300, {
+      duration: duration.normal,
+    });
     opacity.value = withTiming(0, { duration: duration.normal });
     const t = setTimeout(() => setClosing(false), duration.normal);
     return () => clearTimeout(t);

@@ -106,7 +106,10 @@ export function FormInput<
         accessibilityHint={showError ? error : accessibilityHint}
         accessibilityLabel={accessibilityLabel ?? label}
         accessibilityLabelledBy={label ? labelId : undefined}
-        accessibilityState={{ ...accessibilityState, disabled: Boolean(disabled) }}
+        accessibilityState={{
+          ...accessibilityState,
+          disabled: Boolean(disabled),
+        }}
         aria-invalid={showError || undefined}
         className={cn(showError && "border-destructive", className)}
         editable={disabled ? false : props.editable}
@@ -179,7 +182,10 @@ export function FormTextarea<
         accessibilityHint={showError ? error : accessibilityHint}
         accessibilityLabel={accessibilityLabel ?? label}
         accessibilityLabelledBy={label ? labelId : undefined}
-        accessibilityState={{ ...accessibilityState, disabled: Boolean(disabled) }}
+        accessibilityState={{
+          ...accessibilityState,
+          disabled: Boolean(disabled),
+        }}
         aria-invalid={showError || undefined}
         className={cn(showError && "border-destructive", className)}
         editable={disabled ? false : props.editable}

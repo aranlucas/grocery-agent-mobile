@@ -7,7 +7,9 @@ import {
 } from "@/components/ui/native-input";
 import { cn } from "@/lib/utils";
 
-export type TextareaProps = NativeInputProps & { variant?: "default" | "ghost" };
+export type TextareaProps = NativeInputProps & {
+  variant?: "default" | "ghost";
+};
 
 export const Textarea = forwardRef<NativeInputRef, TextareaProps>(function Textarea(
   { variant = "default", className, ...props },

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, useColorScheme } from "react-native";
+import { View } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,7 +8,9 @@ import Animated, {
   withTiming,
   cancelAnimation,
 } from "react-native-reanimated";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { cn } from "@/lib/utils";
+import { useThemeColors } from "@/components/ui/theme-provider";
 
 const sizes = { sm: 12, md: 20, lg: 28 } as const;
 
@@ -33,6 +35,7 @@ function Bar({
 }) {
   const height = useSharedValue(3);
   const opacity = useSharedValue(dim);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     // Follows the playhead smoothly (100ms matches typical status-update ticks).
@@ -46,7 +49,7 @@ function Bar({
       height.value = withTiming(Math.max(3, max * Math.min(1, Math.max(0, level))), {
         duration: 100,
       });
-    } else if (active) {
+    } else if (active && !reducedMotion) {
       const duration = 260 + (index % 5) * 70;
       height.value = withRepeat(
         withSequence(
@@ -57,13 +60,19 @@ function Bar({
         true,
       );
     } else {
+      // Reduced motion (or inactive): a static ambient height, no looping bounce.
       cancelAnimation(height);
-      height.value = withTiming(Math.max(3, max * ambient(index)), { duration: 150 });
+      height.value = withTiming(Math.max(3, max * ambient(index)), {
+        duration: 150,
+      });
     }
     return () => cancelAnimation(height);
-  }, [level, active, index, max, height]);
+  }, [level, active, reducedMotion, index, max, height]);
 
-  const style = useAnimatedStyle(() => ({ height: height.value, opacity: opacity.value }));
+  const style = useAnimatedStyle(() => ({
+    height: height.value,
+    opacity: opacity.value,
+  }));
   return (
     <Animated.View style={[style, { backgroundColor: color }]} className="w-0.5 rounded-full" />
   );
@@ -99,8 +108,8 @@ export function Waveform({
   style,
   ...props
 }: WaveformProps) {
-  const dark = useColorScheme() === "dark";
-  const barColor = color ?? (dark ? "#fafafa" : "#18181b");
+  const colors = useThemeColors();
+  const barColor = color ?? colors.foreground;
   const window = levels?.slice(-bars);
   const pad = window ? bars - window.length : 0;
   // Continuous playhead in bar units — the boundary bar gets an interpolated

@@ -5,8 +5,16 @@ import { View } from "react-native";
 import { Icon } from "@/components/ui/icon";
 
 const imageSize = {
-  compact: { frame: "size-10 rounded-xl", icon: "size-4", image: { height: 40, width: 40 } },
-  default: { frame: "size-13 rounded-xl", icon: "size-6", image: { height: 52, width: 52 } },
+  compact: {
+    frame: "size-10 rounded-xl",
+    icon: "size-4",
+    image: { height: 40, width: 40 },
+  },
+  default: {
+    frame: "size-13 rounded-xl",
+    icon: "size-6",
+    image: { height: 52, width: 52 },
+  },
 } as const;
 
 export function KrogerProductImage({

@@ -48,7 +48,10 @@ export function useSavedResources<T>({
     })),
   });
   const resources = [
-    ...(personalQuery.data ?? []).map((resource) => ({ resource, location: "Personal" })),
+    ...(personalQuery.data ?? []).map((resource) => ({
+      resource,
+      location: "Personal",
+    })),
     ...householdQueries.flatMap((query, index) =>
       ((query.data as T[] | undefined) ?? []).map((resource) => ({
         resource,

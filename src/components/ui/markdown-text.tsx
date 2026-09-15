@@ -49,7 +49,9 @@ export function MarkdownText({ className, content }: { className?: string; conte
   return (
     <View className={className}>
       {ast.children.map((node, index) =>
-        renderBlock(node, `block-${index}`, { isLast: index === ast.children.length - 1 }),
+        renderBlock(node, `block-${index}`, {
+          isLast: index === ast.children.length - 1,
+        }),
       )}
     </View>
   );

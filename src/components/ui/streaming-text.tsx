@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
   cancelAnimation,
 } from "react-native-reanimated";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
 export interface StreamingTextProps extends React.ComponentPropsWithoutRef<typeof Text> {
@@ -25,10 +26,12 @@ export interface StreamingTextProps extends React.ComponentPropsWithoutRef<typeo
 
 function Cursor() {
   const opacity = useSharedValue(1);
+  const reducedMotion = useReducedMotion();
   useEffect(() => {
+    if (reducedMotion) return;
     opacity.value = withRepeat(withTiming(0, { duration: 500 }), -1, true);
     return () => cancelAnimation(opacity);
-  }, [opacity]);
+  }, [opacity, reducedMotion]);
   const style = useAnimatedStyle(() => ({ opacity: opacity.value }));
   // The cursor is a typographic block glyph (not an icon) so it flows inline
   // with the revealed text; Animated.Text lets it blink via opacity.

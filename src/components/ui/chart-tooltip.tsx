@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, useColorScheme } from "react-native";
+import { View, Text } from "react-native";
 import { cn } from "@/lib/utils";
+import { useThemeColors } from "@/components/ui/theme-provider";
 
 export interface ChartTooltipProps extends React.ComponentPropsWithoutRef<typeof View> {
   className?: string;
@@ -20,8 +21,8 @@ export function ChartTooltip({
   items,
   ...props
 }: ChartTooltipProps) {
-  const dark = useColorScheme() === "dark";
-  const resolvedColor = color ?? (dark ? "#fafafa" : "#18181b");
+  const colors = useThemeColors();
+  const resolvedColor = color ?? colors.foreground;
   const indicatorEl = (c: string) =>
     indicator === "line" ? (
       <View className="h-3 w-1 rounded-full" style={{ backgroundColor: c }} />

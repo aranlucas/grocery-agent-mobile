@@ -6,10 +6,505 @@
   "tsx": true,
   "sdkGeneration": "v5",
   "installed": {
+    "accordion": {
+      "version": "0.7.1",
+      "hash": "c3e75840",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "action-sheet": {
+      "version": "0.7.1",
+      "hash": "1cbe0e41",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "alert-dialog": {
+      "version": "0.7.1",
+      "hash": "1bd165ad",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "alert": {
+      "version": "0.7.1",
+      "hash": "5cebb308",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "animate": {
+      "version": "0.7.1",
+      "hash": "318ee818",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "area-chart": {
+      "version": "0.7.1",
+      "hash": "0c94e49c",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "aspect-ratio": {
+      "version": "0.7.1",
+      "hash": "a7caf71f",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "avatar-group": {
+      "version": "0.7.1",
+      "hash": "dbcbd9ca",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "avatar": {
+      "version": "0.7.1",
+      "hash": "12d8a326",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "badge": {
+      "version": "0.7.1",
+      "hash": "428e1434",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "banner": {
+      "version": "0.7.1",
+      "hash": "b48bddb6",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "bar-chart": {
+      "version": "0.7.1",
+      "hash": "e6e98fec",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "bottom-sheet": {
+      "version": "0.7.1",
+      "hash": "5617f26a",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "breadcrumb": {
+      "version": "0.7.1",
+      "hash": "c8aa12be",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "button": {
+      "version": "0.7.1",
+      "hash": "1a19ec28",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "calendar": {
+      "version": "0.7.1",
+      "hash": "d33c92e1",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "card": {
+      "version": "0.7.1",
+      "hash": "9ebd18a3",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "carousel": {
+      "version": "0.7.1",
+      "hash": "8a0c7c2b",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "chart-tooltip": {
+      "version": "0.7.1",
+      "hash": "5a6bdcfa",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "chat-bubble": {
+      "version": "0.7.1",
+      "hash": "6f555209",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "checkbox": {
+      "version": "0.7.1",
+      "hash": "ca120d6b",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "chip": {
+      "version": "0.7.1",
+      "hash": "9e4796aa",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "collapsible": {
+      "version": "0.7.1",
+      "hash": "3f91deb2",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "combobox": {
+      "version": "0.7.1",
+      "hash": "cb45df2e",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "command-menu": {
+      "version": "0.7.1",
+      "hash": "9af5d436",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "connection-banner": {
+      "version": "0.7.1",
+      "hash": "de33bc06",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "context-menu": {
+      "version": "0.7.1",
+      "hash": "8959c4b4",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "data-table": {
+      "version": "0.7.1",
+      "hash": "ec918bd5",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "date-picker": {
+      "version": "0.7.1",
+      "hash": "fcb82d5d",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "dialog": {
+      "version": "0.7.1",
+      "hash": "752cef56",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "direction-provider": {
+      "version": "0.7.1",
+      "hash": "6788b950",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "drawer": {
+      "version": "0.7.1",
+      "hash": "86332536",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "dropdown-menu": {
+      "version": "0.7.1",
+      "hash": "57f4a58f",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "empty-state": {
+      "version": "0.7.1",
+      "hash": "1496ad9d",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "fab": {
+      "version": "0.7.1",
+      "hash": "610ee754",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "field": {
+      "version": "0.7.1",
+      "hash": "869879a6",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "file-picker": {
+      "version": "0.7.1",
+      "hash": "e191aca3",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "form": {
+      "version": "0.7.1",
+      "hash": "452e3fd9",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "gradient": {
+      "version": "0.7.1",
+      "hash": "f7c44ec0",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "grid": {
+      "version": "0.7.1",
+      "hash": "8d50394a",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "hover-card": {
+      "version": "0.7.1",
+      "hash": "da2f690d",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "image-gallery": {
+      "version": "0.7.1",
+      "hash": "bd5f0f77",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "image": {
+      "version": "0.7.1",
+      "hash": "834721ac",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "infinite-list": {
+      "version": "0.7.1",
+      "hash": "7a796268",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "input-group": {
+      "version": "0.7.1",
+      "hash": "dfe8ba9e",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "input-otp": {
+      "version": "0.7.1",
+      "hash": "87cf243f",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "input": {
+      "version": "0.7.1",
+      "hash": "eafcb712",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "kbd": {
+      "version": "0.7.1",
+      "hash": "4132d23f",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "keyboard-view": {
+      "version": "0.7.1",
+      "hash": "ef370558",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "label": {
+      "version": "0.7.1",
+      "hash": "1c32ae21",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "labeled-separator": {
+      "version": "0.7.1",
+      "hash": "28c36cc5",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "line-chart": {
+      "version": "0.7.1",
+      "hash": "8e88c2da",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "list": {
+      "version": "0.7.1",
+      "hash": "c3c71924",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "masked-input": {
+      "version": "0.7.1",
+      "hash": "1173a4cd",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "menubar": {
+      "version": "0.7.1",
+      "hash": "79d42bae",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "number-input": {
+      "version": "0.7.1",
+      "hash": "1fcea7fb",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "pagination": {
+      "version": "0.7.1",
+      "hash": "23647e24",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "password-input": {
+      "version": "0.7.1",
+      "hash": "7acfe70a",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "phone-input": {
+      "version": "0.7.1",
+      "hash": "99da6a39",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "pie-chart": {
+      "version": "0.7.1",
+      "hash": "a026e6ad",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "popover": {
+      "version": "0.7.1",
+      "hash": "31009b90",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "price": {
+      "version": "0.7.1",
+      "hash": "4750a340",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "progress-steps": {
+      "version": "0.7.1",
+      "hash": "5908e45b",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "progress": {
+      "version": "0.7.1",
+      "hash": "c0ec12f4",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "prompt-input": {
+      "version": "0.7.1",
+      "hash": "b4201193",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "radar-chart": {
+      "version": "0.7.1",
+      "hash": "4c14f08e",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "radial-chart": {
+      "version": "0.7.1",
+      "hash": "acc812e1",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "radio-group": {
+      "version": "0.7.1",
+      "hash": "a6e3cbae",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "rating": {
+      "version": "0.7.1",
+      "hash": "43727c6d",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "refresh-control": {
+      "version": "0.7.1",
+      "hash": "05214f62",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "safe-area": {
+      "version": "0.7.1",
+      "hash": "e9c7c8b0",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "search-bar": {
+      "version": "0.7.1",
+      "hash": "bee5931f",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "segmented-control": {
+      "version": "0.7.1",
+      "hash": "58ae183b",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "select": {
+      "version": "0.7.1",
+      "hash": "40986361",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "separator": {
+      "version": "0.7.1",
+      "hash": "2a421ec4",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "sidebar": {
+      "version": "0.7.1",
+      "hash": "f5a84970",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "skeleton": {
+      "version": "0.7.1",
+      "hash": "9f2ae7e1",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "slide-to-confirm": {
+      "version": "0.7.1",
+      "hash": "fe89d8e2",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "slider": {
+      "version": "0.7.1",
+      "hash": "4ded45a8",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "spinner": {
+      "version": "0.7.1",
+      "hash": "9489129d",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "stat-card": {
+      "version": "0.7.1",
+      "hash": "1a77cdf3",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "status-indicator": {
+      "version": "0.7.1",
+      "hash": "60c73ea4",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "stepper": {
+      "version": "0.7.1",
+      "hash": "af6a3666",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "streaming-text": {
+      "version": "0.7.1",
+      "hash": "17fb90ce",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "swipe-deck": {
+      "version": "0.7.1",
+      "hash": "bc160624",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "swipeable-list-item": {
+      "version": "0.7.1",
+      "hash": "31661cd2",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "switch": {
+      "version": "0.7.1",
+      "hash": "614bc634",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "tab-bar": {
+      "version": "0.7.1",
+      "hash": "77286d80",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "table": {
+      "version": "0.7.1",
+      "hash": "504ffeaa",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "tabs": {
+      "version": "0.7.1",
+      "hash": "caa8fbf1",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
     "text": {
-      "version": "0.5.0",
-      "hash": "9a3434aa",
+      "version": "0.7.1",
+      "hash": "0330d68a",
       "addedAt": "2026-07-17T16:09:33.396Z"
+    },
+    "textarea": {
+      "version": "0.7.1",
+      "hash": "5d035c30",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "theme-provider": {
+      "version": "0.7.1",
+      "hash": "fa3cf98a",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "timeline": {
+      "version": "0.7.1",
+      "hash": "61c702bb",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "toggle-group": {
+      "version": "0.7.1",
+      "hash": "d03350e7",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "toggle": {
+      "version": "0.7.1",
+      "hash": "d586d9b9",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "tooltip": {
+      "version": "0.7.1",
+      "hash": "d4534210",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "typing-indicator": {
+      "version": "0.7.1",
+      "hash": "f0b43a5b",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
+    },
+    "waveform": {
+      "version": "0.7.1",
+      "hash": "31a7623f",
+      "addedAt": "2026-09-15T19:44:45.373872+00:00"
     }
+  },
+  "upstream": {
+    "repository": "https://github.com/anishlp7/aniui",
+    "commit": "aa63bc0c115895557e3cf9e53c979aa244641d7b",
+    "reviewedAt": "2026-09-15T19:44:45.373872+00:00"
   }
 }

@@ -106,7 +106,9 @@ export default function SharedListScreen() {
         case "add":
           return api.addItems(mutation.listId, [{ name: mutation.name }]);
         case "toggle":
-          return api.updateItem(mutation.listId, mutation.itemId, { checked: mutation.checked });
+          return api.updateItem(mutation.listId, mutation.itemId, {
+            checked: mutation.checked,
+          });
         case "delete":
           return api.deleteItem(mutation.listId, mutation.itemId);
       }
@@ -137,7 +139,11 @@ export default function SharedListScreen() {
     if (!name || !activeList || addItemInFlight.current || mutateItem.isPending) return;
     addItemInFlight.current = true;
     try {
-      await mutateItem.mutateAsync({ type: "add", listId: activeList.id, name });
+      await mutateItem.mutateAsync({
+        type: "add",
+        listId: activeList.id,
+        name,
+      });
     } catch {
       // Mutation state owns the user-visible error; keep the submitted input for retry.
     } finally {
@@ -293,7 +299,9 @@ export default function SharedListScreen() {
               containerClassName="flex-1"
               control={addItemForm.control}
               name="name"
-              rules={{ validate: (value) => value.trim().length > 0 || "Enter an item name." }}
+              rules={{
+                validate: (value) => value.trim().length > 0 || "Enter an item name.",
+              }}
               accessibilityLabel="New grocery item"
               onSubmitEditing={() => void submitAddItem()}
               placeholder="Add an item"
@@ -333,7 +341,9 @@ export default function SharedListScreen() {
               control={createListForm.control}
               label="List title"
               name="title"
-              rules={{ validate: (value) => value.trim().length > 0 || "Enter a list title." }}
+              rules={{
+                validate: (value) => value.trim().length > 0 || "Enter a list title.",
+              }}
               autoCapitalize="words"
               onSubmitEditing={() => void submitCreateList()}
               placeholder={`${householdName} groceries`}

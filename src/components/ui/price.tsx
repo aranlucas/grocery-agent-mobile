@@ -22,7 +22,10 @@ export function Price({
   textClassName,
   ...props
 }: PriceProps) {
-  const formatted = new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
+  const formatted = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+  }).format(amount);
 
   return (
     <View className={cn("flex-row items-baseline", className)} {...props}>

@@ -18,7 +18,11 @@ type GroceryAgentContextValue = ReturnType<typeof useGroceryAgentController> & {
 const GroceryAgentContext = createContext<GroceryAgentContextValue | null>(null);
 
 export function GroceryAgentProvider({ children }: { children: ReactNode }) {
-  const threadStore = useThreads({ agentId: AGENT_ID, enabled: true, limit: 25 });
+  const threadStore = useThreads({
+    agentId: AGENT_ID,
+    enabled: true,
+    limit: 25,
+  });
   const agentController = useGroceryAgentController(threadStore.refetchThreads);
 
   const value = useMemo<GroceryAgentContextValue>(

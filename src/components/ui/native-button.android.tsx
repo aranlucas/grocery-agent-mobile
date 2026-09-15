@@ -34,7 +34,12 @@ export function NativeButton({
         disabledContentColor: foreground,
       }}
       shape={Shape.RoundedCorner({
-        cornerRadii: { topStart: 12, topEnd: 12, bottomStart: 12, bottomEnd: 12 },
+        cornerRadii: {
+          topStart: 12,
+          topEnd: 12,
+          bottomStart: 12,
+          bottomEnd: 12,
+        },
       })}
       modifiers={[
         height(56),

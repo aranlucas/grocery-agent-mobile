@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, useColorScheme } from "react-native";
+import { View, Text } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { ChevronRight, Check } from "lucide-react-native";
 import { cn } from "@/lib/utils";
+import { useThemeColors } from "@/components/ui/theme-provider";
 
 const THUMB = 48;
 const PAD = 4;
@@ -37,7 +38,7 @@ export function SlideToConfirm({
   const [trackWidth, setTrackWidth] = useState(0);
   const tx = useSharedValue(0);
   const end = Math.max(0, trackWidth - THUMB - PAD * 2);
-  const dark = useColorScheme() === "dark";
+  const colors = useThemeColors();
 
   const confirm = () => {
     setConfirmed(true);
@@ -57,7 +58,9 @@ export function SlideToConfirm({
       }
     });
 
-  const thumbStyle = useAnimatedStyle(() => ({ transform: [{ translateX: tx.value }] }));
+  const thumbStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: tx.value }],
+  }));
   // The hint label fades out as the thumb travels across it.
   const labelStyle = useAnimatedStyle(() => ({
     opacity: interpolate(tx.value, [0, end || 1], [1, 0]),
@@ -98,9 +101,9 @@ export function SlideToConfirm({
           className="ms-1 h-12 w-12 items-center justify-center rounded-full bg-primary"
         >
           {confirmed ? (
-            <Check size={20} color={dark ? "#18181b" : "#fafafa"} strokeWidth={2.5} />
+            <Check size={20} color={colors.primaryForeground} strokeWidth={2.5} />
           ) : (
-            <ChevronRight size={22} color={dark ? "#18181b" : "#fafafa"} />
+            <ChevronRight size={22} color={colors.primaryForeground} />
           )}
         </Animated.View>
       </View>

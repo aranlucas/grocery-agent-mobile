@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as PopoverPrimitive from "@rn-primitives/popover";
 import Animated from "react-native-reanimated";
 import { entering, exiting } from "@/components/ui/animate";
 import { cn } from "@/lib/utils";
+import { PortalOverlay } from "./portal-overlay";
 
 export interface PopoverProps {
   onOpenChange?: (open: boolean) => void;
@@ -22,8 +24,10 @@ export interface PopoverTriggerProps extends React.ComponentPropsWithoutRef<type
 export function PopoverTrigger({ className, children, ...props }: PopoverTriggerProps) {
   return (
     <PopoverPrimitive.Trigger asChild>
+      {/* Keep the inline anchor measurable; expand its touch area without shifting the overlay. */}
       <Pressable
-        className={cn("min-h-12 min-w-12", className)}
+        hitSlop={16}
+        className={cn("", className)}
         accessible={true}
         accessibilityRole="button"
         {...props}
@@ -50,19 +54,32 @@ export function PopoverContent({
   align = "center",
   ...props
 }: PopoverContentProps) {
+  const insets = useSafeAreaInsets();
+  const { open, onOpenChange } = PopoverPrimitive.useRootContext();
   return (
     <PopoverPrimitive.Portal>
-      <PopoverPrimitive.Overlay className="absolute inset-0" />
-      <PopoverPrimitive.Content side={side} sideOffset={sideOffset} align={align} avoidCollisions>
-        <Animated.View entering={entering.fadeIn} exiting={exiting.fadeOut}>
-          <View
-            className={cn("w-72 rounded-lg border border-border bg-card p-4 shadow-lg", className)}
-            {...props}
-          >
-            {children}
-          </View>
-        </Animated.View>
-      </PopoverPrimitive.Content>
+      <PortalOverlay open={open} onClose={() => onOpenChange(false)}>
+        <PopoverPrimitive.Overlay className="absolute inset-0" />
+        <PopoverPrimitive.Content
+          side={side}
+          sideOffset={sideOffset}
+          align={align}
+          avoidCollisions
+          insets={insets}
+        >
+          <Animated.View entering={entering.fadeIn} exiting={exiting.fadeOut}>
+            <View
+              className={cn(
+                "w-72 rounded-lg border border-border bg-card p-4 shadow-lg",
+                className,
+              )}
+              {...props}
+            >
+              {children}
+            </View>
+          </Animated.View>
+        </PopoverPrimitive.Content>
+      </PortalOverlay>
     </PopoverPrimitive.Portal>
   );
 }

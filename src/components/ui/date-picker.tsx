@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, Modal } from "react-native";
 import { cn } from "@/lib/utils";
+import { useThemeColors } from "@/components/ui/theme-provider";
 import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react-native";
 
@@ -52,6 +53,7 @@ function TriggerButton({
   className?: string;
   onPress: () => void;
 }) {
+  const colors = useThemeColors();
   return (
     <Pressable
       className={cn(
@@ -67,7 +69,7 @@ function TriggerButton({
       >
         {label}
       </Text>
-      <CalendarIcon size={16} color="#71717a" />
+      <CalendarIcon size={16} color={colors.mutedForeground} />
     </Pressable>
   );
 }

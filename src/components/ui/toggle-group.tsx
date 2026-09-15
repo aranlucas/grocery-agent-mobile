@@ -75,7 +75,10 @@ export function ToggleGroupItem({
   return (
     <Pressable
       className={cn(
-        itemVariants({ variant: variant ?? groupVariant, size: size ?? groupSize }),
+        itemVariants({
+          variant: variant ?? groupVariant,
+          size: size ?? groupSize,
+        }),
         active && "bg-accent",
         className,
       )}

@@ -35,7 +35,12 @@ export function NativePicker({ options, value, label, onValueChange }: NativePic
         readOnly
         singleLine
         shape={Shape.RoundedCorner({
-          cornerRadii: { topStart: 12, topEnd: 12, bottomStart: 12, bottomEnd: 12 },
+          cornerRadii: {
+            topStart: 12,
+            topEnd: 12,
+            bottomStart: 12,
+            bottomEnd: 12,
+          },
         })}
         colors={{
           focusedTextColor: foreground,
@@ -50,6 +55,9 @@ export function NativePicker({ options, value, label, onValueChange }: NativePic
           ...accessibilityModifiers({ accessibilityLabel: label }),
         ]}
       >
+        <OutlinedTextField.Label>
+          <Text>{label}</Text>
+        </OutlinedTextField.Label>
         <OutlinedTextField.TrailingIcon>
           <Icon source={ExpandMore} tint={foreground} />
         </OutlinedTextField.TrailingIcon>

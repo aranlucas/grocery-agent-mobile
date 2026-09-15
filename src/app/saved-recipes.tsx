@@ -119,7 +119,10 @@ export default function SavedRecipesScreen() {
           ))
         ) : queryError instanceof Error ? null : (
           <EmptyState
-            action={{ label: "Plan a recipe", onPress: () => router.replace("/chat") }}
+            action={{
+              label: "Plan a recipe",
+              onPress: () => router.replace("/chat"),
+            }}
             className="min-h-72"
             description="Recipes you save will stay here so you can quickly build the grocery list again."
             icon={<Icon as={BookMarked} className="size-8 text-primary" strokeWidth={2} />}
@@ -163,7 +166,12 @@ const RecipeCard = memo(function RecipeCard({
       accessibilityLabel={`${recipe.title}, ${location}`}
       accessibilityRole="button"
       className="active:opacity-80"
-      onPress={() => router.push({ pathname: "/saved-recipe", params: { recipeId: recipe.id } })}
+      onPress={() =>
+        router.push({
+          pathname: "/saved-recipe",
+          params: { recipeId: recipe.id },
+        })
+      }
     >
       <Card>
         <CardHeader className="flex-row items-center gap-3">

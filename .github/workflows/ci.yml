@@ -19,13 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 12.3.4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Check and test
-        run: pnpm check && pnpm test
+      - name: Strict validation
+        run: pnpm validate
+      - name: Validate Android and iOS exports
+        run: pnpm build

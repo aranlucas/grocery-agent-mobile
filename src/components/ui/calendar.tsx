@@ -57,7 +57,10 @@ export function Calendar({
     setMode("days");
   };
   const decadeStart = Math.floor(year / 12) * 12;
-  const label = new Date(year, month).toLocaleString("default", { month: "long", year: "numeric" });
+  const label = new Date(year, month).toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <View className={cn("rounded-lg bg-background p-3", className)}>
@@ -70,7 +73,7 @@ export function Calendar({
                 ? setViewing(new Date(year - 1, month, 1))
                 : setViewing(new Date(decadeStart - 12, month, 1))
           }
-          className="h-9 w-9 items-center justify-center rounded-md"
+          className="h-12 w-12 items-center justify-center rounded-md"
           accessibilityRole="button"
           accessibilityLabel="Previous"
         >
@@ -93,7 +96,7 @@ export function Calendar({
                 ? setViewing(new Date(year + 1, month, 1))
                 : setViewing(new Date(decadeStart + 12, month, 1))
           }
-          className="h-9 w-9 items-center justify-center rounded-md"
+          className="h-12 w-12 items-center justify-center rounded-md"
           accessibilityRole="button"
           accessibilityLabel="Next"
         >
@@ -107,7 +110,7 @@ export function Calendar({
               <Pressable
                 onPress={() => pickYear(y)}
                 className={cn(
-                  "h-9 w-full items-center justify-center rounded-md",
+                  "h-12 w-full items-center justify-center rounded-md",
                   y === year && "bg-primary",
                 )}
                 accessibilityRole="button"
@@ -134,7 +137,7 @@ export function Calendar({
               <Pressable
                 onPress={() => pickMonth(i)}
                 className={cn(
-                  "h-9 w-full items-center justify-center rounded-md",
+                  "h-12 w-full items-center justify-center rounded-md",
                   i === month && year === viewing.getFullYear() && "bg-primary",
                 )}
                 accessibilityRole="button"
@@ -174,7 +177,7 @@ export function Calendar({
                 ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
               ];
               return cells.map((day, i) => {
-                if (day === null) return <View key={`e-${i}`} className="h-9 w-1/7" />;
+                if (day === null) return <View key={`e-${i}`} className="w-1/7 h-12" />;
                 const date = new Date(year, month, day);
                 const sel = selected && same(date, selected);
                 const rs = rangeStart && same(date, rangeStart);
@@ -192,7 +195,7 @@ export function Calendar({
                       onPress={() => handlePress(day)}
                       disabled={!!off}
                       className={cn(
-                        "h-9 w-9 items-center justify-center rounded-full",
+                        "h-12 w-12 items-center justify-center rounded-full",
                         sel || rs || re ? "bg-primary" : inR ? "bg-accent" : "",
                         today && !sel && "border border-primary",
                         off && "opacity-30",

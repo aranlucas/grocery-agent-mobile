@@ -169,7 +169,10 @@ export default function HouseholdsScreen() {
                   onPress={() =>
                     router.push({
                       pathname: "/shared-list",
-                      params: { householdId: household.id, householdName: household.name },
+                      params: {
+                        householdId: household.id,
+                        householdName: household.name,
+                      },
                     })
                   }
                 >

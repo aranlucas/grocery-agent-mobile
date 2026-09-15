@@ -13,7 +13,7 @@ export function Menubar({ className, ...props }: MenubarProps) {
   return (
     <View
       className={cn(
-        "h-10 flex-row items-center gap-1 rounded-md border border-border bg-card px-1",
+        "min-h-14 flex-row items-center gap-1 rounded-md border border-border bg-card px-1",
         className,
       )}
       accessibilityRole="menubar"
@@ -49,7 +49,7 @@ export function MenubarMenu({ trigger, className, children }: MenubarMenuProps) 
         onPress={openMenu}
         accessibilityRole="menuitem"
         accessible
-        className="h-8 justify-center rounded-sm px-3"
+        className="min-h-14 min-w-14 justify-center rounded-sm px-3"
       >
         {typeof trigger === "string" ? (
           <Text className="text-sm font-medium text-foreground">{trigger}</Text>
@@ -89,7 +89,7 @@ export function MenubarItem({ className, children, onPress, ...props }: MenubarI
         onPress?.(e);
         close?.();
       }}
-      className={cn("min-h-10 justify-center rounded-sm px-2", className)}
+      className={cn("min-h-14 min-w-14 justify-center rounded-sm px-2", className)}
       {...props}
     >
       {typeof children === "string" ? (

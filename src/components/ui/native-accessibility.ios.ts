@@ -6,6 +6,9 @@ import {
   frame,
 } from "@expo/ui/swift-ui/modifiers";
 import type { NativeAccessibility } from "./native-accessibility";
+export function accessibilityHostProps(_props: NativeAccessibility, _onActivate?: () => void) {
+  return {};
+}
 export function accessibilityModifiers(props: NativeAccessibility) {
   return [
     ...(props.accessibilityLabel ? [accessibilityLabel(props.accessibilityLabel)] : []),

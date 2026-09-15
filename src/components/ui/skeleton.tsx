@@ -4,11 +4,11 @@ import Animated, {
   cancelAnimation,
   useSharedValue,
   useAnimatedStyle,
-  useReducedMotion,
   withRepeat,
   withSequence,
   withTiming,
 } from "react-native-reanimated";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
 export interface SkeletonProps extends React.ComponentPropsWithoutRef<typeof View> {

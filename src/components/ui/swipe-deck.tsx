@@ -69,13 +69,17 @@ export function SwipeDeck<T>({
     transform: [
       { translateX: tx.value },
       { translateY: ty.value },
-      { rotate: `${interpolate(tx.value, [-width || -1, width || 1], [-12, 12])}deg` },
+      {
+        rotate: `${interpolate(tx.value, [-width || -1, width || 1], [-12, 12])}deg`,
+      },
     ],
   }));
   // The card behind grows into place as the top card is dragged away.
   const nextStyle = useAnimatedStyle(() => {
     const progress = Math.min(1, Math.abs(tx.value) / ((width || 1) * 0.5));
-    return { transform: [{ scale: 0.95 + 0.05 * progress }, { translateY: 8 - 8 * progress }] };
+    return {
+      transform: [{ scale: 0.95 + 0.05 * progress }, { translateY: 8 - 8 * progress }],
+    };
   });
 
   const top = data[index];

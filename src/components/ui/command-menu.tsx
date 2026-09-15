@@ -5,7 +5,6 @@ import {
   TextInput,
   Pressable,
   SectionList,
-  useColorScheme,
   useWindowDimensions,
   Keyboard,
 } from "react-native";
@@ -14,6 +13,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-na
 import { entering, exiting } from "@/components/ui/animate";
 import { Search } from "lucide-react-native";
 import { cn } from "@/lib/utils";
+import { useThemeColors } from "@/components/ui/theme-provider";
 
 export interface CommandItem {
   label: string;
@@ -50,7 +50,7 @@ export function CommandMenu({
   ...props
 }: CommandMenuProps) {
   const [search, setSearch] = useState("");
-  const dark = useColorScheme() === "dark";
+  const colors = useThemeColors();
   const { height: winH } = useWindowDimensions();
   const inputRef = useRef<TextInput>(null);
   const kb = useSharedValue(0);
@@ -138,13 +138,13 @@ export function CommandMenu({
             )}
             {...props}
           >
-            <View className="flex-row items-center border-b border-border px-4">
-              <Search size={16} color="#71717a" strokeWidth={2} />
+            <View className="flex-row items-center px-4 border-b border-border">
+              <Search size={16} color={colors.mutedForeground} strokeWidth={2} />
               <TextInput
                 ref={inputRef}
                 className="min-h-12 flex-1 ps-3 text-base text-foreground"
                 placeholder={placeholder}
-                placeholderTextColor={dark ? "#a1a1aa" : "#71717a"}
+                placeholderTextColor={colors.mutedForeground}
                 value={search}
                 onChangeText={setSearch}
                 accessibilityLabel="Command search"
@@ -215,11 +215,11 @@ export interface CommandInputProps extends React.ComponentPropsWithoutRef<typeof
 }
 
 export function CommandInput({ className, ...props }: CommandInputProps) {
-  const dark = useColorScheme() === "dark";
+  const colors = useThemeColors();
   return (
     <TextInput
-      className={cn("min-h-12 border-b border-border px-4 text-base text-foreground", className)}
-      placeholderTextColor={dark ? "#a1a1aa" : "#71717a"}
+      className={cn("min-h-12 px-4 text-base text-foreground border-b border-border", className)}
+      placeholderTextColor={colors.mutedForeground}
       {...props}
     />
   );

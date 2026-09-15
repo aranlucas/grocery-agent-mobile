@@ -1,15 +1,25 @@
 import React, { useState, useMemo, useCallback } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-  useColorScheme,
-  type ViewStyle,
-} from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, type ViewStyle } from "react-native";
 import { cn } from "@/lib/utils";
+import { useThemeColors } from "@/components/ui/theme-provider";
 import { ChevronDown, ChevronUp } from "lucide-react-native";
+
+function cellText(value: unknown): string {
+  if (value == null) return "";
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "bigint"
+  ) {
+    return String(value);
+  }
+  try {
+    return JSON.stringify(value) ?? "";
+  } catch {
+    return "";
+  }
+}
 
 export interface DataTableColumn<T> {
   key: keyof T & string;
@@ -41,10 +51,11 @@ export interface DataTableProps<T> extends React.ComponentPropsWithoutRef<typeof
 }
 
 function SortIcon({ order }: { order?: "asc" | "desc" }) {
+  const colors = useThemeColors();
   return order === "asc" ? (
-    <ChevronUp size={12} color="#71717a" strokeWidth={2.5} />
+    <ChevronUp size={12} color={colors.mutedForeground} strokeWidth={2.5} />
   ) : (
-    <ChevronDown size={12} color="#71717a" strokeWidth={2.5} />
+    <ChevronDown size={12} color={colors.mutedForeground} strokeWidth={2.5} />
   );
 }
 
@@ -91,13 +102,7 @@ export function DataTable<T extends Record<string, unknown>>({
   const filtered = useMemo(() => {
     if (!search.trim()) return data;
     const q = search.toLowerCase();
-    return data.filter((row) =>
-      keys.some((k) =>
-        String(row[k] ?? "")
-          .toLowerCase()
-          .includes(q),
-      ),
-    );
+    return data.filter((row) => keys.some((k) => cellText(row[k]).toLowerCase().includes(q)));
   }, [data, search, keys]);
 
   const sorted = useMemo(() => {
@@ -105,7 +110,9 @@ export function DataTable<T extends Record<string, unknown>>({
     return [...filtered].sort((a, b) => {
       const aVal = a[sortBy] ?? "";
       const bVal = b[sortBy] ?? "";
-      const cmp = String(aVal).localeCompare(String(bVal), undefined, { numeric: true });
+      const cmp = cellText(aVal).localeCompare(cellText(bVal), undefined, {
+        numeric: true,
+      });
       return sortOrder === "asc" ? cmp : -cmp;
     });
   }, [filtered, sortBy, sortOrder]);
@@ -123,12 +130,18 @@ export function DataTable<T extends Record<string, unknown>>({
     if (col.width) return { width: col.width, overflow: "hidden" };
     if (truncate) {
       if (truncatedAutoWidth > 0) return { width: truncatedAutoWidth, overflow: "hidden" };
-      return { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0, overflow: "hidden" };
+      return {
+        flexGrow: 1,
+        flexShrink: 1,
+        flexBasis: 0,
+        minWidth: 0,
+        overflow: "hidden",
+      };
     }
     return { width: defaultColumnWidth, overflow: "hidden" };
   };
 
-  const dark = useColorScheme() === "dark";
+  const colors = useThemeColors();
 
   return (
     <View className={cn("overflow-hidden rounded-md border border-border", className)} {...props}>
@@ -137,7 +150,7 @@ export function DataTable<T extends Record<string, unknown>>({
           <TextInput
             className="min-h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
             placeholder={searchPlaceholder}
-            placeholderTextColor={dark ? "#a1a1aa" : "#71717a"}
+            placeholderTextColor={colors.mutedForeground}
             value={search}
             onChangeText={(v) => {
               setSearch(v);

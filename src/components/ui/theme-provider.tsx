@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Appearance, useColorScheme as useNativeColorScheme, View } from "react-native";
 import { cn } from "@/lib/utils";
+import { useCSSVariable } from "uniwind";
 
 type Theme = "light" | "dark" | "system";
 
@@ -18,6 +19,40 @@ const ThemeContext = createContext<{
 
 export function useTheme() {
   return useContext(ThemeContext);
+}
+
+const nativeColors = {
+  background: ["--color-background", "#f7f8f2"],
+  foreground: ["--color-foreground", "#17201a"],
+  card: ["--color-card", "#ffffff"],
+  cardForeground: ["--color-card-foreground", "#17201a"],
+  primary: ["--color-primary", "#15803d"],
+  primaryForeground: ["--color-primary-foreground", "#ffffff"],
+  secondary: ["--color-secondary", "#14532d"],
+  secondaryForeground: ["--color-secondary-foreground", "#f7f8f2"],
+  muted: ["--color-muted", "#eef2e8"],
+  mutedForeground: ["--color-muted-foreground", "#667067"],
+  accent: ["--color-accent", "#d9f99d"],
+  accentForeground: ["--color-accent-foreground", "#17201a"],
+  destructive: ["--color-destructive", "#b42318"],
+  destructiveForeground: ["--color-destructive-foreground", "#ffffff"],
+  border: ["--color-border", "#dfe5dc"],
+  input: ["--color-input", "#dfe5dc"],
+  ring: ["--color-ring", "#15803d"],
+} as const;
+
+const colorEntries = Object.entries(nativeColors);
+const colorVariables = colorEntries.map(([, [variable]]) => variable);
+
+/** AniUI's native color API, backed by the same Uniwind tokens as className. */
+export function useThemeColors() {
+  const values = useCSSVariable(colorVariables);
+  return Object.fromEntries(
+    colorEntries.map(([name, [, fallback]], index) => [
+      name,
+      typeof values[index] === "string" ? values[index] : fallback,
+    ]),
+  ) as Record<keyof typeof nativeColors, string>;
 }
 
 export interface ThemeProviderProps {

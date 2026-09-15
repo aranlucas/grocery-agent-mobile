@@ -1,6 +1,10 @@
 import { Checkbox as ExpoCheckbox } from "@expo/ui";
 import type { AccessibilityProps } from "react-native";
-import { accessibilityModifiers, controlSizeModifiers } from "@/components/ui/native-accessibility";
+import {
+  accessibilityHostProps,
+  accessibilityModifiers,
+  controlSizeModifiers,
+} from "@/components/ui/native-accessibility";
 import { UIHost } from "@/components/ui/native-host";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +29,18 @@ export function Checkbox({
       className={cn("min-h-14 min-w-14 justify-center", className)}
       matchContents
       accessible={false}
+      {...accessibilityHostProps(
+        {
+          ...accessibility,
+          accessibilityRole: "checkbox",
+          accessibilityState: {
+            ...accessibility.accessibilityState,
+            checked,
+            disabled,
+          },
+        },
+        () => onCheckedChange?.(!checked),
+      )}
     >
       <ExpoCheckbox
         value={checked}

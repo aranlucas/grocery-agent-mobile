@@ -284,7 +284,11 @@ export function useGroceryAgentController(onRunComplete: () => void) {
           restoreSnapshot();
           const error = caught instanceof Error ? caught : new Error(readableError(caught));
           const message = readableError(error);
-          setFailure({ operation: "open-thread", message, threadId: nextThreadId });
+          setFailure({
+            operation: "open-thread",
+            message,
+            threadId: nextThreadId,
+          });
           return { status: "failed", error, message };
         }
       });

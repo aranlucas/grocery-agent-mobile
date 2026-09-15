@@ -143,7 +143,9 @@ export default function SavedRecipeScreen() {
             label="Title"
             name="title"
             placeholder="Recipe title"
-            rules={{ validate: (value) => value.trim().length > 0 || "Add a recipe title." }}
+            rules={{
+              validate: (value) => value.trim().length > 0 || "Add a recipe title.",
+            }}
           />
           <FormTextarea
             accessibilityLabel="Recipe description"
@@ -191,7 +193,9 @@ export default function SavedRecipeScreen() {
                   control={control}
                   name={`ingredients.${index}.name`}
                   placeholder="Ingredient"
-                  rules={{ validate: (value) => value.trim().length > 0 || "Add an ingredient." }}
+                  rules={{
+                    validate: (value) => value.trim().length > 0 || "Add an ingredient.",
+                  }}
                 />
                 <Pressable
                   accessibilityLabel={`Remove ingredient ${index + 1}`}
@@ -256,7 +260,9 @@ export default function SavedRecipeScreen() {
                 control={control}
                 name={`steps.${index}`}
                 placeholder="Instruction"
-                rules={{ validate: (value) => value.trim().length > 0 || "Add an instruction." }}
+                rules={{
+                  validate: (value) => value.trim().length > 0 || "Add an instruction.",
+                }}
               />
               <Pressable
                 accessibilityLabel={`Remove step ${index + 1}`}

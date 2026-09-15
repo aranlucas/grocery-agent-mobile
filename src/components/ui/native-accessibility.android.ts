@@ -1,22 +1,23 @@
-import { defaultMinSize, semantics } from "@expo/ui/jetpack-compose/modifiers";
+import { defaultMinSize } from "@expo/ui/jetpack-compose/modifiers";
 import type { NativeAccessibility } from "./native-accessibility";
-export function accessibilityModifiers(props: NativeAccessibility) {
-  return [
-    semantics({
-      contentDescription: props.accessibilityLabel,
-      stateDescription:
-        [props.accessibilityValue?.text, props.accessibilityHint].filter(Boolean).join(". ") ||
-        undefined,
-      error: props["aria-invalid"] ? (props.accessibilityHint ?? "Invalid value") : undefined,
-      selected: props.accessibilityState?.selected,
-      role: props.accessibilityRole,
-      checked:
-        typeof props.accessibilityState?.checked === "boolean"
-          ? props.accessibilityState.checked
-          : undefined,
-    }),
-  ];
+export function accessibilityModifiers(_props: NativeAccessibility) {
+  // Stable Expo UI has no custom Compose semantics API. UIHost owns the RN accessibility node.
+  return [];
 }
 export function controlSizeModifiers() {
   return [defaultMinSize({ minWidth: 56, minHeight: 56 })];
+}
+export function accessibilityHostProps(props: NativeAccessibility, onActivate?: () => void) {
+  const { "aria-invalid": _invalid, ...accessibility } = props;
+  return {
+    ...accessibility,
+    accessible: true,
+    onPress: props.accessibilityState?.disabled ? undefined : onActivate,
+    accessibilityActions: onActivate ? [{ name: "activate" as const }] : props.accessibilityActions,
+    onAccessibilityAction: onActivate
+      ? () => {
+          if (!props.accessibilityState?.disabled) onActivate();
+        }
+      : props.onAccessibilityAction,
+  };
 }
