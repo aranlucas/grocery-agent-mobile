@@ -1,0 +1,45 @@
+baseline: shipshape/recommended@1
+
+# Commands below use the existing root checks, which include packages/**.
+# Shipshape v1 cannot resolve cross-workspace CI coverage or inherited tsconfig
+# settings; see docs/repository-readiness.md for the verified coverage.
+packages:
+  - path: .
+    commands:
+      format: pnpm fmt:check
+      lint: pnpm lint
+      typecheck: pnpm typecheck
+  - path: packages/types
+    commands:
+      format: pnpm -w fmt:check
+      lint: pnpm -w lint
+      typecheck: pnpm -w typecheck
+  - path: packages/oxlint-config
+    commands:
+      format: pnpm -w fmt:check
+  - path: packages/typescript-config
+    commands:
+      format: pnpm -w fmt:check
+
+# JSON configuration packages have no executable or TypeScript source.
+# Revisit these exceptions if either package acquires source code.
+exceptions:
+  - rule: lint
+    path: packages/oxlint-config
+    reason: JSON-only configuration package; the root formatter checks its files.
+    expires: "2026-12-15"
+  - rule: typecheck
+    path: packages/oxlint-config
+    reason: JSON-only configuration package with no TypeScript source to check.
+    expires: "2026-12-15"
+  - rule: lint
+    path: packages/typescript-config
+    reason: JSON-only configuration package; the root formatter checks its files.
+    expires: "2026-12-15"
+  - rule: typecheck
+    path: packages/typescript-config
+    reason: JSON-only configuration package with no TypeScript source to check.
+    expires: "2026-12-15"
+
+# No test command is declared: test tooling was deliberately removed in
+# fba17db. Keep standards.test visible as a gap; exports are not runtime tests.
