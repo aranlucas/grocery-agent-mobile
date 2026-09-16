@@ -65,7 +65,8 @@
         }
       ],
       "expo-secure-store",
-      "./plugins/with-expo-dev-launcher-always-run"
+      "./plugins/with-expo-dev-launcher-always-run",
+      "./plugins/with-kotlin-return-value-annotations"
     ],
     "extra": {
       "clerkPublishableKey": "",
