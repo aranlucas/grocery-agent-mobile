@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { View, Text, ScrollView, type StyleProp, type ViewStyle } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { cn } from "@/lib/utils";
 
 type TableContextValue = { truncate: boolean; defaultColumnWidth: number };
@@ -25,7 +25,7 @@ export interface TableCellProps extends TableViewProps {
   textClassName?: string;
 }
 
-const truncateCellStyle: StyleProp<ViewStyle> = {
+const truncateCellStyle: TableViewProps["style"] = {
   flexGrow: 1,
   flexShrink: 1,
   flexBasis: 0,
@@ -69,7 +69,7 @@ export function TableRow({ className, ...props }: TableViewProps) {
 export function TableHead({ className, textClassName, children, style, ...props }: TableCellProps) {
   const { truncate, defaultColumnWidth } = useContext(TableContext);
   const isText = typeof children === "string" || typeof children === "number";
-  const widthStyle: StyleProp<ViewStyle> = truncate
+  const widthStyle: TableViewProps["style"] = truncate
     ? truncateCellStyle
     : { width: defaultColumnWidth, overflow: "hidden" };
   return (
@@ -95,7 +95,7 @@ export function TableHead({ className, textClassName, children, style, ...props 
 export function TableCell({ className, textClassName, children, style, ...props }: TableCellProps) {
   const { truncate, defaultColumnWidth } = useContext(TableContext);
   const isText = typeof children === "string" || typeof children === "number";
-  const widthStyle: StyleProp<ViewStyle> = truncate
+  const widthStyle: TableViewProps["style"] = truncate
     ? truncateCellStyle
     : { width: defaultColumnWidth, overflow: "hidden" };
   return (

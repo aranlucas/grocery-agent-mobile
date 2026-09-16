@@ -1,6 +1,6 @@
 import { Host } from "@expo/ui/jetpack-compose";
 import type { UniversalHostProps } from "@expo/ui";
-import { Pressable, View } from "react-native";
+import { Pressable, View, type PressableProps } from "react-native";
 import { useUniwind, withUniwind } from "uniwind";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
@@ -46,7 +46,7 @@ export function UIHost({
     <Pressable
       className={className}
       onLayout={onLayout}
-      style={style}
+      style={style as PressableProps["style"]}
       accessible
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}

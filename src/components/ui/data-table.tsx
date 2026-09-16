@@ -126,7 +126,12 @@ export function DataTable<T extends Record<string, unknown>>({
   const truncatedAutoWidth =
     autoCount > 0 && contentWidth > 0 ? Math.max((contentWidth - fixedSum) / autoCount, 80) : 0;
 
-  const colStyle = (col: DataTableColumn<T>): ViewStyle => {
+  const colStyle = (
+    col: DataTableColumn<T>,
+  ): Pick<
+    ViewStyle,
+    "width" | "overflow" | "flexGrow" | "flexShrink" | "flexBasis" | "minWidth"
+  > => {
     if (col.width) return { width: col.width, overflow: "hidden" };
     if (truncate) {
       if (truncatedAutoWidth > 0) return { width: truncatedAutoWidth, overflow: "hidden" };

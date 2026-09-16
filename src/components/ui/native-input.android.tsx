@@ -1,10 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import {
-  TextInput,
-  type TextInputInstance,
-  type TextInputProps,
-  type TextStyle,
-} from "react-native";
+import { TextInput, type TextInputInstance, type TextInputProps } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import type { NativeInputProps, NativeInputRef } from "./native-input";
 
@@ -67,8 +62,8 @@ export const NativeInput = forwardRef<NativeInputRef, NativeInputProps>(function
       }
       style={[
         { minHeight: 56, padding: 16, fontSize: 16, color: foreground },
-        textStyle as TextStyle,
-        style as TextStyle,
+        textStyle as TextInputProps["style"],
+        style as TextInputProps["style"],
       ]}
     />
   );
