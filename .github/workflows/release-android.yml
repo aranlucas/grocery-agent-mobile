@@ -108,7 +108,7 @@ jobs:
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           mkdir -p dist
-          pnpm dlx eas-cli@21.0.0 build \
+          pnpm dlx --allow-build=dtrace-provider eas-cli@21.0.0 build \
             --platform android \
             --profile production-apk \
             --local \

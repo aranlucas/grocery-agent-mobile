@@ -43,6 +43,7 @@ function build() {
     "pnpm",
     [
       "dlx",
+      "--allow-build=dtrace-provider",
       "eas-cli@21.0.0",
       "build",
       "--platform",
