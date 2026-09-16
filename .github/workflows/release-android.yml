@@ -104,6 +104,7 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           # Match the existing local production APK build; signing is managed by EAS.
           SENTRY_DISABLE_AUTO_UPLOAD: "true"
+          EAS_LOCAL_BUILD_PLUGIN_PATH: ${{ github.workspace }}/scripts/eas-local-build.sh
           GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
