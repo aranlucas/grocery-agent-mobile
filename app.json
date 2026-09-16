@@ -65,7 +65,6 @@
         }
       ],
       "expo-secure-store",
-      "./plugins/with-expo-dev-launcher-always-run",
       [
         "./plugins/with-android-kotlin-runtime",
         {
