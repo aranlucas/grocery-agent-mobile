@@ -5,7 +5,6 @@ import { runAuthenticated } from "./auth";
 
 type GrocerySchema = components["schemas"];
 
-export type HouseholdRole = "owner" | "member";
 export type GroceryListStatus = "active" | "archived";
 
 export type Household = GrocerySchema["Household"];

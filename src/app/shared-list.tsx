@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
-import { ListPlus, Plus, Trash2 } from "lucide-react-native";
+import { ListPlus, Plus } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useForm } from "react-hook-form";
+import { GroceryListItemRow } from "@/components/grocery-list-item-row";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,24 +15,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FormInput } from "@/components/ui/form";
 import { Icon } from "@/components/ui/icon";
 import { RefreshControl } from "@/components/ui/refresh-control";
 import { Screen } from "@/components/ui/screen";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { type GroceryList } from "@/lib/household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
-import { cn } from "@/lib/utils";
-
-function firstParam(value: string | string[] | undefined): string {
-  return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
-}
+import { firstParam } from "@/lib/utils";
 
 type ItemMutation =
   | { type: "add"; listId: string; name: string }
@@ -213,60 +208,29 @@ export default function SharedListScreen() {
             </CardHeader>
             <CardContent className="p-0">
               {activeList.items.length ? (
-                activeList.items.map((item, index) => {
-                  const checked = Boolean(item.checked_at);
-                  const itemBusy = busy === `item:${item.id}`;
-                  return (
-                    <View key={item.id}>
-                      <View
-                        className={cn(
-                          "min-h-16 flex-row items-center px-4",
-                          itemBusy && "opacity-50",
-                        )}
-                      >
-                        <Checkbox
-                          accessibilityLabel={`${checked ? "Uncheck" : "Check"} ${item.name}`}
-                          checked={checked}
-                          disabled={itemBusy}
-                          onCheckedChange={(nextChecked) =>
-                            mutateItem.mutate({
-                              type: "toggle",
-                              listId: activeList.id,
-                              itemId: item.id,
-                              checked: nextChecked,
-                            })
-                          }
-                        />
-                        <View className="flex-1 gap-0.5 py-3">
-                          <Text
-                            className={cn(checked && "text-muted-foreground line-through")}
-                            selectable
-                            variant="large"
-                          >
-                            {item.name}
-                          </Text>
-                          <Text variant="muted">Quantity {item.quantity}</Text>
-                        </View>
-                        <Pressable
-                          accessibilityLabel={`Remove ${item.name}`}
-                          accessibilityRole="button"
-                          className="min-h-14 min-w-14 items-center justify-center active:opacity-60"
-                          disabled={itemBusy}
-                          onPress={() =>
-                            mutateItem.mutate({
-                              type: "delete",
-                              listId: activeList.id,
-                              itemId: item.id,
-                            })
-                          }
-                        >
-                          <Icon as={Trash2} className="size-5 text-muted-foreground" />
-                        </Pressable>
-                      </View>
-                      {index < activeList.items.length - 1 ? <Separator className="ml-13" /> : null}
-                    </View>
-                  );
-                })
+                activeList.items.map((item, index) => (
+                  <GroceryListItemRow
+                    key={item.id}
+                    busy={busy === `item:${item.id}`}
+                    item={item}
+                    onDelete={() =>
+                      mutateItem.mutate({
+                        type: "delete",
+                        listId: activeList.id,
+                        itemId: item.id,
+                      })
+                    }
+                    onToggle={(checked) =>
+                      mutateItem.mutate({
+                        type: "toggle",
+                        listId: activeList.id,
+                        itemId: item.id,
+                        checked,
+                      })
+                    }
+                    showSeparator={index < activeList.items.length - 1}
+                  />
+                ))
               ) : (
                 <EmptyState
                   className="p-4"
