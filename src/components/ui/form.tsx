@@ -10,6 +10,7 @@ import {
 } from "react-hook-form";
 import { Input, type InputProps } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { NativeInputProps } from "@/components/ui/native-input";
 import { Text } from "@/components/ui/text";
 import { Textarea, type TextareaProps } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -45,154 +46,106 @@ type SharedFieldProps = {
   label?: string;
 };
 
-export type FormInputProps<
+type OmittedControlProps =
+  | "defaultValue"
+  | "disabled"
+  | "name"
+  | "onBlur"
+  | "onChange"
+  | "onChangeText"
+  | "value";
+
+type FormTextControlProps<
   TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TName extends FieldPath<TFieldValues>,
+  TControlProps extends NativeInputProps,
 > = UseControllerProps<TFieldValues, TName> &
-  Omit<
-    InputProps,
-    "defaultValue" | "disabled" | "name" | "onBlur" | "onChange" | "onChangeText" | "value"
-  > &
+  Omit<TControlProps, OmittedControlProps> &
   SharedFieldProps;
 
-export function FormInput<
+type FormTextField<TControlProps extends NativeInputProps> = <
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-  className,
-  containerClassName,
-  control,
-  defaultValue,
-  description,
-  disabled,
-  label,
-  name,
-  rules,
-  shouldUnregister,
-  accessibilityHint,
-  accessibilityLabel,
-  accessibilityState,
-  ...props
-}: FormInputProps<TFieldValues, TName>) {
-  const labelId = React.useId();
-  const { field, fieldState, formState } = useController({
+>(
+  props: FormTextControlProps<TFieldValues, TName, TControlProps>,
+) => React.ReactElement;
+
+function createFormTextControl<TControlProps extends NativeInputProps>(
+  Control: typeof Input | typeof Textarea,
+): FormTextField<TControlProps> {
+  return function FormTextControl({
+    className,
+    containerClassName,
     control,
     defaultValue,
+    description,
     disabled,
+    label,
     name,
     rules,
     shouldUnregister,
-  });
-  const error = fieldState.error?.message;
-  const showError = Boolean(error) && (fieldState.isTouched || formState.isSubmitted);
+    accessibilityHint,
+    accessibilityLabel,
+    accessibilityState,
+    ...props
+  }) {
+    const labelId = React.useId();
+    const { field, fieldState, formState } = useController({
+      control,
+      defaultValue,
+      disabled,
+      name,
+      rules,
+      shouldUnregister,
+    });
+    const error = fieldState.error?.message;
+    const showError = Boolean(error) && (fieldState.isTouched || formState.isSubmitted);
 
-  return (
-    <FormItem className={containerClassName}>
-      {label ? (
-        <Label className="mb-0" nativeID={labelId}>
-          {label}
-        </Label>
-      ) : null}
-      <Input
-        ref={field.ref}
-        {...props}
-        accessibilityHint={showError ? error : accessibilityHint}
-        accessibilityLabel={accessibilityLabel ?? label}
-        accessibilityLabelledBy={label ? labelId : undefined}
-        accessibilityState={{
-          ...accessibilityState,
-          disabled: Boolean(disabled),
-        }}
-        aria-invalid={showError || undefined}
-        className={cn(showError && "border-destructive", className)}
-        editable={disabled ? false : props.editable}
-        onBlur={field.onBlur}
-        onChangeText={field.onChange}
-        value={typeof field.value === "string" ? field.value : String(field.value ?? "")}
-      />
-      {showError ? (
-        <FormMessage message={error} />
-      ) : description ? (
-        <Text className="text-muted-foreground" selectable variant="small">
-          {description}
-        </Text>
-      ) : null}
-    </FormItem>
-  );
+    return (
+      <FormItem className={containerClassName}>
+        {label ? (
+          <Label className="mb-0" nativeID={labelId}>
+            {label}
+          </Label>
+        ) : null}
+        <Control
+          ref={field.ref}
+          {...props}
+          accessibilityHint={showError ? error : accessibilityHint}
+          accessibilityLabel={accessibilityLabel ?? label}
+          accessibilityLabelledBy={label ? labelId : undefined}
+          accessibilityState={{
+            ...accessibilityState,
+            disabled: Boolean(disabled),
+          }}
+          aria-invalid={showError || undefined}
+          className={cn(showError && "border-destructive", className)}
+          editable={disabled ? false : props.editable}
+          onBlur={field.onBlur}
+          onChangeText={field.onChange}
+          value={typeof field.value === "string" ? field.value : String(field.value ?? "")}
+        />
+        {showError ? (
+          <FormMessage message={error} />
+        ) : description ? (
+          <Text className="text-muted-foreground" selectable variant="small">
+            {description}
+          </Text>
+        ) : null}
+      </FormItem>
+    );
+  };
 }
+
+export type FormInputProps<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> = FormTextControlProps<TFieldValues, TName, InputProps>;
 
 export type FormTextareaProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<
-    TextareaProps,
-    "defaultValue" | "disabled" | "name" | "onBlur" | "onChange" | "onChangeText" | "value"
-  > &
-  SharedFieldProps;
+> = FormTextControlProps<TFieldValues, TName, TextareaProps>;
 
-export function FormTextarea<
-  TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-  className,
-  containerClassName,
-  control,
-  defaultValue,
-  description,
-  disabled,
-  label,
-  name,
-  rules,
-  shouldUnregister,
-  accessibilityHint,
-  accessibilityLabel,
-  accessibilityState,
-  ...props
-}: FormTextareaProps<TFieldValues, TName>) {
-  const labelId = React.useId();
-  const { field, fieldState, formState } = useController({
-    control,
-    defaultValue,
-    disabled,
-    name,
-    rules,
-    shouldUnregister,
-  });
-  const error = fieldState.error?.message;
-  const showError = Boolean(error) && (fieldState.isTouched || formState.isSubmitted);
-
-  return (
-    <FormItem className={containerClassName}>
-      {label ? (
-        <Label className="mb-0" nativeID={labelId}>
-          {label}
-        </Label>
-      ) : null}
-      <Textarea
-        ref={field.ref}
-        {...props}
-        accessibilityHint={showError ? error : accessibilityHint}
-        accessibilityLabel={accessibilityLabel ?? label}
-        accessibilityLabelledBy={label ? labelId : undefined}
-        accessibilityState={{
-          ...accessibilityState,
-          disabled: Boolean(disabled),
-        }}
-        aria-invalid={showError || undefined}
-        className={cn(showError && "border-destructive", className)}
-        editable={disabled ? false : props.editable}
-        onBlur={field.onBlur}
-        onChangeText={field.onChange}
-        value={typeof field.value === "string" ? field.value : String(field.value ?? "")}
-      />
-      {showError ? (
-        <FormMessage message={error} />
-      ) : description ? (
-        <Text className="text-muted-foreground" selectable variant="small">
-          {description}
-        </Text>
-      ) : null}
-    </FormItem>
-  );
-}
+export const FormInput = createFormTextControl<InputProps>(Input);
+export const FormTextarea = createFormTextControl<TextareaProps>(Textarea);
