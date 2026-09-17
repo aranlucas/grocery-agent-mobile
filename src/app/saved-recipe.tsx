@@ -15,10 +15,7 @@ import { Text } from "@/components/ui/text";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { type Recipe, type RecipeContent } from "@/lib/household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
-
-function firstParam(value: string | string[] | undefined): string {
-  return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
-}
+import { firstParam } from "@/lib/utils";
 
 type RecipeFormValues = Omit<RecipeContent, "tags"> & { tags: string };
 
