@@ -20,7 +20,7 @@ export function HeaderActionButton({
     <Pressable
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
-      className={cn("size-10 items-center justify-center rounded-full active:bg-muted", className)}
+      className={cn("min-h-14 min-w-14 items-center justify-center rounded-full active:bg-muted", className)}
       onPress={onPress}
     >
       <Icon as={icon} className="size-5 text-foreground" />
