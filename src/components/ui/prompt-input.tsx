@@ -10,9 +10,6 @@ import { ArrowUp, Square } from "lucide-react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { cn } from "@/lib/utils";
 
-// Compound composer (ChatGPT/Claude-style): textarea on top, toolbar below.
-// <PromptInput onSend={…}><PromptInputTextarea /><PromptInputToolbar>…</PromptInputToolbar></PromptInput>
-
 type PromptInputCtx = {
   text: string;
   setText: (t: string) => void;
@@ -109,7 +106,6 @@ export interface PromptInputToolbarProps extends React.ComponentPropsWithoutRef<
   className?: string;
 }
 
-/** Bottom action row — put leading tools first, then <PromptInputSpacer />, then trailing tools. */
 export function PromptInputToolbar({ className, ...props }: PromptInputToolbarProps) {
   return <View className={cn("flex-row items-center gap-1 pt-2", className)} {...props} />;
 }
