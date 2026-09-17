@@ -22,6 +22,9 @@ function firstParam(value: string | string[] | undefined): string {
   return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
 }
 
+type TitleForm = { title: string };
+type AddItemForm = { name: string };
+
 export default function SavedListScreen() {
   const listId = firstParam(useLocalSearchParams<{ listId?: string | string[] }>().listId);
   const { api, userId } = useHouseholdApi();
@@ -39,16 +42,14 @@ export default function SavedListScreen() {
     reset,
     resetField,
     trigger,
-  } = useForm<{
-    title: string;
-    newItem: string;
-  }>({ defaultValues: { title: "", newItem: "" } });
+  } = useForm<TitleForm>({ defaultValues: { title: "" } });
+  const addItemForm = useForm<AddItemForm>({ defaultValues: { name: "" } });
   const list = listQuery.data;
   const keepDirtyValues = Object.keys(dirtyFields).length > 0;
 
   useEffect(() => {
     if (list) {
-      reset({ title: list.title, newItem: "" }, { keepDirtyValues });
+      reset({ title: list.title }, { keepDirtyValues });
     }
   }, [keepDirtyValues, list, reset]);
   const mutateList = useMutation({
@@ -80,7 +81,7 @@ export default function SavedListScreen() {
         queryClient.setQueryData(listKey, updatedList);
         resetField("title", { defaultValue: updatedList.title });
       }
-      if (mutation.type === "add") resetField("newItem");
+      if (mutation.type === "add") addItemForm.reset();
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: listKey }),
         queryClient.invalidateQueries({
@@ -94,11 +95,9 @@ export default function SavedListScreen() {
       mutateList.mutate({ type: "title", title: getValues("title").trim() });
     }
   };
-  const addItem = async () => {
-    if (await trigger("newItem")) {
-      mutateList.mutate({ type: "add", name: getValues("newItem").trim() });
-    }
-  };
+  const submitAddItem = addItemForm.handleSubmit(({ name }) => {
+    mutateList.mutate({ type: "add", name: name.trim() });
+  });
 
   if (!listId) {
     return (
@@ -211,9 +210,9 @@ export default function SavedListScreen() {
           accessibilityLabel="New grocery item"
           className="flex-1"
           containerClassName="flex-1"
-          control={control}
-          name="newItem"
-          onSubmitEditing={() => void addItem()}
+          control={addItemForm.control}
+          name="name"
+          onSubmitEditing={() => void submitAddItem()}
           placeholder="Add an item"
           returnKeyType="done"
           rules={{
@@ -224,7 +223,7 @@ export default function SavedListScreen() {
           accessibilityLabel="Add grocery item"
           disabled={mutateList.isPending}
           icon={<Icon as={Plus} className="size-5 text-primary-foreground" />}
-          onPress={() => void addItem()}
+          onPress={() => void submitAddItem()}
           size="icon"
         />
       </View>
