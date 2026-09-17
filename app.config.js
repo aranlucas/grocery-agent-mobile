@@ -1,29 +1,4 @@
 const appJson = require("./app.json");
-const fs = require("node:fs");
-const path = require("node:path");
-
-function readLocalRootEnv() {
-  if (process.env.EAS_BUILD || process.env.CI) return {};
-
-  try {
-    const contents = fs.readFileSync(path.resolve(__dirname, ".env"), "utf8");
-    return Object.fromEntries(
-      contents
-        .split(/\r?\n/u)
-        .map((line) => line.trim())
-        .filter((line) => line && !line.startsWith("#") && line.includes("="))
-        .map((line) => {
-          const separator = line.indexOf("=");
-          const key = line.slice(0, separator).trim();
-          const rawValue = line.slice(separator + 1).trim();
-          const value = rawValue.replace(/^(['"])(.*)\1$/u, "$2");
-          return [key, value];
-        }),
-    );
-  } catch {
-    return {};
-  }
-}
 
 function envOrFallback(name, fallback) {
   return process.env[name] || fallback || "";
@@ -36,7 +11,6 @@ function runtimeUrlForKey(clerkPublishableKey, productionRuntimeUrl) {
 }
 
 function configure({ config }) {
-  const localRootEnv = readLocalRootEnv();
   const baseConfig = {
     ...appJson.expo,
     ...config,
@@ -47,7 +21,7 @@ function configure({ config }) {
   };
   const clerkPublishableKey = envOrFallback(
     "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY",
-    localRootEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || baseExtra.clerkPublishableKey,
+    baseExtra.clerkPublishableKey,
   );
   const localRuntimeUrl = runtimeUrlForKey(clerkPublishableKey, baseExtra.copilotKitRuntimeUrl);
 
@@ -66,4 +40,3 @@ function configure({ config }) {
 }
 
 module.exports = configure;
-module.exports.runtimeUrlForKey = runtimeUrlForKey;

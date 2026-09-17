@@ -22,7 +22,7 @@ function updateFocus(status: AppStateStatus) {
   focusManager.setFocused(status === "active");
 }
 
-export function createGroceryQueryClient(): QueryClient {
+function createGroceryQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
       queries: {
