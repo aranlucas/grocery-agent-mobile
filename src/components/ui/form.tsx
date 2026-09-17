@@ -2,7 +2,6 @@ import React from "react";
 import { View } from "react-native";
 import {
   Controller,
-  FormProvider,
   useController,
   type ControllerProps,
   type FieldPath,
@@ -15,8 +14,6 @@ import { Text } from "@/components/ui/text";
 import { Textarea, type TextareaProps } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-export const Form = FormProvider;
-
 export function FormField<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -24,15 +21,11 @@ export function FormField<
   return <Controller {...props} />;
 }
 
-export interface FormItemProps extends React.ComponentPropsWithoutRef<typeof View> {
-  className?: string;
-}
-
-export function FormItem({ className, ...props }: FormItemProps) {
+function FormItem({ className, ...props }: React.ComponentPropsWithoutRef<typeof View>) {
   return <View className={cn("gap-1.5", className)} {...props} />;
 }
 
-export function FormMessage({ className, message }: { className?: string; message?: string }) {
+function FormMessage({ className, message }: { className?: string; message?: string }) {
   if (!message) return null;
   return (
     <Text

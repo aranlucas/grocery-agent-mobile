@@ -7,17 +7,7 @@ type IconProps = LucideProps & {
   as: LucideIcon;
 } & React.RefAttributes<LucideIcon>;
 
-/**
- * Lucide icon wrapper with Uniwind `className` support.
- *
- * @example
- * ```tsx
- * import { ArrowRight } from "lucide-react-native";
- * import { Icon } from "@/components/ui/icon";
- *
- * <Icon as={ArrowRight} className="text-primary" size={16} />
- * ```
- */
+/** Lucide icon wrapper with Uniwind `className` support. */
 function Icon({ as: IconComponent, className, size, ...props }: IconProps) {
   const styles = useResolveClassNames(cn("text-foreground", className));
   const classSize = typeof styles.width === "number" ? styles.width : undefined;
