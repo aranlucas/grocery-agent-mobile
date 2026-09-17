@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { useForm, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +15,7 @@ import { Alert } from "@/components/ui/alert";
 import { Chip } from "@/components/ui/chip";
 import { FormInput } from "@/components/ui/form";
 import { Text } from "@/components/ui/text";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import type { Household } from "@/lib/household-api";
 
 export function SaveResourceDialog({
@@ -25,18 +26,22 @@ export function SaveResourceDialog({
   onConfirm,
   onOpenChange,
   open,
-  saving,
 }: {
   defaultTitle: string;
   error?: string;
   households: Household[];
   kind: "list" | "recipe";
-  onConfirm: (title: string, householdId?: string) => void;
+  onConfirm: (title: string, householdId?: string) => Promise<unknown>;
   onOpenChange: (open: boolean) => void;
   open: boolean;
-  saving: boolean;
 }) {
-  const { control, handleSubmit, reset, setValue } = useForm<{
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { isSubmitting },
+  } = useSubmitForm<{
     title: string;
     householdId?: string;
   }>({ defaultValues: { title: defaultTitle, householdId: undefined } });
@@ -48,7 +53,13 @@ export function SaveResourceDialog({
   }, [defaultTitle, open, reset]);
 
   const resource = kind === "list" ? "grocery list" : "recipe";
-  const submit = handleSubmit(({ title, householdId }) => onConfirm(title.trim(), householdId));
+  const submit = handleSubmit(async ({ title, householdId }) => {
+    try {
+      await onConfirm(title.trim(), householdId);
+    } catch {
+      // The caller's mutation error is rendered below; preserve the draft for retry.
+    }
+  });
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
@@ -95,11 +106,11 @@ export function SaveResourceDialog({
           {error ? <Alert title={error} variant="destructive" /> : null}
         </View>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={saving} onPress={() => onOpenChange(false)}>
+          <AlertDialogCancel disabled={isSubmitting} onPress={() => onOpenChange(false)}>
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction disabled={saving} onPress={() => void submit()}>
-            {saving ? "Saving…" : "Save"}
+          <AlertDialogAction disabled={isSubmitting} onPress={() => void submit()}>
+            {isSubmitting ? "Saving…" : "Save"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

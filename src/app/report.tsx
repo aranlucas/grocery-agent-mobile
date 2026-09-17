@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/expo";
 import { Linking, View } from "react-native";
-import { useForm, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
@@ -8,6 +8,7 @@ import { FormField, FormTextarea } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Screen } from "@/components/ui/screen";
 import { Text } from "@/components/ui/text";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import { buildReportMailto, type ReportCategory } from "@/lib/report";
 
 const CATEGORIES: ReportCategory[] = ["Wrong item", "Connection issue", "App problem", "Other"];
@@ -21,7 +22,7 @@ export default function ReportScreen() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<ReportFormValues>({
+  } = useSubmitForm<ReportFormValues>({
     defaultValues: { category: "Wrong item", details: "" },
   });
   const details = useWatch({ control, name: "details" });

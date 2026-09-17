@@ -3,7 +3,6 @@ import { useLocalSearchParams } from "expo-router";
 import { Plus, Save } from "lucide-react-native";
 import { useEffect } from "react";
 import { View } from "react-native";
-import { useForm } from "react-hook-form";
 import { GroceryListItemRow } from "@/components/grocery-list-item-row";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import { Icon } from "@/components/ui/icon";
 import { Screen } from "@/components/ui/screen";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
 import { firstParam } from "@/lib/utils";
@@ -32,13 +32,12 @@ export default function SavedListScreen() {
   });
   const {
     control,
-    formState: { dirtyFields },
-    getValues,
+    formState: { dirtyFields, isSubmitting },
+    handleSubmit,
     reset,
     resetField,
-    trigger,
-  } = useForm<TitleForm>({ defaultValues: { title: "" } });
-  const addItemForm = useForm<AddItemForm>({ defaultValues: { name: "" } });
+  } = useSubmitForm<TitleForm>({ defaultValues: { title: "" } });
+  const addItemForm = useSubmitForm<AddItemForm>({ defaultValues: { name: "" } });
   const list = listQuery.data;
   const keepDirtyValues = Object.keys(dirtyFields).length > 0;
 
@@ -85,13 +84,19 @@ export default function SavedListScreen() {
       ]);
     },
   });
-  const saveTitle = async () => {
-    if (await trigger("title")) {
-      mutateList.mutate({ type: "title", title: getValues("title").trim() });
+  const saveTitle = handleSubmit(async ({ title }) => {
+    try {
+      await mutateList.mutateAsync({ type: "title", title: title.trim() });
+    } catch {
+      // Mutation state displays the error; retain the input for retry.
     }
-  };
-  const submitAddItem = addItemForm.handleSubmit(({ name }) => {
-    mutateList.mutate({ type: "add", name: name.trim() });
+  });
+  const submitAddItem = addItemForm.handleSubmit(async ({ name }) => {
+    try {
+      await mutateList.mutateAsync({ type: "add", name: name.trim() });
+    } catch {
+      // Mutation state displays the error; retain the input for retry.
+    }
   });
 
   if (!listId) {
@@ -131,6 +136,8 @@ export default function SavedListScreen() {
           containerClassName="flex-1"
           control={control}
           label="List title"
+          onSubmitEditing={() => void saveTitle()}
+          returnKeyType="done"
           name="title"
           rules={{
             validate: (value) => value.trim().length > 0 || "Add a title.",
@@ -138,6 +145,7 @@ export default function SavedListScreen() {
         />
         <Button
           accessibilityLabel="Save list title"
+          loading={isSubmitting}
           disabled={mutateList.isPending}
           icon={<Icon as={Save} className="size-4.5 text-primary-foreground" />}
           onPress={() => void saveTitle()}
@@ -193,6 +201,7 @@ export default function SavedListScreen() {
         />
         <Button
           accessibilityLabel="Add grocery item"
+          loading={addItemForm.formState.isSubmitting}
           disabled={mutateList.isPending}
           icon={<Icon as={Plus} className="size-5 text-primary-foreground" />}
           onPress={() => void submitAddItem()}

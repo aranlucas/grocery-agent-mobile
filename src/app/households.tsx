@@ -3,7 +3,6 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { ChevronRight, Copy, Home, Users } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
-import { useForm } from "react-hook-form";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,7 @@ import { RefreshControl } from "@/components/ui/refresh-control";
 import { Screen } from "@/components/ui/screen";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { type HouseholdInvite } from "@/lib/household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
@@ -36,11 +36,11 @@ export default function HouseholdsScreen() {
   const queryKey = useMemo(() => groceryQueryKeys.households(userId), [userId]);
   const [isFocused, setIsFocused] = useState(false);
   const [createdInvites, setCreatedInvites] = useState<Record<string, HouseholdInvite>>({});
-  const createForm = useForm<CreateHouseholdForm>({
+  const createForm = useSubmitForm<CreateHouseholdForm>({
     defaultValues: { name: "" },
     mode: "onChange",
   });
-  const joinForm = useForm<JoinHouseholdForm>({
+  const joinForm = useSubmitForm<JoinHouseholdForm>({
     defaultValues: { inviteCode: "" },
     mode: "onChange",
   });
@@ -81,29 +81,38 @@ export default function HouseholdsScreen() {
     },
   });
 
-  const submitCreateHousehold = createForm.handleSubmit(({ name }) => {
+  const submitCreateHousehold = createForm.handleSubmit(async ({ name }) => {
     const nextName = name.trim();
     if (!nextName || createHousehold.isPending) return;
-    createHousehold.mutate(nextName);
+    try {
+      await createHousehold.mutateAsync(nextName);
+    } catch {
+      // Mutation state displays the error; retain the input for retry.
+    }
   });
 
-  const submitJoinHousehold = joinForm.handleSubmit(({ inviteCode }) => {
+  const submitJoinHousehold = joinForm.handleSubmit(async ({ inviteCode }) => {
     const code = inviteCode.trim().toUpperCase();
     if (!code || joinHousehold.isPending) return;
-    joinHousehold.mutate(code);
+    try {
+      await joinHousehold.mutateAsync(code);
+    } catch {
+      // Mutation state displays the error; retain the input for retry.
+    }
   });
 
   const households = householdsQuery.data ?? [];
   const mutationError = createHousehold.error ?? joinHousehold.error ?? createInvite.error;
   const error = householdsQuery.error ?? mutationError;
   const errorMessage = error instanceof Error ? error.message : error ? "The request failed." : "";
-  const busy = createHousehold.isPending
-    ? "create"
-    : joinHousehold.isPending
-      ? "join"
-      : createInvite.isPending
-        ? `invite:${createInvite.variables}`
-        : "";
+  const busy =
+    createForm.formState.isSubmitting || createHousehold.isPending
+      ? "create"
+      : joinForm.formState.isSubmitting || joinHousehold.isPending
+        ? "join"
+        : createInvite.isPending
+          ? `invite:${createInvite.variables}`
+          : "";
 
   return (
     <Screen

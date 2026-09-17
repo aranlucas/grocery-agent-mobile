@@ -258,10 +258,9 @@ function GroceryListContent() {
         }
         households={householdsQuery.data ?? []}
         kind="list"
-        onConfirm={(title, householdId) => saveList.mutate({ title, householdId })}
+        onConfirm={(title, householdId) => saveList.mutateAsync({ title, householdId })}
         onOpenChange={setSaveOpen}
         open={saveOpen}
-        saving={saveList.isPending}
       />
     </>
   );
