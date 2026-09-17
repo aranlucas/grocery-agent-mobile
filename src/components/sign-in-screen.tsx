@@ -3,7 +3,6 @@ import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { useForm } from "react-hook-form";
 import { BrandMark } from "@/components/brand-mark";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { KeyboardView } from "@/components/ui/keyboard-view";
 import { SafeArea } from "@/components/ui/safe-area";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import { readableError } from "@/lib/auth";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -35,7 +35,7 @@ export function SignInScreen() {
     reset,
     setError,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<AuthFormValues>({
+  } = useSubmitForm<AuthFormValues>({
     defaultValues: { code: "", email: "", password: "" },
     mode: "onChange",
   });

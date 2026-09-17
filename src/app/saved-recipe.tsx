@@ -3,7 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import { Plus, Save, Trash2 } from "lucide-react-native";
 import { useEffect, useMemo } from "react";
 import { Pressable, View } from "react-native";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { Icon } from "@/components/ui/icon";
 import { Screen } from "@/components/ui/screen";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { type Recipe, type RecipeContent } from "@/lib/household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
@@ -61,11 +62,11 @@ export default function SavedRecipeScreen() {
   const values = useMemo(() => recipeFormValues(recipeQuery.data), [recipeQuery.data]);
   const {
     control,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isSubmitting },
     handleSubmit,
     reset,
     setValue,
-  } = useForm<RecipeFormValues>({ defaultValues: EMPTY_RECIPE_FORM });
+  } = useSubmitForm<RecipeFormValues>({ defaultValues: EMPTY_RECIPE_FORM });
   const keepDirtyValues = Object.keys(dirtyFields).length > 0;
 
   useEffect(() => {
@@ -87,15 +88,19 @@ export default function SavedRecipeScreen() {
       });
     },
   });
-  const submit = handleSubmit((draft) =>
-    updateRecipe.mutate({
-      ...draft,
-      tags: draft.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean),
-    }),
-  );
+  const submit = handleSubmit(async (draft) => {
+    try {
+      await updateRecipe.mutateAsync({
+        ...draft,
+        tags: draft.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+      });
+    } catch {
+      // Mutation state displays the error; retain the input for retry.
+    }
+  });
 
   if (!recipeId) {
     return (
@@ -298,7 +303,7 @@ export default function SavedRecipeScreen() {
       {updateRecipe.data ? <Alert title="Recipe changes saved" /> : null}
       <Button
         icon={<Icon as={Save} className="size-5 text-primary-foreground" />}
-        loading={updateRecipe.isPending}
+        loading={isSubmitting || updateRecipe.isPending}
         onPress={() => void submit()}
         size="lg"
       >

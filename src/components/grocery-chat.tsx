@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Sparkles } from "lucide-react-native";
-import { useForm } from "react-hook-form";
 import { ADD_TO_CART_MESSAGE, AddToCartDialog } from "@/components/add-to-cart-dialog";
 import { GroceryStateCard } from "@/components/grocery-state-card";
 import { useGroceryAgent } from "@/components/grocery-agent-provider";
@@ -36,6 +35,7 @@ import {
   useGroceryState,
   type GroceryOperationOutcome,
 } from "@/hooks/use-grocery-agent";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import { useKrogerConnection } from "@/hooks/use-kroger-connection";
 import type { DisplayMessage } from "@/lib/grocery-state";
 import { GROCERY_SUGGESTIONS } from "@/lib/grocery-suggestions";
@@ -312,7 +312,7 @@ const ChatComposer = memo(function ChatComposer({
     handleSubmit,
     reset,
     formState: { isSubmitting },
-  } = useForm<{ message: string }>({ defaultValues: { message: "" } });
+  } = useSubmitForm<{ message: string }>({ defaultValues: { message: "" } });
   const submit = handleSubmit(async ({ message }) => {
     const content = message.trim();
     if (!content || isRunning) return;

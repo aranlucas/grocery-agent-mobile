@@ -144,10 +144,9 @@ export default function SavedRecipesScreen() {
         error={saveRecipe.error instanceof Error ? saveRecipe.error.message : undefined}
         households={households}
         kind="recipe"
-        onConfirm={(title, householdId) => saveRecipe.mutate({ title, householdId })}
+        onConfirm={(title, householdId) => saveRecipe.mutateAsync({ title, householdId })}
         onOpenChange={setSaveOpen}
         open={saveOpen}
-        saving={saveRecipe.isPending}
       />
     </>
   );

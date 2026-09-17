@@ -29,7 +29,8 @@
     "typecheck": "GOMAXPROCS=2 tsc --noEmit -p tsconfig.json",
     "check": "pnpm lint && pnpm fmt:check && pnpm typecheck",
     "lint:fix": "oxlint --config .oxlintrc.json --threads=2 --deny-warnings --fix src scripts plugins packages index.js app.config.js metro.config.js",
-    "validate": "pnpm check && pnpm exec expo install --check"
+    "validate": "pnpm check && pnpm test && pnpm exec expo install --check",
+    "test": "node --test scripts/form-submit.test.mjs"
   },
   "dependencies": {
     "@agents/types": "workspace:*",

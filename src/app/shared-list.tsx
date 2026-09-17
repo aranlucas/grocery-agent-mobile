@@ -1,9 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { ListPlus, Plus } from "lucide-react-native";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { useForm } from "react-hook-form";
 import { GroceryListItemRow } from "@/components/grocery-list-item-row";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,7 @@ import { RefreshControl } from "@/components/ui/refresh-control";
 import { Screen } from "@/components/ui/screen";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { useSubmitForm } from "@/hooks/use-submit-form";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { type GroceryList } from "@/lib/household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
@@ -46,15 +46,13 @@ export default function SharedListScreen() {
   const { api, userId } = useHouseholdApi();
   const queryClient = useQueryClient();
   const listsKey = groceryQueryKeys.lists(userId, householdId);
-  const createListInFlight = useRef(false);
-  const addItemInFlight = useRef(false);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedListId, setSelectedListId] = useState("");
-  const createListForm = useForm<CreateListForm>({
+  const createListForm = useSubmitForm<CreateListForm>({
     defaultValues: { title: "" },
     mode: "onChange",
   });
-  const addItemForm = useForm<AddItemForm>({
+  const addItemForm = useSubmitForm<AddItemForm>({
     defaultValues: { name: "" },
     mode: "onChange",
   });
@@ -118,21 +116,17 @@ export default function SharedListScreen() {
 
   const submitCreateList = createListForm.handleSubmit(async ({ title: inputTitle }) => {
     const title = inputTitle.trim();
-    if (!title || !householdId || createListInFlight.current || createList.isPending) return;
-    createListInFlight.current = true;
+    if (!title || !householdId || createList.isPending) return;
     try {
       await createList.mutateAsync(title);
     } catch {
-      // Mutation state owns the user-visible error; keep the submitted input for retry.
-    } finally {
-      createListInFlight.current = false;
+      // Mutation state displays the error; retain the input for retry.
     }
   });
 
   const submitAddItem = addItemForm.handleSubmit(async ({ name: inputName }) => {
     const name = inputName.trim();
-    if (!name || !activeList || addItemInFlight.current || mutateItem.isPending) return;
-    addItemInFlight.current = true;
+    if (!name || !activeList || mutateItem.isPending) return;
     try {
       await mutateItem.mutateAsync({
         type: "add",
@@ -140,9 +134,7 @@ export default function SharedListScreen() {
         name,
       });
     } catch {
-      // Mutation state owns the user-visible error; keep the submitted input for retry.
-    } finally {
-      addItemInFlight.current = false;
+      // Mutation state displays the error; retain the input for retry.
     }
   });
 
@@ -275,7 +267,7 @@ export default function SharedListScreen() {
               accessibilityLabel="Add item"
               disabled={!addItemForm.formState.isValid || busy === "add-item"}
               icon={<Icon as={Plus} className="size-5.5 text-primary-foreground" />}
-              loading={busy === "add-item"}
+              loading={addItemForm.formState.isSubmitting || busy === "add-item"}
               onPress={() => void submitAddItem()}
               size="icon"
             />
@@ -318,7 +310,7 @@ export default function SharedListScreen() {
             <Button
               className="flex-1"
               disabled={!householdId || !createListForm.formState.isValid || busy === "create-list"}
-              loading={busy === "create-list"}
+              loading={createListForm.formState.isSubmitting || busy === "create-list"}
               size="lg"
               onPress={() => void submitCreateList()}
             >

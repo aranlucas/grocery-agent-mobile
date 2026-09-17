@@ -45,12 +45,7 @@
       }
     },
     {
-      "files": [
-        "src/components/ui/form.tsx",
-        "src/hooks/use-grocery-agent.ts",
-        "src/app/households.tsx",
-        "src/app/shared-list.tsx"
-      ],
+      "files": ["src/components/ui/form.tsx", "src/hooks/use-grocery-agent.ts"],
       "rules": {
         "react/refs": "off"
       }
