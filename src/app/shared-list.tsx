@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { ListPlus, Plus, Trash2 } from "lucide-react-native";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { Alert } from "@/components/ui/alert";
@@ -51,8 +51,6 @@ export default function SharedListScreen() {
   const { api, userId } = useHouseholdApi();
   const queryClient = useQueryClient();
   const listsKey = groceryQueryKeys.lists(userId, householdId);
-  const createListInFlight = useRef(false);
-  const addItemInFlight = useRef(false);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedListId, setSelectedListId] = useState("");
   const createListForm = useForm<CreateListForm>({
@@ -121,34 +119,20 @@ export default function SharedListScreen() {
     },
   });
 
-  const submitCreateList = createListForm.handleSubmit(async ({ title: inputTitle }) => {
+  const submitCreateList = createListForm.handleSubmit(({ title: inputTitle }) => {
     const title = inputTitle.trim();
-    if (!title || !householdId || createListInFlight.current || createList.isPending) return;
-    createListInFlight.current = true;
-    try {
-      await createList.mutateAsync(title);
-    } catch {
-      // Mutation state owns the user-visible error; keep the submitted input for retry.
-    } finally {
-      createListInFlight.current = false;
-    }
+    if (!title || !householdId || createList.isPending) return;
+    createList.mutate(title);
   });
 
-  const submitAddItem = addItemForm.handleSubmit(async ({ name: inputName }) => {
+  const submitAddItem = addItemForm.handleSubmit(({ name: inputName }) => {
     const name = inputName.trim();
-    if (!name || !activeList || addItemInFlight.current || mutateItem.isPending) return;
-    addItemInFlight.current = true;
-    try {
-      await mutateItem.mutateAsync({
-        type: "add",
-        listId: activeList.id,
-        name,
-      });
-    } catch {
-      // Mutation state owns the user-visible error; keep the submitted input for retry.
-    } finally {
-      addItemInFlight.current = false;
-    }
+    if (!name || !activeList || mutateItem.isPending) return;
+    mutateItem.mutate({
+      type: "add",
+      listId: activeList.id,
+      name,
+    });
   });
 
   const mutationError = createList.error ?? mutateItem.error;

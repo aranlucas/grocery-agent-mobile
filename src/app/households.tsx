@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useRouter } from "expo-router";
 import { ChevronRight, Copy, Home, Users } from "lucide-react-native";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { Alert } from "@/components/ui/alert";
@@ -34,8 +34,6 @@ export default function HouseholdsScreen() {
   const { api, userId } = useHouseholdApi();
   const queryClient = useQueryClient();
   const queryKey = useMemo(() => groceryQueryKeys.households(userId), [userId]);
-  const createInFlight = useRef(false);
-  const joinInFlight = useRef(false);
   const [isFocused, setIsFocused] = useState(false);
   const [createdInvites, setCreatedInvites] = useState<Record<string, HouseholdInvite>>({});
   const createForm = useForm<CreateHouseholdForm>({
@@ -83,30 +81,16 @@ export default function HouseholdsScreen() {
     },
   });
 
-  const submitCreateHousehold = createForm.handleSubmit(async ({ name }) => {
+  const submitCreateHousehold = createForm.handleSubmit(({ name }) => {
     const nextName = name.trim();
-    if (!nextName || createInFlight.current || createHousehold.isPending) return;
-    createInFlight.current = true;
-    try {
-      await createHousehold.mutateAsync(nextName);
-    } catch {
-      // Mutation state owns the user-visible error; keep the submitted input for retry.
-    } finally {
-      createInFlight.current = false;
-    }
+    if (!nextName || createHousehold.isPending) return;
+    createHousehold.mutate(nextName);
   });
 
-  const submitJoinHousehold = joinForm.handleSubmit(async ({ inviteCode }) => {
+  const submitJoinHousehold = joinForm.handleSubmit(({ inviteCode }) => {
     const code = inviteCode.trim().toUpperCase();
-    if (!code || joinInFlight.current || joinHousehold.isPending) return;
-    joinInFlight.current = true;
-    try {
-      await joinHousehold.mutateAsync(code);
-    } catch {
-      // Mutation state owns the user-visible error; keep the submitted input for retry.
-    } finally {
-      joinInFlight.current = false;
-    }
+    if (!code || joinHousehold.isPending) return;
+    joinHousehold.mutate(code);
   });
 
   const households = householdsQuery.data ?? [];
