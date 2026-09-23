@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
@@ -21,13 +21,7 @@ import { FormField } from "@/components/ui/form";
 import { Icon } from "@/components/ui/icon";
 import { KeyboardView } from "@/components/ui/keyboard-view";
 import { MarkdownText } from "@/components/ui/markdown-text";
-import {
-  PromptInput,
-  PromptInputSend,
-  PromptInputSpacer,
-  PromptInputTextarea,
-  PromptInputToolbar,
-} from "@/components/ui/prompt-input";
+import { PromptInput, PromptInputSend, PromptInputTextarea } from "@/components/ui/prompt-input";
 import { SafeArea } from "@/components/ui/safe-area";
 import { Text } from "@/components/ui/text";
 import {
@@ -37,14 +31,16 @@ import {
 } from "@/hooks/use-grocery-agent";
 import { useSubmitForm } from "@/hooks/use-submit-form";
 import { useKrogerConnection } from "@/hooks/use-kroger-connection";
-import type { DisplayMessage } from "@/lib/grocery-state";
+import { cartSubtotal, type DisplayMessage } from "@/lib/grocery-state";
 import { GROCERY_SUGGESTIONS } from "@/lib/grocery-suggestions";
+import { firstParam } from "@/lib/utils";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ANDROID_HEADER_HEIGHT = 56;
 
 export function GroceryChat() {
   const router = useRouter();
+  const prompt = firstParam(useLocalSearchParams<{ prompt?: string | string[] }>().prompt);
   const insets = useSafeAreaInsets();
   const [cartDialogOpen, setCartDialogOpen] = useState(false);
   const [reasoningDurations, setReasoningDurations] = useState<Record<string, number>>({});
@@ -157,7 +153,9 @@ export function GroceryChat() {
               onSaveList={openListSave}
               onSaveRecipe={state.recipe ? openRecipeSave : undefined}
             />
-            <KrogerConnectionCard connection={connection} />
+            {messages.length > 0 && state.shopping_list?.length ? (
+              <KrogerConnectionCard connection={connection} />
+            ) : null}
             {error ? (
               <View className="gap-2">
                 <Alert title={error} variant="destructive" />
@@ -190,7 +188,8 @@ export function GroceryChat() {
       <SafeArea className="flex-none border-t border-border" edges={["bottom"]}>
         <View className="w-full max-w-3xl self-center px-4 py-3 sm:px-6">
           <ChatComposer
-            key={activeThreadId ?? "grocery"}
+            key={`${activeThreadId ?? "grocery"}:${prompt}`}
+            initialMessage={prompt}
             isRunning={isRunning}
             onSend={sendAndFollow}
             onStop={stop}
@@ -198,6 +197,8 @@ export function GroceryChat() {
         </View>
       </SafeArea>
       <AddToCartDialog
+        itemCount={state.product_matches?.length ?? 0}
+        subtotal={cartSubtotal(state.cart ?? [])}
         open={cartDialogOpen}
         onOpenChange={setCartDialogOpen}
         onConfirm={() => void send(ADD_TO_CART_MESSAGE)}
@@ -214,18 +215,15 @@ const ChatEmptyState = memo(function ChatEmptyState({
   onSend: (content: string) => Promise<GroceryOperationOutcome>;
 }) {
   return (
-    <View className="items-center gap-3 px-3 py-6">
+    <View className="gap-4 py-6">
       <View className="size-14 items-center justify-center rounded-2xl bg-muted">
         <Icon as={Sparkles} className="size-6.5 text-primary" />
       </View>
-      <Text className="text-center" variant="h3">
-        What are you shopping for?
+      <Text variant="h3">A good plan starts with you.</Text>
+      <Text className="text-muted-foreground">
+        Tell me what you’d like to cook, how many people, or what you’d like to spend.
       </Text>
-      <Text className="max-w-88 text-center text-muted-foreground">
-        Describe a recipe, a weekly budget, or the meals you need. I’ll turn it into a practical
-        list you control.
-      </Text>
-      <View className="w-full flex-row flex-wrap justify-center gap-2">
+      <View className="w-full items-start gap-2">
         {GROCERY_SUGGESTIONS.map((suggestion) => (
           <Chip
             key={suggestion.title}
@@ -248,10 +246,8 @@ function messageKey(message: DisplayMessage) {
 const UserMessage = memo(function UserMessage({ content, id }: { content: string; id: string }) {
   return (
     <View className="w-full items-end" nativeID={id}>
-      <View className="max-w-3/4 rounded-2xl rounded-br-sm bg-primary px-4 py-2.5">
-        <Text className="text-end text-sm leading-relaxed text-primary-foreground" selectable>
-          {content}
-        </Text>
+      <View className="max-w-9/10 rounded-2xl rounded-br-sm bg-primary-surface px-4 py-3">
+        <Text selectable>{content}</Text>
       </View>
     </View>
   );
@@ -290,7 +286,7 @@ const MessageItem = memo(function MessageItem({
           status={message.status}
         />
       ) : (
-        <View className="max-w-3/4 rounded-2xl rounded-bl-sm bg-muted px-4 py-2.5">
+        <View className="w-full py-3">
           <MarkdownText className="min-w-0 self-start" content={message.content} />
         </View>
       )}
@@ -299,10 +295,12 @@ const MessageItem = memo(function MessageItem({
 });
 
 const ChatComposer = memo(function ChatComposer({
+  initialMessage,
   isRunning,
   onSend,
   onStop,
 }: {
+  initialMessage: string;
   isRunning: boolean;
   onSend: (content: string) => Promise<GroceryOperationOutcome>;
   onStop: () => Promise<GroceryOperationOutcome>;
@@ -312,7 +310,7 @@ const ChatComposer = memo(function ChatComposer({
     handleSubmit,
     reset,
     formState: { isSubmitting },
-  } = useSubmitForm<{ message: string }>({ defaultValues: { message: "" } });
+  } = useSubmitForm<{ message: string }>({ defaultValues: { message: initialMessage } });
   const submit = handleSubmit(async ({ message }) => {
     const content = message.trim();
     if (!content || isRunning) return;
@@ -330,6 +328,7 @@ const ChatComposer = memo(function ChatComposer({
       rules={{ validate: (value) => value.trim().length > 0 }}
       render={({ field }) => (
         <PromptInput
+          className="flex-row items-end gap-2 rounded-2xl bg-card p-2"
           clearOnSend={false}
           onChangeText={field.onChange}
           onSend={() => void submit()}
@@ -337,11 +336,15 @@ const ChatComposer = memo(function ChatComposer({
           streaming={isRunning || isSubmitting}
           value={field.value}
         >
-          <PromptInputTextarea ref={field.ref} onBlur={field.onBlur} />
-          <PromptInputToolbar>
-            <PromptInputSpacer />
-            <PromptInputSend />
-          </PromptInputToolbar>
+          <View className="min-w-0 flex-1">
+            <PromptInputTextarea
+              testID="chat-message"
+              ref={field.ref}
+              onBlur={field.onBlur}
+              placeholder="Ask about meals or groceries…"
+            />
+          </View>
+          <PromptInputSend testID="chat-send" />
         </PromptInput>
       )}
     />

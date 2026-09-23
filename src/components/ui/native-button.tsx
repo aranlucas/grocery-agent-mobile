@@ -1,3 +1,4 @@
+import { useWindowDimensions } from "react-native";
 import { Button } from "@expo/ui";
 import type { ReactNode } from "react";
 import type { NativeAccessibility } from "./native-accessibility";
@@ -19,6 +20,7 @@ export function NativeButton({
   width,
   testID,
 }: NativeButtonProps) {
+  const { fontScale } = useWindowDimensions();
   return (
     <Button
       variant={
@@ -30,7 +32,7 @@ export function NativeButton({
       }
       onPress={onPress}
       disabled={disabled}
-      style={{ height: 56, width }}
+      style={{ height: Math.max(56, 32 + 24 * fontScale), width }}
       testID={testID}
     >
       {children}

@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  /><title>Grocery Agent · Live verification</title
+  ><style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #f7f8f2;
+      color: #17201a;
+      font:
+        16px/1.55 system-ui,
+        sans-serif;
+    }
+    header,
+    main {
+      max-width: 1280px;
+      margin: auto;
+      padding: 32px 24px;
+    }
+    header {
+      padding-bottom: 8px;
+    }
+    p {
+      max-width: 800px;
+      color: #59675d;
+    }
+    h1 {
+      font-size: 32px;
+      letter-spacing: -0.7px;
+      margin: 12px 0;
+    }
+    h2 {
+      font-size: 22px;
+      margin: 32px 0 16px;
+    }
+    nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    a {
+      color: #14532d;
+    }
+    select,
+    button {
+      font: inherit;
+    }
+    select {
+      padding: 12px;
+      border: 1px solid #b2beb2;
+      border-radius: 8px;
+      background: white;
+      color: inherit;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+      gap: 24px;
+    }
+    .shot {
+      border: 1px solid #dfe5dc;
+      background: white;
+      color: inherit;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: left;
+      cursor: zoom-in;
+    }
+    .shot img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 9/20;
+      object-fit: contain;
+      background: #111813;
+      border-radius: 8px;
+    }
+    .shot span {
+      display: block;
+      font-weight: 600;
+      padding: 12px 2px 2px;
+    }
+    .shot:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #15803d;
+      outline-offset: 4px;
+    }
+    .tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: #14532d;
+      letter-spacing: 1px;
+    }
+    dialog {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px;
+      background: #f7f8f2;
+      max-width: 95vw;
+      max-height: 96vh;
+    }
+    dialog::backdrop {
+      background: #000b;
+    }
+    dialog img {
+      display: block;
+      max-height: 82vh;
+      max-width: 85vw;
+    }
+    dialog button {
+      min-height: 48px;
+      background: #14532d;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 18px;
+      margin-bottom: 12px;
+    }
+    footer {
+      padding: 24px;
+      color: #59675d;
+    }
+    [hidden] {
+      display: none !important;
+    }
+  </style>
+  <header>
+    <div class="tag">GROCERY AGENT / REAL-ACCOUNT RERUN</div>
+    <h1>Verified with Clerk and the live development gateway.</h1>
+    <p>
+      Real native Android captures from 22 September 2026. The rerun spans CopilotKit 1.72.0 and the
+      requested 1.73.2 upgrade. Screenshots include observed failures; this gallery does not claim
+      every integration passed. No checkout or messages to other people were performed.
+    </p>
+    <nav>
+      <a href="live-verification.md">Detailed live results and limits</a
+      ><a href="index.html">Original full UI review</a><a href="audit.md">Screen and flow map</a
+      ><a href="design-system.md">Design system</a>
+    </nav>
+  </header>
+  <main>
+    <label for="area">Journey </label
+    ><select id="area" onchange="filter(this.value)">
+      <option value="all">All journeys</option>
+      <option>Clerk authentication</option>
+      <option>Households and lists</option>
+      <option>Saved recipe</option>
+      <option>Chat and connections</option>
+    </select>
+    <section data-area="Clerk authentication">
+      <h2>Clerk authentication</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Reset rejects an incorrect code"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/reset-invalid-code.png"
+            alt="Reset rejects an incorrect code on Android"
+          /><span>Reset rejects an incorrect code</span></button
+        ><button class="shot" onclick="openShot(this)" aria-label="Enlarge Signed out on 1.73.2">
+          <img
+            loading="lazy"
+            src="evidence/live/signed-out-latest.png"
+            alt="Signed out on 1.73.2 on Android"
+          /><span>Signed out on 1.73.2</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Password sign-in returns to Home"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/signed-in-again-latest.png"
+            alt="Password sign-in returns to Home on Android"
+          /><span>Password sign-in returns to Home</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge New account: invalid code"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/signup-verification-error.png"
+            alt="New account: invalid code on Android"
+          /><span>New account: invalid code</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge New account: code resent"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/signup-verification-resent.png"
+            alt="New account: code resent on Android"
+          /><span>New account: code resent</span>
+        </button>
+      </div>
+    </section>
+    <section data-area="Households and lists">
+      <h2>Households and lists</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Household created on the live gateway"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/household-created.png"
+            alt="Household created on the live gateway on Android"
+          /><span>Household created on the live gateway</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge New shared list with keyboard"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/new-list-keyboard.png"
+            alt="New shared list with keyboard on Android"
+          /><span>New shared list with keyboard</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Live lists: no search results"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/lists-search-empty.png"
+            alt="Live lists: no search results on Android"
+          /><span>Live lists: no search results</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge List title: unsaved changes guard"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/list-unsaved-back.png"
+            alt="List title: unsaved changes guard on Android"
+          /><span>List title: unsaved changes guard</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Joined as a second account"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/household-joined-member.png"
+            alt="Joined as a second account on Android"
+          /><span>Joined as a second account</span>
+        </button>
+      </div>
+    </section>
+    <section data-area="Saved recipe">
+      <h2>Saved recipe</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Persisted recipe after upgrade"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/recipe-reading-latest.png"
+            alt="Persisted recipe after upgrade on Android"
+          /><span>Persisted recipe after upgrade</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Recipe: Android Back protection"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/recipe-unsaved-back.png"
+            alt="Recipe: Android Back protection on Android"
+          /><span>Recipe: Android Back protection</span></button
+        ><button class="shot" onclick="openShot(this)" aria-label="Enlarge Edited recipe persisted">
+          <img
+            loading="lazy"
+            src="evidence/live/recipe-saved-latest.png"
+            alt="Edited recipe persisted on Android"
+          /><span>Edited recipe persisted</span></button
+        ><button class="shot" onclick="openShot(this)" aria-label="Enlarge Offline recovery state">
+          <img
+            loading="lazy"
+            src="evidence/live/recipes-offline.png"
+            alt="Offline recovery state on Android"
+          /><span>Offline recovery state</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Recipes loaded after reconnect"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/recipes-reconnected.png"
+            alt="Recipes loaded after reconnect on Android"
+          /><span>Recipes loaded after reconnect</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge 320dp, 150% text, light appearance"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/recipe-live-narrow-light.png"
+            alt="320dp, 150% text, light appearance on Android"
+          /><span>320dp, 150% text, light appearance</span>
+        </button>
+      </div>
+    </section>
+    <section data-area="Chat and connections">
+      <h2>Chat and connections</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Live conversation history"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/chat-history-latest.png"
+            alt="Live conversation history on Android"
+          /><span>Live conversation history</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Completed response restored"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/chat-resumed-ready-latest.png"
+            alt="Completed response restored on Android"
+          /><span>Completed response restored</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Fresh response on 1.73.2"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/chat-ready-generated-latest.png"
+            alt="Fresh response on 1.73.2 on Android"
+          /><span>Fresh response on 1.73.2</span></button
+        ><button class="shot" onclick="openShot(this)" aria-label="Enlarge Streaming reasoning">
+          <img
+            loading="lazy"
+            src="evidence/live/chat-generating.png"
+            alt="Streaming reasoning on Android"
+          /><span>Streaming reasoning</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Long stream failure and Retry"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/chat-stream-error-latest.png"
+            alt="Long stream failure and Retry on Android"
+          /><span>Long stream failure and Retry</span></button
+        ><button
+          class="shot"
+          onclick="openShot(this)"
+          aria-label="Enlarge Incomplete connection recovery"
+        >
+          <img
+            loading="lazy"
+            src="evidence/live/kroger-callback-recovery.png"
+            alt="Incomplete connection recovery on Android"
+          /><span>Incomplete connection recovery</span></button
+        ><button class="shot" onclick="openShot(this)" aria-label="Enlarge Final generation retry">
+          <img
+            loading="lazy"
+            src="evidence/live/latest-retry-result.png"
+            alt="Final generation retry on Android"
+          /><span>Final generation retry</span>
+        </button>
+      </div>
+    </section>
+  </main>
+  <dialog id="preview">
+    <button onclick="preview.close()">Close preview</button><img id="full" alt="" />
+  </dialog>
+  <footer>
+    Android API 35 · Real development test accounts · Unedited captures may show development tools
+    and error overlays.
+  </footer>
+  <script>
+    const preview = document.getElementById("preview");
+    const full = document.getElementById("full");
+    function filter(area) {
+      document
+        .querySelectorAll("section")
+        .forEach((s) => (s.hidden = area !== "all" && s.dataset.area !== area));
+    }
+    function openShot(b) {
+      full.src = b.querySelector("img").src;
+      full.alt = b.querySelector("img").alt;
+      preview.showModal();
+    }
+    preview.addEventListener("click", (e) => {
+      if (e.target === preview) preview.close();
+    });
+  </script>
+</html>

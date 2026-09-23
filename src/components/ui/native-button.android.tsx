@@ -1,6 +1,6 @@
 import { Button, OutlinedButton, TextButton, Shape } from "@expo/ui/jetpack-compose";
 import {
-  height,
+  defaultMinSize,
   width as nativeWidth,
   testID as nativeTestID,
 } from "@expo/ui/jetpack-compose/modifiers";
@@ -42,7 +42,7 @@ export function NativeButton({
         },
       })}
       modifiers={[
-        height(56),
+        defaultMinSize({ minHeight: 56, minWidth: 56 }),
         ...(width ? [nativeWidth(width)] : []),
         ...accessibilityModifiers(accessibility),
         ...(testID ? [nativeTestID(testID)] : []),

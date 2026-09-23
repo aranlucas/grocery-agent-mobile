@@ -55,8 +55,8 @@ export default function KrogerCallbackScreen() {
               <CardDescription selectable>{error}</CardDescription>
             </CardHeader>
             <CardFooter>
-              <Button className="flex-1" size="lg" onPress={() => router.replace("/")}>
-                Back to Grocery Agent
+              <Button className="flex-1" size="lg" onPress={() => router.replace("/account")}>
+                Back to account
               </Button>
             </CardFooter>
           </Card>

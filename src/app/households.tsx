@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useRouter } from "expo-router";
-import { ChevronRight, Copy, Home, Users } from "lucide-react-native";
+import { ChevronRight, Home, Users, Share2 } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, Share, View } from "react-native";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Chip } from "@/components/ui/chip";
+import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FormInput } from "@/components/ui/form";
 import { Icon } from "@/components/ui/icon";
@@ -34,6 +36,8 @@ export default function HouseholdsScreen() {
   const { api, userId } = useHouseholdApi();
   const queryClient = useQueryClient();
   const queryKey = useMemo(() => groceryQueryKeys.households(userId), [userId]);
+  const [formMode, setFormMode] = useState<"create" | "join">("create");
+  const [inviteError, setInviteError] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [createdInvites, setCreatedInvites] = useState<Record<string, HouseholdInvite>>({});
   const createForm = useSubmitForm<CreateHouseholdForm>({
@@ -128,7 +132,13 @@ export default function HouseholdsScreen() {
         <Badge variant="outline">{String(households.length)}</Badge>
       </View>
 
-      {householdsQuery.isPending ? (
+      {householdsQuery.fetchStatus === "paused" && !households.length ? (
+        <ErrorState
+          title="You’re offline"
+          message="Reconnect to load your households."
+          onRetry={() => void householdsQuery.refetch()}
+        />
+      ) : householdsQuery.isPending ? (
         <View
           accessibilityLabel="Loading households"
           accessibilityRole="progressbar"
@@ -137,6 +147,16 @@ export default function HouseholdsScreen() {
           <Skeleton className="h-28 w-full" />
           <Skeleton className="h-28 w-full" />
         </View>
+      ) : householdsQuery.error && households.length === 0 ? (
+        <ErrorState
+          title="Couldn’t load your households"
+          message={
+            householdsQuery.error instanceof Error
+              ? householdsQuery.error.message
+              : "Check your connection and try again."
+          }
+          onRetry={() => void householdsQuery.refetch()}
+        />
       ) : households.length === 0 ? (
         <Card>
           <CardContent>
@@ -181,15 +201,36 @@ export default function HouseholdsScreen() {
               {household.role === "owner" ? (
                 <CardContent className="pt-0">
                   {invite ? (
-                    <View className="flex-row items-center gap-2.5 rounded-2xl bg-muted p-3">
-                      <Icon as={Copy} className="size-4.5 text-primary" />
+                    <View className="gap-3 rounded-2xl bg-muted p-3">
+                      <Icon as={Users} className="size-5 text-primary" />
                       <View className="flex-1 gap-0.5">
                         <Text variant="muted">Invite code</Text>
                         <Text className="tracking-widest" selectable variant="large">
                           {invite.code}
                         </Text>
                       </View>
-                      <Text variant="muted">7 days</Text>
+                      <Button
+                        variant="outline"
+                        icon={<Icon as={Share2} className="size-4 text-primary" />}
+                        onPress={() => {
+                          setInviteError("");
+                          void Share.share({
+                            message: `Join ${household.name} in Grocery Agent with invite code ${invite.code}.`,
+                          }).catch(() =>
+                            setInviteError(
+                              "Couldn’t open sharing. You can select and copy the code above.",
+                            ),
+                          );
+                        }}
+                      >
+                        Share invite code
+                      </Button>
+                      <Text variant="muted">
+                        Expires{" "}
+                        {new Date(
+                          invite.expires_at < 1e12 ? invite.expires_at * 1000 : invite.expires_at,
+                        ).toLocaleDateString()}
+                      </Text>
                     </View>
                   ) : (
                     <Button
@@ -211,90 +252,123 @@ export default function HouseholdsScreen() {
         })
       )}
 
-      {errorMessage ? <Alert title={errorMessage} variant="destructive" /> : null}
+      {mutationError || (households.length > 0 && errorMessage) ? (
+        <Alert title={errorMessage} variant="destructive" />
+      ) : null}
+      {inviteError ? <Alert title={inviteError} variant="destructive" /> : null}
+      {createHousehold.isSuccess ? (
+        <Alert title={`${createHousehold.data.name} is ready`} variant="success" />
+      ) : joinHousehold.isSuccess ? (
+        <Alert title={`You joined ${joinHousehold.data.name}`} variant="success" />
+      ) : null}
 
       <Text variant="h4">Add a household</Text>
-      <Card>
-        <CardHeader className="flex-row items-center gap-3 pb-0">
-          <View className="size-11 items-center justify-center rounded-2xl bg-muted">
-            <Icon as={Home} className="size-5 text-primary" />
-          </View>
-          <View className="flex-1 gap-0.5">
-            <CardTitle>Create a household</CardTitle>
-            <CardDescription>
-              Keep one grocery list in sync with the people at home.
-            </CardDescription>
-          </View>
-        </CardHeader>
-        <CardContent>
-          <FormInput
-            control={createForm.control}
-            label="Household name"
-            name="name"
-            rules={{
-              validate: (value) => value.trim().length > 0 || "Enter a household name.",
-            }}
-            autoCapitalize="words"
-            onSubmitEditing={() => void submitCreateHousehold()}
-            placeholder="Household name"
-            returnKeyType="done"
-          />
-        </CardContent>
-        <CardFooter className="pt-0">
-          <Button
-            className="flex-1"
-            disabled={!createForm.formState.isValid}
-            loading={busy === "create"}
-            size="lg"
-            variant="secondary"
-            onPress={() => void submitCreateHousehold()}
-          >
-            Create household
-          </Button>
-        </CardFooter>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex-row items-center gap-3 pb-0">
-          <View className="size-11 items-center justify-center rounded-2xl bg-muted">
-            <Icon as={Users} className="size-5 text-primary" />
-          </View>
-          <View className="flex-1 gap-0.5">
-            <CardTitle>Join with an invite</CardTitle>
-            <CardDescription>
-              Paste the eight-character code from a household owner.
-            </CardDescription>
-          </View>
-        </CardHeader>
-        <CardContent>
-          <FormInput
-            control={joinForm.control}
-            label="Invite code"
-            name="inviteCode"
-            rules={{
-              validate: (value) =>
-                value.trim().length === 8 || "Enter the eight-character invite code.",
-            }}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            onSubmitEditing={() => void submitJoinHousehold()}
-            placeholder="ABCDEFGH"
-            returnKeyType="done"
-          />
-        </CardContent>
-        <CardFooter className="pt-0">
-          <Button
-            className="flex-1"
-            disabled={!joinForm.formState.isValid}
-            loading={busy === "join"}
-            size="lg"
-            variant="secondary"
-            onPress={() => void submitJoinHousehold()}
-          >
-            {busy === "join" ? "Joining…" : "Join household"}
-          </Button>
-        </CardFooter>
-      </Card>
+      <View
+        className="flex-row flex-wrap gap-2"
+        accessibilityRole="radiogroup"
+        accessibilityLabel="Add a household"
+      >
+        <Chip
+          accessibilityRole="radio"
+          accessibilityState={{ checked: formMode === "create" }}
+          selected={formMode === "create"}
+          onPress={() => setFormMode("create")}
+        >
+          Create new
+        </Chip>
+        <Chip
+          accessibilityRole="radio"
+          accessibilityState={{ checked: formMode === "join" }}
+          selected={formMode === "join"}
+          onPress={() => setFormMode("join")}
+        >
+          Join with a code
+        </Chip>
+      </View>
+      {formMode === "create" ? (
+        <Card>
+          <CardHeader className="flex-row items-center gap-3 pb-0">
+            <View className="size-11 items-center justify-center rounded-2xl bg-muted">
+              <Icon as={Home} className="size-5 text-primary" />
+            </View>
+            <View className="flex-1 gap-0.5">
+              <CardTitle>Create a household</CardTitle>
+              <CardDescription>
+                Keep one grocery list in sync with the people at home.
+              </CardDescription>
+            </View>
+          </CardHeader>
+          <CardContent>
+            <FormInput
+              control={createForm.control}
+              label="Household name"
+              name="name"
+              rules={{
+                validate: (value) => value.trim().length > 0 || "Enter a household name.",
+              }}
+              autoCapitalize="words"
+              onSubmitEditing={() => void submitCreateHousehold()}
+              placeholder="Household name"
+              returnKeyType="done"
+            />
+          </CardContent>
+          <CardFooter className="pt-0">
+            <Button
+              className="flex-1"
+              disabled={!createForm.formState.isValid}
+              loading={busy === "create"}
+              size="lg"
+              variant="secondary"
+              onPress={() => void submitCreateHousehold()}
+            >
+              Create household
+            </Button>
+          </CardFooter>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader className="flex-row items-center gap-3 pb-0">
+            <View className="size-11 items-center justify-center rounded-2xl bg-muted">
+              <Icon as={Users} className="size-5 text-primary" />
+            </View>
+            <View className="flex-1 gap-0.5">
+              <CardTitle>Join with an invite</CardTitle>
+              <CardDescription>
+                Paste the eight-character code from a household owner.
+              </CardDescription>
+            </View>
+          </CardHeader>
+          <CardContent>
+            <FormInput
+              control={joinForm.control}
+              label="Invite code"
+              name="inviteCode"
+              rules={{
+                validate: (value) =>
+                  value.trim().length === 8 || "Enter the eight-character invite code.",
+              }}
+              maxLength={8}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              onSubmitEditing={() => void submitJoinHousehold()}
+              placeholder="ABCDEFGH"
+              returnKeyType="done"
+            />
+          </CardContent>
+          <CardFooter className="pt-0">
+            <Button
+              className="flex-1"
+              disabled={!joinForm.formState.isValid}
+              loading={busy === "join"}
+              size="lg"
+              variant="secondary"
+              onPress={() => void submitJoinHousehold()}
+            >
+              {busy === "join" ? "Joining…" : "Join household"}
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
     </Screen>
   );
 }

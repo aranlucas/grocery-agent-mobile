@@ -1,19 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { ListPlus, Plus } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { ListProgress } from "@/components/list-progress";
+import { ErrorState } from "@/components/ui/error-state";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
 import { GroceryListItemRow } from "@/components/grocery-list-item-row";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FormInput } from "@/components/ui/form";
@@ -37,6 +39,8 @@ type CreateListForm = { title: string };
 type AddItemForm = { name: string };
 
 export default function SharedListScreen() {
+  const router = useRouter();
+  const [createOpen, setCreateOpen] = useState(false);
   const params = useLocalSearchParams<{
     householdId?: string | string[];
     householdName?: string | string[];
@@ -87,6 +91,7 @@ export default function SharedListScreen() {
     mutationFn: (title: string) => api.createList(title, householdId),
     onSuccess: (created) => {
       createListForm.reset();
+      setCreateOpen(false);
       setSelectedListId(created.id);
       queryClient.setQueryData<GroceryList[]>(listsKey, (current = []) => [created, ...current]);
       queryClient.setQueryData(groceryQueryKeys.list(userId, created.id), created);
@@ -108,9 +113,10 @@ export default function SharedListScreen() {
     },
     onSuccess: async (_, mutation) => {
       if (mutation.type === "add") addItemForm.reset();
-      await queryClient.invalidateQueries({
-        queryKey: groceryQueryKeys.list(userId, mutation.listId),
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: groceryQueryKeys.list(userId, mutation.listId) }),
+        queryClient.invalidateQueries({ queryKey: listsKey }),
+      ]);
     },
   });
 
@@ -158,169 +164,240 @@ export default function SharedListScreen() {
     Boolean(householdId) &&
     (listsQuery.isPending || (Boolean(activeListId) && activeListQuery.isPending));
 
-  return (
-    <Screen
-      refreshControl={
-        <RefreshControl
-          refreshing={listsQuery.isRefetching || activeListQuery.isRefetching}
-          onRefresh={() => {
-            void listsQuery.refetch();
-            if (activeListId) void activeListQuery.refetch();
-          }}
+  if (!householdId)
+    return (
+      <Screen>
+        <ErrorState
+          title="This household link is incomplete"
+          message="Open a household to see its shared lists."
+          onRetry={() => router.replace("/households")}
+          retryLabel="Open households"
         />
-      }
-    >
-      <View className="gap-1">
-        <Text className="font-extrabold text-primary" selectable variant="small">
-          {householdName}
-        </Text>
-        <Text variant="muted">Changes are visible to everyone in this household.</Text>
-      </View>
+      </Screen>
+    );
 
-      {lists.length > 1 ? (
-        <ScrollView
-          accessibilityLabel="Grocery list selector"
-          accessibilityRole="radiogroup"
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerClassName="gap-2"
-        >
-          {lists.map((list) => {
-            const selected = list.id === activeList?.id;
-            return (
-              <Chip
-                accessibilityState={{ checked: selected }}
-                accessibilityRole="radio"
-                key={list.id}
-                onPress={() => setSelectedListId(list.id)}
-                selected={selected}
-              >
-                {list.title}
-              </Chip>
-            );
-          })}
-        </ScrollView>
-      ) : null}
-
-      {activeList ? (
-        <>
-          <Card className="overflow-hidden">
-            <CardHeader className="flex-row items-center justify-between gap-3">
-              <View className="flex-1 gap-0.5">
-                <CardTitle selectable>{activeList.title}</CardTitle>
-                <CardDescription>
-                  {activeList.items.length} {activeList.items.length === 1 ? "item" : "items"}
-                </CardDescription>
-              </View>
-              <Icon as={ListPlus} className="size-5.5 text-primary" />
-            </CardHeader>
-            <CardContent className="p-0">
-              {activeList.items.length ? (
-                activeList.items.map((item, index) => (
-                  <GroceryListItemRow
-                    key={item.id}
-                    busy={busy === `item:${item.id}`}
-                    item={item}
-                    onDelete={() =>
-                      mutateItem.mutate({
-                        type: "delete",
-                        listId: activeList.id,
-                        itemId: item.id,
-                      })
-                    }
-                    onToggle={(checked) =>
-                      mutateItem.mutate({
-                        type: "toggle",
-                        listId: activeList.id,
-                        itemId: item.id,
-                        checked,
-                      })
-                    }
-                    showSeparator={index < activeList.items.length - 1}
-                  />
-                ))
-              ) : (
-                <EmptyState
-                  className="p-4"
-                  description="Add the first grocery item below."
-                  icon={<Icon as={ListPlus} className="size-6 text-primary" />}
-                  title="No items yet"
-                />
-              )}
-            </CardContent>
-          </Card>
-
-          <View className="flex-row items-start gap-2.5">
-            <FormInput
-              containerClassName="flex-1"
-              control={addItemForm.control}
-              name="name"
-              rules={{
-                validate: (value) => value.trim().length > 0 || "Enter an item name.",
-              }}
-              accessibilityLabel="New grocery item"
-              onSubmitEditing={() => void submitAddItem()}
-              placeholder="Add an item"
-              returnKeyType="done"
-            />
-            <Button
-              accessibilityLabel="Add item"
-              disabled={!addItemForm.formState.isValid || busy === "add-item"}
-              icon={<Icon as={Plus} className="size-5.5 text-primary-foreground" />}
-              loading={addItemForm.formState.isSubmitting || busy === "add-item"}
-              onPress={() => void submitAddItem()}
-              size="icon"
-            />
-          </View>
-        </>
-      ) : loading ? (
-        <View
-          accessibilityLabel="Loading shared lists"
-          accessibilityRole="progressbar"
-          className="gap-3"
-        >
-          <Skeleton className="h-36 w-full rounded-2xl" />
-          <Skeleton className="h-14 w-full rounded-2xl" />
+  return (
+    <>
+      <Screen
+        refreshControl={
+          <RefreshControl
+            refreshing={listsQuery.isRefetching || activeListQuery.isRefetching}
+            onRefresh={() => {
+              void listsQuery.refetch();
+              if (activeListId) void activeListQuery.refetch();
+            }}
+          />
+        }
+      >
+        <View className="gap-1">
+          <Text className="font-extrabold text-primary" selectable variant="small">
+            {householdName}
+          </Text>
+          <Text variant="muted">Changes are visible to everyone in this household.</Text>
         </View>
-      ) : (
-        <Card>
-          <CardHeader className="p-5 pb-0">
-            <EmptyState
-              className="p-0"
-              description={`Create the first list for ${householdName}.`}
-              icon={<Icon as={ListPlus} className="size-7 text-primary" />}
-              title="Start a shared list"
-            />
-          </CardHeader>
-          <CardContent className="p-5">
-            <FormInput
-              control={createListForm.control}
-              label="List title"
-              name="title"
-              rules={{
-                validate: (value) => value.trim().length > 0 || "Enter a list title.",
-              }}
-              autoCapitalize="words"
-              onSubmitEditing={() => void submitCreateList()}
-              placeholder={`${householdName} groceries`}
-              returnKeyType="done"
-            />
-          </CardContent>
-          <CardFooter className="p-5 pt-0">
-            <Button
-              className="flex-1"
-              disabled={!householdId || !createListForm.formState.isValid || busy === "create-list"}
-              loading={createListForm.formState.isSubmitting || busy === "create-list"}
-              size="lg"
-              onPress={() => void submitCreateList()}
-            >
-              Create shared list
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
 
-      {errorMessage ? <Alert title={errorMessage} variant="destructive" /> : null}
-    </Screen>
+        {lists.length > 1 ? (
+          <View
+            accessibilityLabel="Grocery list selector"
+            accessibilityRole="radiogroup"
+            className="flex-row flex-wrap gap-2"
+          >
+            {lists.map((list) => {
+              const selected = list.id === activeList?.id;
+              return (
+                <Chip
+                  accessibilityState={{ checked: selected }}
+                  accessibilityRole="radio"
+                  key={list.id}
+                  onPress={() => setSelectedListId(list.id)}
+                  selected={selected}
+                >
+                  {list.title}
+                </Chip>
+              );
+            })}
+          </View>
+        ) : null}
+
+        {activeList ? (
+          <>
+            <Card className="overflow-hidden p-0">
+              <CardHeader className="flex-row items-center justify-between gap-3 p-4">
+                <View className="flex-1 gap-0.5">
+                  <CardTitle selectable>{activeList.title}</CardTitle>
+                  <ListProgress items={activeList.items} />
+                </View>
+                <Icon as={ListPlus} className="size-5.5 text-primary" />
+              </CardHeader>
+              <CardContent className="p-0">
+                {activeList.items.length ? (
+                  activeList.items.map((item, index) => (
+                    <GroceryListItemRow
+                      key={item.id}
+                      busy={mutateItem.isPending}
+                      item={item}
+                      onDelete={() =>
+                        mutateItem.mutate({
+                          type: "delete",
+                          listId: activeList.id,
+                          itemId: item.id,
+                        })
+                      }
+                      onToggle={(checked) =>
+                        mutateItem.mutate({
+                          type: "toggle",
+                          listId: activeList.id,
+                          itemId: item.id,
+                          checked,
+                        })
+                      }
+                      showSeparator={index < activeList.items.length - 1}
+                    />
+                  ))
+                ) : (
+                  <EmptyState
+                    className="p-4"
+                    description="Add the first grocery item below."
+                    icon={<Icon as={ListPlus} className="size-6 text-primary" />}
+                    title="No items yet"
+                  />
+                )}
+              </CardContent>
+            </Card>
+
+            <View className="flex-row items-start gap-2.5">
+              <FormInput
+                containerClassName="flex-1"
+                control={addItemForm.control}
+                name="name"
+                rules={{
+                  validate: (value) => value.trim().length > 0 || "Enter an item name.",
+                }}
+                accessibilityLabel="New grocery item"
+                onSubmitEditing={() => void submitAddItem()}
+                placeholder="Add an item"
+                returnKeyType="done"
+              />
+              <Button
+                accessibilityLabel="Add item"
+                disabled={!addItemForm.formState.isValid || mutateItem.isPending}
+                icon={<Icon as={Plus} className="size-5.5 text-primary-foreground" />}
+                loading={addItemForm.formState.isSubmitting || busy === "add-item"}
+                onPress={() => void submitAddItem()}
+                size="icon"
+              />
+            </View>
+            <Button
+              variant="outline"
+              onPress={() => setCreateOpen(true)}
+              icon={<Icon as={Plus} className="size-5 text-primary" />}
+            >
+              Create another list
+            </Button>
+          </>
+        ) : listsQuery.fetchStatus === "paused" ? (
+          <ErrorState
+            title="You’re offline"
+            message="Reconnect to load your shared lists."
+            onRetry={() => void listsQuery.refetch()}
+          />
+        ) : loading ? (
+          <View
+            accessibilityLabel="Loading shared lists"
+            accessibilityRole="progressbar"
+            className="gap-3"
+          >
+            <Skeleton className="h-36 w-full rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
+          </View>
+        ) : listsQuery.error ? (
+          <ErrorState
+            title="Couldn’t load shared lists"
+            message={errorMessage}
+            onRetry={() => void listsQuery.refetch()}
+          />
+        ) : (
+          <Card className="p-0">
+            <CardHeader className="p-5 pb-0">
+              <EmptyState
+                className="p-0"
+                description={`Create the first list for ${householdName}.`}
+                icon={<Icon as={ListPlus} className="size-7 text-primary" />}
+                title="Start a shared list"
+              />
+            </CardHeader>
+            <CardContent className="p-5">
+              <FormInput
+                control={createListForm.control}
+                label="List title"
+                name="title"
+                rules={{
+                  validate: (value) => value.trim().length > 0 || "Enter a list title.",
+                }}
+                autoCapitalize="words"
+                onSubmitEditing={() => void submitCreateList()}
+                placeholder={`${householdName} groceries`}
+                returnKeyType="done"
+              />
+            </CardContent>
+            <CardFooter className="p-5 pt-0">
+              <Button
+                className="flex-1"
+                disabled={
+                  !householdId || !createListForm.formState.isValid || busy === "create-list"
+                }
+                loading={createListForm.formState.isSubmitting || busy === "create-list"}
+                size="lg"
+                onPress={() => void submitCreateList()}
+              >
+                Create shared list
+              </Button>
+            </CardFooter>
+          </Card>
+        )}
+
+        {mutationError ? (
+          <Alert title={errorMessage} variant="destructive" />
+        ) : errorMessage && activeList ? (
+          <ErrorState
+            inline
+            message={errorMessage}
+            onRetry={() => {
+              void listsQuery.refetch();
+              void activeListQuery.refetch();
+            }}
+          />
+        ) : null}
+      </Screen>
+      <AlertDialog open={createOpen} onOpenChange={setCreateOpen} busy={createList.isPending}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>New shared list</AlertDialogTitle>
+          </AlertDialogHeader>
+          <FormInput
+            control={createListForm.control}
+            name="title"
+            label="List title"
+            placeholder="Weekend groceries"
+            rules={{ validate: (value) => value.trim().length > 0 || "Enter a list title." }}
+          />
+          {createList.error instanceof Error ? (
+            <Alert title={createList.error.message} variant="destructive" />
+          ) : null}
+          <AlertDialogFooter>
+            <Button
+              variant="outline"
+              disabled={createList.isPending}
+              onPress={() => setCreateOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button loading={createList.isPending} onPress={() => void submitCreateList()}>
+              Create list
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

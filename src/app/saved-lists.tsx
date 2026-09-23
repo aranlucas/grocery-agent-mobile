@@ -1,89 +1,122 @@
 import { useRouter } from "expo-router";
-import { ChevronRight, ListChecks } from "lucide-react-native";
-import { Pressable, View } from "react-native";
-import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ListChecks } from "lucide-react-native";
+import { useState } from "react";
+import { View } from "react-native";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  CollectionToolbar,
+  type CollectionScope,
+  type CollectionSort,
+} from "@/components/ui/collection-toolbar";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { Icon } from "@/components/ui/icon";
+import { NavigationRow } from "@/components/ui/navigation-row";
+import { RefreshControl } from "@/components/ui/refresh-control";
 import { Screen } from "@/components/ui/screen";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { useSavedResources } from "@/hooks/use-saved-resources";
+import { filterCollection, updatedLabel } from "@/lib/collection";
 import { groceryQueryKeys } from "@/lib/query-keys";
 
 export default function SavedListsScreen() {
   const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [scope, setScope] = useState<CollectionScope>("all");
+  const [sort, setSort] = useState<CollectionSort>("recent");
   const {
     resources: lists,
     queryError,
     loading,
+    refreshing,
+    refresh,
   } = useSavedResources({
     queryKey: groceryQueryKeys.lists,
     load: (api, householdId) => api.listLists(householdId),
   });
-
+  const filtered = filterCollection(lists, search, scope, sort);
   return (
-    <Screen>
-      <View className="flex-row items-center gap-3">
-        <Text className="flex-1" variant="muted">
-          Open a personal or household list to edit its items.
-        </Text>
-        <Badge accessible accessibilityLabel={`${lists.length} saved lists`} variant="outline">
-          {String(lists.length)}
-        </Badge>
-      </View>
-
-      {queryError instanceof Error ? (
-        <Alert title={queryError.message} variant="destructive" />
+    <Screen
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} />}
+    >
+      <Text variant="muted">Your personal and household lists, ready for the next shop.</Text>
+      {lists.length > 0 ? (
+        <CollectionToolbar
+          search={search}
+          onSearch={setSearch}
+          scope={scope}
+          onScope={setScope}
+          sort={sort}
+          onSort={setSort}
+          placeholder="Search saved lists"
+        />
       ) : null}
-      {loading ? (
-        <View accessibilityLabel="Loading saved grocery lists" className="gap-3">
+      {queryError instanceof Error ? (
+        <ErrorState
+          inline={lists.length > 0}
+          title="Couldn’t load your lists"
+          message={queryError.message}
+          onRetry={() => void refresh()}
+        />
+      ) : null}
+      {loading && !lists.length ? (
+        <View
+          accessibilityLabel="Loading saved lists"
+          accessibilityRole="progressbar"
+          className="gap-3"
+        >
           <Skeleton className="h-24 rounded-2xl" />
           <Skeleton className="h-24 rounded-2xl" />
         </View>
+      ) : filtered.length ? (
+        <>
+          <Text variant="muted" accessibilityLiveRegion="polite">
+            {filtered.length} {filtered.length === 1 ? "list" : "lists"}
+          </Text>
+          <Card className="overflow-hidden p-0">
+            {filtered.map(({ resource: list, location }, index) => (
+              <View key={list.id}>
+                {index > 0 ? <Separator className="ml-17" /> : null}
+                <NavigationRow
+                  icon={ListChecks}
+                  title={list.title}
+                  description={`${location} · ${updatedLabel(list.updated_at)}`}
+                  onPress={() =>
+                    router.push({ pathname: "/saved-list", params: { listId: list.id } })
+                  }
+                />
+              </View>
+            ))}
+          </Card>
+        </>
       ) : lists.length ? (
-        lists.map(({ resource: list, location }) => (
-          <Pressable
-            accessibilityLabel={`${list.title}, ${location}`}
-            accessibilityRole="button"
-            className="active:opacity-80"
-            key={list.id}
-            onPress={() =>
-              router.push({
-                pathname: "/saved-list",
-                params: { listId: list.id },
-              })
-            }
-          >
-            <Card className="p-0">
-              <CardHeader className="flex-row items-center gap-3 p-4">
-                <View className="size-11 items-center justify-center rounded-md bg-muted">
-                  <Icon as={ListChecks} className="size-5 text-primary" />
-                </View>
-                <View className="flex-1 gap-1">
-                  <CardTitle>{list.title}</CardTitle>
-                  <CardDescription>
-                    {location} · Updated {new Date(list.updated_at).toLocaleDateString()}
-                  </CardDescription>
-                </View>
-                <Icon as={ChevronRight} className="size-5 text-muted-foreground" />
-              </CardHeader>
-            </Card>
-          </Pressable>
-        ))
-      ) : queryError instanceof Error ? null : (
         <EmptyState
+          title="No matching lists"
+          description="Try a different name or show all your lists."
           action={{
-            label: "Create a list",
-            onPress: () => router.replace("/chat"),
+            label: "Clear filters",
+            onPress: () => {
+              setSearch("");
+              setScope("all");
+            },
           }}
-          className="min-h-72"
-          description="Lists you explicitly save from chat will appear here."
-          icon={<Icon as={ListChecks} className="size-8 text-primary" />}
-          title="No saved lists yet"
         />
-      )}
+      ) : !queryError ? (
+        <EmptyState
+          icon={<Icon as={ListChecks} className="size-7 text-primary" />}
+          title="Keep a list for next time"
+          description="Plan in chat, then save your grocery list. You can edit it and check items off as you shop."
+          action={{ label: "Plan a grocery list", onPress: () => router.push("/chat") }}
+        />
+      ) : null}
+      {lists.length ? (
+        <Button onPress={() => router.push("/chat")} variant="outline">
+          Plan another list
+        </Button>
+      ) : null}
     </Screen>
   );
 }

@@ -3,7 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useRouter } from "expo-router";
 import { memo, useMemo, useState } from "react";
 import { View } from "react-native";
-import { Save, ShoppingCart, Sparkles, Tag } from "lucide-react-native";
+import { Save, ShoppingCart, ShoppingBasket } from "lucide-react-native";
 import { ADD_TO_CART_MESSAGE, AddToCartDialog } from "@/components/add-to-cart-dialog";
 import { KrogerProductImage } from "@/components/kroger-product-image";
 import { KrogerConnectionCard } from "@/components/kroger-connection-card";
@@ -11,7 +11,9 @@ import { SaveResourceDialog } from "@/components/save-resource-dialog";
 import { useGroceryAgent } from "@/components/grocery-agent-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Disclosure } from "@/components/ui/disclosure";
+import { MarkdownText } from "@/components/ui/markdown-text";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Icon } from "@/components/ui/icon";
 import { Price } from "@/components/ui/price";
@@ -61,6 +63,8 @@ function GroceryListContent() {
   const state = useGroceryState();
   const connection = useKrogerConnection();
   const { connected } = connection;
+  const [mealOpen, setMealOpen] = useState(false);
+  const [dealsOpen, setDealsOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [saveOpen, setSaveOpen] = useState(requestSave === "1");
   const list = useMemo(() => state.shopping_list ?? [], [state.shopping_list]);
@@ -138,6 +142,10 @@ function GroceryListContent() {
       ),
     onSuccess: async (saved) => {
       setSaveOpen(false);
+      if (requestSave === "1") {
+        if (router.canGoBack()) router.back();
+        else router.replace("/chat");
+      }
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: groceryQueryKeys.lists(userId, null),
@@ -153,47 +161,40 @@ function GroceryListContent() {
 
   if (!list.length && !cart.length && !state.meal_plan) {
     return (
-      <EmptyState
-        action={{
-          label: "Start planning",
-          onPress: () => router.replace("/chat"),
-        }}
-        className="w-full max-w-3xl flex-1 self-center bg-background"
-        description="Ask Grocery Agent for a recipe, meal plan, or budget-friendly list."
-        icon={<Icon as={Sparkles} className="size-9 text-primary" />}
-        title="Your first plan starts in chat"
-      />
+      <Screen contentContainerClassName="grow justify-center">
+        <EmptyState
+          action={{
+            label: "Start planning",
+            onPress: () => router.replace("/chat"),
+          }}
+          className="w-full max-w-3xl flex-1 self-center bg-background"
+          description="Ask Grocery Agent for a recipe, meal plan, or budget-friendly list."
+          icon={<Icon as={ShoppingBasket} className="size-9 text-primary" />}
+          title="Your first plan starts in chat"
+        />
+      </Screen>
     );
   }
 
   return (
     <>
       <Screen>
-        {state.meal_plan ? (
-          <Card>
-            <CardHeader className="flex-row items-center gap-2 pb-0">
-              <Icon as={Sparkles} className="size-5 text-primary" />
-              <CardTitle>Meal plan</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2.5">
-              <CardDescription selectable>{state.meal_plan}</CardDescription>
-            </CardContent>
-          </Card>
-        ) : null}
-
-        <View className="flex-row items-end justify-between">
-          <View>
-            <Text variant="h3">{list.length || cart.length} grocery items</Text>
+        <View className="flex-row flex-wrap items-end justify-between gap-3">
+          <View className="min-w-0 flex-1">
+            <Text variant="h3">{state.list_title || "Your grocery list"}</Text>
             <Text className="mt-1" variant="muted">
-              {state.shopping_profile?.pantry.length ?? 0} pantry items known
+              {rows.length} items · {state.product_matches?.length ?? 0} matched to Kroger
             </Text>
           </View>
           {subtotal > 0 ? (
-            <Price amount={subtotal} textClassName="text-xl font-extrabold text-secondary" />
+            <View className="gap-1">
+              <Text variant="muted">Estimated subtotal</Text>
+              <Price amount={subtotal} textClassName="text-xl font-semibold text-foreground" />
+            </View>
           ) : null}
         </View>
 
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden p-0">
           <CardContent className="p-0">
             {rows.map((item, index) => (
               <GroceryItemRow
@@ -205,20 +206,25 @@ function GroceryListContent() {
           </CardContent>
         </Card>
 
-        {state.weekly_deals ? (
-          <Card>
-            <CardHeader className="flex-row items-center gap-2 pb-0">
-              <Icon as={Tag} className="size-5 text-primary" />
-              <CardTitle>Weekly deals</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2.5">
-              <CardDescription selectable>{state.weekly_deals}</CardDescription>
-            </CardContent>
-          </Card>
+        {state.meal_plan ? (
+          <Disclosure label="Meal plan" open={mealOpen} onOpenChange={setMealOpen}>
+            <MarkdownText content={state.meal_plan} />
+          </Disclosure>
         ) : null}
-
+        {state.weekly_deals ? (
+          <Disclosure label="Weekly deals" open={dealsOpen} onOpenChange={setDealsOpen}>
+            <MarkdownText content={state.weekly_deals} />
+          </Disclosure>
+        ) : null}
+        {state.status !== "ready" ? (
+          <Text variant="muted">
+            {isRunning
+              ? "Your plan is still updating. You can save and add matched items when it’s ready."
+              : "Continue in chat to finish your grocery plan."}
+          </Text>
+        ) : null}
         {error ? <Alert title={error} variant="destructive" /> : null}
-        {saveList.data ? <Alert title={`${saveList.data.title} saved`} /> : null}
+        {saveList.data ? <Alert title={`${saveList.data.title} saved`} variant="success" /> : null}
         <Button
           icon={<Icon as={Save} className="size-5 text-secondary-foreground" />}
           disabled={!list.length || isRunning || state.status !== "ready"}
@@ -232,7 +238,7 @@ function GroceryListContent() {
           <Button
             icon={<Icon as={ShoppingCart} className="size-5 text-primary-foreground" />}
             loading={isRunning}
-            disabled={!list.length}
+            disabled={!state.product_matches?.length || state.status !== "ready"}
             size="lg"
             onPress={() => setConfirmOpen(true)}
           >
@@ -241,8 +247,13 @@ function GroceryListContent() {
         ) : (
           <KrogerConnectionCard connection={connection} />
         )}
+        <Button variant="ghost" onPress={() => router.push("/chat")}>
+          Refine in chat
+        </Button>
       </Screen>
       <AddToCartDialog
+        itemCount={state.product_matches?.length ?? 0}
+        subtotal={subtotal}
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         onConfirm={() => void send(ADD_TO_CART_MESSAGE)}

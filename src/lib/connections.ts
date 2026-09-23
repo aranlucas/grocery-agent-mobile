@@ -1,6 +1,9 @@
 export type ExternalAccountLike = {
   provider: string;
-  verification?: { status?: string | null } | null;
+  verification?: {
+    status?: string | null;
+    error?: { code?: string; longMessage?: string; message?: string } | null;
+  } | null;
 };
 
 const KROGER_PROVIDERS = new Set(["oauth_custom_shopping", "custom_shopping"]);
@@ -13,6 +16,17 @@ export function hasKrogerConnection(accounts: readonly ExternalAccountLike[]): b
   return accounts.some(
     (account) => isKrogerConnection(account) && account.verification?.status === "verified",
   );
+}
+
+export function krogerConnectionError(account: ExternalAccountLike | undefined): string {
+  if (!account || !isKrogerConnection(account) || account.verification?.status === "verified") {
+    return "";
+  }
+  const error = account.verification?.error;
+  if (error?.code === "oauth_identification_claimed") {
+    return "This Kroger email is already registered to another Grocery Agent account. Sign in to that account to use Kroger.";
+  }
+  return error?.longMessage || error?.message || "";
 }
 
 export function rotatingTokenNonceFromCallback(callbackUrl: string): string {
@@ -62,6 +76,8 @@ export async function waitForKrogerConnection<
     await waitForDelay(delay, signal);
     const user = await reload();
     if (hasKrogerConnection(user.externalAccounts)) return user;
+    const error = krogerConnectionError(user.externalAccounts.find(isKrogerConnection));
+    if (error) throw new Error(error);
   }
 
   throw new Error("Kroger returned without completing the account connection.");

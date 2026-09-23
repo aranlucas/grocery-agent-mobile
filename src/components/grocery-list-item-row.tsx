@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react-native";
-import { Pressable, View } from "react-native";
+import { Alert, Pressable, View } from "react-native";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Icon } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
@@ -44,9 +44,19 @@ export function GroceryListItemRow({
         <Pressable
           accessibilityLabel={`Remove ${item.name}`}
           accessibilityRole="button"
+          accessibilityState={{ disabled: busy, busy }}
           className="min-h-14 min-w-14 items-center justify-center active:opacity-60"
           disabled={busy}
-          onPress={onDelete}
+          onPress={() =>
+            Alert.alert(
+              `Remove ${item.name}?`,
+              "This removes the item from the list for everyone who can access it.",
+              [
+                { text: "Keep item", style: "cancel" },
+                { text: "Remove", style: "destructive", onPress: onDelete },
+              ],
+            )
+          }
         >
           <Icon as={Trash2} className="size-5 text-muted-foreground" />
         </Pressable>

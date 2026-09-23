@@ -38,7 +38,7 @@ type RenderContext = {
   isLast?: boolean;
 };
 
-const bodyTextClassName = "text-sm leading-relaxed text-foreground";
+const bodyTextClassName = "text-base leading-6 text-foreground";
 
 export function MarkdownText({ className, content }: { className?: string; content: string }) {
   const ast = useMemo(

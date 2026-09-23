@@ -93,11 +93,12 @@ function createFormTextControl<TControlProps extends NativeInputProps>(
     const { field, fieldState, formState } = useController({
       control,
       defaultValue,
-      disabled,
       name,
       rules,
       shouldUnregister,
     });
+    // Busy controls must keep their submitted values. RHF's `disabled` option
+    // omits the field from the payload, so apply it only to the native input.
     const error = fieldState.error?.message;
     const showError = Boolean(error) && (fieldState.isTouched || formState.isSubmitted);
 

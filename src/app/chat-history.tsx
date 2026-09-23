@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
+import { SearchField } from "@/components/ui/collection-toolbar";
 import { cn } from "@/lib/utils";
 
 const activityDateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -65,7 +66,7 @@ const ChatHistoryRow = memo(function ChatHistoryRow({
         )}
       </View>
       <View className="flex-1 gap-0.5">
-        <Text numberOfLines={1} variant="large">
+        <Text numberOfLines={2} variant="large">
           {thread.name || "Grocery chat"}
         </Text>
         <Text variant="muted">
@@ -106,6 +107,7 @@ export default function ChatHistoryScreen() {
     refetchThreads,
     fetchMoreThreads,
   } = useGroceryAgent();
+  const [search, setSearch] = useState("");
   const [opening, setOpening] = useState("");
   const openingRef = useRef("");
 
@@ -180,11 +182,16 @@ export default function ChatHistoryScreen() {
     <FlatList
       className="w-full max-w-3xl flex-1 self-center bg-background"
       contentInsetAdjustmentBehavior="automatic"
+      keyboardShouldPersistTaps="handled"
       contentContainerClassName={cn(
-        "m-4 overflow-hidden rounded-3xl border border-border bg-card sm:m-6",
+        "p-4 pb-10 sm:p-6",
         threads.length === 0 && "grow border-0 bg-background",
       )}
-      data={threads}
+      data={threads.filter((thread) =>
+        (thread.name || "Grocery chat")
+          .toLocaleLowerCase()
+          .includes(search.trim().toLocaleLowerCase()),
+      )}
       keyExtractor={(thread) => thread.id}
       onEndReached={() => {
         if (hasMoreThreads && !isFetchingMoreThreads) fetchMoreThreads();
@@ -193,9 +200,35 @@ export default function ChatHistoryScreen() {
       refreshControl={<RefreshControl refreshing={threadsLoading} onRefresh={refetchThreads} />}
       ItemSeparatorComponent={HistorySeparator}
       renderItem={renderItem}
-      ListEmptyComponent={renderEmpty}
+      ListHeaderComponent={
+        threads.length ? (
+          <View className="gap-3 pb-4">
+            <SearchField value={search} onChange={setSearch} placeholder="Search loaded chats" />
+            <Text variant="muted">
+              {hasMoreThreads
+                ? "Search covers loaded conversations. Scroll to load more."
+                : "Continue a conversation from where you left off."}
+            </Text>
+          </View>
+        ) : undefined
+      }
+      ListEmptyComponent={
+        search ? (
+          <EmptyState
+            title="No matching chats"
+            description="Try another search, or load more conversations below."
+            action={{ label: "Clear search", onPress: () => setSearch("") }}
+          />
+        ) : (
+          renderEmpty
+        )
+      }
       ListFooterComponent={
-        replayError || threadsError || fetchMoreThreadsError || isFetchingMoreThreads ? (
+        replayError ||
+        threadsError ||
+        fetchMoreThreadsError ||
+        isFetchingMoreThreads ||
+        hasMoreThreads ? (
           <View className="items-center gap-2.5 p-3.5">
             {replayError ? <Alert title={replayError} variant="destructive" /> : null}
             {threadsError && threads.length > 0 ? (
@@ -208,6 +241,11 @@ export default function ChatHistoryScreen() {
                   Try again
                 </Button>
               </>
+            ) : null}
+            {hasMoreThreads && !isFetchingMoreThreads ? (
+              <Button onPress={fetchMoreThreads} variant="outline">
+                Load more chats
+              </Button>
             ) : null}
             {isFetchingMoreThreads ? (
               <Spinner accessibilityLabel="Loading more chats" size="sm" />

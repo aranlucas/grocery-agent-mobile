@@ -9,7 +9,11 @@ export interface CardProps extends React.ComponentPropsWithoutRef<typeof View> {
 
 export function Card({ className, ...props }: CardProps) {
   return (
-    <View className={cn("rounded-lg border border-border bg-card p-6", className)} {...props} />
+    <View
+      className={cn("rounded-lg border border-border bg-card p-4", className)}
+      style={{ borderCurve: "continuous" }}
+      {...props}
+    />
   );
 }
 
@@ -29,7 +33,8 @@ export interface CardTitleProps extends React.ComponentPropsWithoutRef<typeof Te
 export function CardTitle({ className, ...props }: CardTitleProps) {
   return (
     <Text
-      className={cn("text-2xl font-semibold tracking-tight text-card-foreground", className)}
+      accessibilityRole="header"
+      className={cn("text-lg leading-6 font-semibold text-card-foreground", className)}
       {...props}
     />
   );
@@ -40,7 +45,7 @@ export interface CardDescriptionProps extends React.ComponentPropsWithoutRef<typ
 }
 
 export function CardDescription({ className, ...props }: CardDescriptionProps) {
-  return <Text className={cn("text-sm text-muted-foreground", className)} {...props} />;
+  return <Text className={cn("text-sm leading-5 text-muted-foreground", className)} {...props} />;
 }
 
 export interface CardContentProps extends React.ComponentPropsWithoutRef<typeof View> {

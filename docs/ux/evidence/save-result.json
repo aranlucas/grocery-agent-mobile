@@ -1,0 +1,32 @@
+{
+  "devServerUrl": "http://127.0.0.1:8082",
+  "expression": "globalThis.__groceryReview.snapshot().lists.map(x=>({title:x.title,household:x.household_id,count:x.items.length}))",
+  "threw": false,
+  "type": "object",
+  "value": [
+    {
+      "count": 3,
+      "household": "home-1",
+      "title": "Easy dinners for two"
+    },
+    {
+      "count": 4,
+      "household": null,
+      "title": "This week’s groceries"
+    },
+    {
+      "count": 4,
+      "household": "home-1",
+      "title": "Saturday breakfast"
+    },
+    {
+      "count": 0,
+      "household": "home-1",
+      "title": "Dinner with friends"
+    }
+  ],
+  "description": null,
+  "exception": null,
+  "promise": null,
+  "untrusted": ["value", "description", "exception", "promise"]
+}

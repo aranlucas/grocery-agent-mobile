@@ -1,0 +1,9 @@
+{
+  "count": 1,
+  "errors": [
+    {
+      "source": "console",
+      "message": "[CopilotKit] Error (agent_run_error_event): Error: the model provider is unavailable; try again shortly"
+    }
+  ]
+}

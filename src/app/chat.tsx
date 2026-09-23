@@ -1,8 +1,7 @@
 import EditSquare from "@expo/material-symbols/edit_square.xml";
 import History from "@expo/material-symbols/history.xml";
-import Settings from "@expo/material-symbols/settings.xml";
 import { Stack, useRouter } from "expo-router";
-import { History as HistoryIcon, Settings as SettingsIcon, SquarePen } from "lucide-react-native";
+import { History as HistoryIcon, SquarePen } from "lucide-react-native";
 import { View } from "react-native";
 import { GroceryChat } from "@/components/grocery-chat";
 import { useGroceryAgent } from "@/components/grocery-agent-provider";
@@ -30,11 +29,6 @@ export default function GroceryChatScreen() {
                   icon={SquarePen}
                   onPress={() => void startNewChat()}
                 />
-                <HeaderActionButton
-                  accessibilityLabel="Settings"
-                  icon={SettingsIcon}
-                  onPress={() => router.push("/account")}
-                />
               </View>
             ),
           }}
@@ -50,11 +44,6 @@ export default function GroceryChatScreen() {
             accessibilityLabel="New chat"
             icon={process.env.EXPO_OS === "android" ? EditSquare : "square.and.pencil"}
             onPress={() => void startNewChat()}
-          />
-          <Stack.Toolbar.Button
-            accessibilityLabel="Settings"
-            icon={process.env.EXPO_OS === "android" ? Settings : "gearshape"}
-            onPress={() => router.push("/account")}
           />
         </Stack.Toolbar>
       )}

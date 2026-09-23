@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { View } from "react-native";
 import {
   NativeInput,
@@ -13,14 +13,16 @@ export type InputProps = NativeInputProps & {
 };
 
 export const Input = forwardRef<NativeInputRef, InputProps>(function Input(
-  { variant = "default", size = "md", className, ...props },
+  { variant = "default", size = "md", className, onFocus, onBlur, ...props },
   ref,
 ) {
+  const [focused, setFocused] = useState(false);
   return (
     <View
       className={cn(
         "min-h-14 flex-row items-center rounded-xl",
-        variant === "default" && "border border-input bg-background",
+        variant === "default" && "border border-input bg-card",
+        focused && "border-primary",
         className,
       )}
     >
@@ -28,6 +30,14 @@ export const Input = forwardRef<NativeInputRef, InputProps>(function Input(
         ref={ref}
         className="flex-1"
         textStyle={{ fontSize: size === "lg" ? 18 : 16 }}
+        onFocus={() => {
+          setFocused(true);
+          onFocus?.();
+        }}
+        onBlur={() => {
+          setFocused(false);
+          onBlur?.();
+        }}
         {...props}
       />
     </View>

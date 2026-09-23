@@ -1,6 +1,26 @@
 @import "tailwindcss";
 @import "uniwind";
 
+/* Use physical layout units so Metro's rem setting cannot shrink touch targets
+   or body text. Uniwind remains the single source of visual tokens. */
+@theme {
+  --spacing: 4px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+  --text-4xl: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+}
+
 @layer theme {
   :root {
     @variant light {
@@ -25,6 +45,9 @@
       --color-destructive-surface: #fef3f2;
       --color-accent: #d9f99d;
       --color-accent-foreground: #17201a;
+      --color-primary-surface: #e7f1e9;
+      --color-success: #166534;
+      --color-success-surface: #e7f1e9;
     }
 
     @variant dark {
@@ -49,6 +72,9 @@
       --color-destructive-surface: #3b1d1a;
       --color-accent: #84cc16;
       --color-accent-foreground: #111813;
+      --color-primary-surface: #203d2b;
+      --color-success: #86efac;
+      --color-success-surface: #203d2b;
     }
   }
 }

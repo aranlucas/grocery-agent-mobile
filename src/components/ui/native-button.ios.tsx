@@ -1,3 +1,4 @@
+import { useWindowDimensions } from "react-native";
 import { Button } from "@expo/ui";
 import { tint, buttonBorderShape } from "@expo/ui/swift-ui/modifiers";
 import { accessibilityModifiers } from "./native-accessibility";
@@ -13,13 +14,14 @@ export function NativeButton({
   testID,
   ...accessibility
 }: NativeButtonProps) {
+  const { fontScale } = useWindowDimensions();
   const filled = variant === "default" || variant === "secondary" || variant === "destructive";
   return (
     <Button
       variant={filled ? "filled" : variant === "outline" ? "outlined" : "text"}
       onPress={onPress}
       disabled={disabled}
-      style={{ height: 56, width }}
+      style={{ height: Math.max(56, 32 + 24 * fontScale), width }}
       modifiers={[
         tint(filled ? background : foreground),
         buttonBorderShape("roundedRectangle", 12),

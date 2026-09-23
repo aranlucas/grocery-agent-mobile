@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  /><title>Grocery Agent · Product review</title
+  ><style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #f7f8f2;
+      color: #17201a;
+      font:
+        16px/1.55 system-ui,
+        sans-serif;
+    }
+    header,
+    main {
+      max-width: 1280px;
+      margin: auto;
+      padding: 32px 24px;
+    }
+    header {
+      padding-bottom: 8px;
+    }
+    p {
+      max-width: 800px;
+      color: #59675d;
+    }
+    h1 {
+      font-size: 32px;
+      letter-spacing: -0.7px;
+      margin: 12px 0;
+    }
+    h2 {
+      font-size: 22px;
+      margin: 32px 0 16px;
+    }
+    nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    a {
+      color: #14532d;
+    }
+    select,
+    button {
+      font: inherit;
+    }
+    select {
+      padding: 12px;
+      border: 1px solid #b2beb2;
+      border-radius: 8px;
+      background: white;
+      color: inherit;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+      gap: 24px;
+    }
+    .shot {
+      border: 1px solid #dfe5dc;
+      background: white;
+      color: inherit;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: left;
+      cursor: zoom-in;
+    }
+    .shot img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 9/20;
+      object-fit: contain;
+      background: #111813;
+      border-radius: 8px;
+    }
+    .shot span {
+      display: block;
+      font-weight: 600;
+      padding: 12px 2px 2px;
+    }
+    .shot:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #15803d;
+      outline-offset: 4px;
+    }
+    .tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: #14532d;
+      letter-spacing: 1px;
+    }
+    dialog {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px;
+      background: #f7f8f2;
+      max-width: 95vw;
+      max-height: 96vh;
+    }
+    dialog::backdrop {
+      background: #000b;
+    }
+    dialog img {
+      display: block;
+      max-height: 82vh;
+      max-width: 85vw;
+    }
+    dialog button {
+      min-height: 48px;
+      background: #14532d;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 18px;
+      margin-bottom: 12px;
+    }
+    footer {
+      padding: 24px;
+      color: #59675d;
+    }
+    [hidden] {
+      display: none !important;
+    }
+  </style>
+  <header>
+    <div class="tag">GROCERY AGENT / PRODUCT REVIEW</div>
+    <h1>One product, from planning to the shop.</h1>
+    <p>
+      Native Android captures of the redesigned app, using isolated sample accounts and grocery
+      data. These images document UI behavior; they do not demonstrate live Clerk authentication,
+      backend persistence, or Kroger transactions.
+    </p>
+    <nav>
+      <a href="live.html">Real-account rerun</a>
+      <a href="audit.md">Complete flow map & screen audit</a
+      ><a href="design-system.md">Design system</a
+      ><a href="verification.md">Verification & remaining work</a>
+    </nav>
+  </header>
+  <main>
+    <label for="area">Product area </label
+    ><select id="area" onchange="filter(this.value)">
+      <option value="all">All areas</option>
+      <option>Home</option>
+      <option>Planning</option>
+      <option>Library</option>
+      <option>Households</option>
+      <option>Account &amp; authentication</option>
+    </select>
+    <section data-area="Home">
+      <h2>Home</h2>
+      <div class="grid">
+        <button class="shot" data-area="Home" onclick="openShot(this)" aria-label="Enlarge Home">
+          <img loading="lazy" src="evidence/home.png" alt="Home on Android" /><span
+            >Home</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Home"
+          onclick="openShot(this)"
+          aria-label="Enlarge Home light"
+        >
+          <img loading="lazy" src="evidence/home-light.png" alt="Home light on Android" /><span
+            >Home light</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Home"
+          onclick="openShot(this)"
+          aria-label="Enlarge Home · 800dp"
+        >
+          <img loading="lazy" src="evidence/home-wide.png" alt="Home · 800dp on Android" /><span
+            >Home · 800dp</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Home"
+          onclick="openShot(this)"
+          aria-label="Enlarge Home · 320dp, 150% text"
+        >
+          <img
+            loading="lazy"
+            src="evidence/home-narrow.png"
+            alt="Home · 320dp, 150% text on Android"
+          /><span>Home · 320dp, 150% text</span>
+        </button>
+      </div>
+    </section>
+    <section data-area="Planning">
+      <h2>Planning</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          data-area="Planning"
+          onclick="openShot(this)"
+          aria-label="Enlarge Chat"
+        >
+          <img loading="lazy" src="evidence/chat.png" alt="Chat on Android" /><span
+            >Chat</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Planning"
+          onclick="openShot(this)"
+          aria-label="Enlarge Chat empty"
+        >
+          <img loading="lazy" src="evidence/chat-empty.png" alt="Chat empty on Android" /><span
+            >Chat empty</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Planning"
+          onclick="openShot(this)"
+          aria-label="Enlarge Plan"
+        >
+          <img loading="lazy" src="evidence/plan.png" alt="Plan on Android" /><span
+            >Plan</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Planning"
+          onclick="openShot(this)"
+          aria-label="Enlarge Plan empty"
+        >
+          <img loading="lazy" src="evidence/plan-empty.png" alt="Plan empty on Android" /><span
+            >Plan empty</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Planning"
+          onclick="openShot(this)"
+          aria-label="Enlarge Cart confirm"
+        >
+          <img loading="lazy" src="evidence/cart-confirm.png" alt="Cart confirm on Android" /><span
+            >Cart confirm</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Planning"
+          onclick="openShot(this)"
+          aria-label="Enlarge Save list"
+        >
+          <img loading="lazy" src="evidence/save-list.png" alt="Save list on Android" /><span
+            >Save list</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Planning"
+          onclick="openShot(this)"
+          aria-label="Enlarge Shared list sheet with keyboard"
+        >
+          <img
+            loading="lazy"
+            src="evidence/save-list-keyboard.png"
+            alt="Shared list sheet with keyboard on Android"
+          /><span>Shared list sheet with keyboard</span>
+        </button>
+      </div>
+    </section>
+    <section data-area="Library">
+      <h2>Library</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Saved lists"
+        >
+          <img loading="lazy" src="evidence/saved-lists.png" alt="Saved lists on Android" /><span
+            >Saved lists</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Saved lists · 320dp, 150% text"
+        >
+          <img
+            loading="lazy"
+            src="evidence/saved-lists-narrow.png"
+            alt="Saved lists · 320dp, 150% text on Android"
+          /><span>Saved lists · 320dp, 150% text</span></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Saved lists · 800dp"
+        >
+          <img
+            loading="lazy"
+            src="evidence/saved-lists-wide.png"
+            alt="Saved lists · 800dp on Android"
+          /><span>Saved lists · 800dp</span></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Lists search"
+        >
+          <img loading="lazy" src="evidence/lists-search.png" alt="Lists search on Android" /><span
+            >Lists search</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Lists empty"
+        >
+          <img loading="lazy" src="evidence/lists-empty.png" alt="Lists empty on Android" /><span
+            >Lists empty</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Lists error"
+        >
+          <img loading="lazy" src="evidence/lists-error.png" alt="Lists error on Android" /><span
+            >Lists error</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Lists loading"
+        >
+          <img
+            loading="lazy"
+            src="evidence/lists-loading.png"
+            alt="Lists loading on Android"
+          /><span>Lists loading</span></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Saved list"
+        >
+          <img loading="lazy" src="evidence/saved-list.png" alt="Saved list on Android" /><span
+            >Saved list</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Remove item"
+        >
+          <img loading="lazy" src="evidence/remove-item.png" alt="Remove item on Android" /><span
+            >Remove item</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Saved recipes"
+        >
+          <img
+            loading="lazy"
+            src="evidence/saved-recipes.png"
+            alt="Saved recipes on Android"
+          /><span>Saved recipes</span></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Recipe"
+        >
+          <img loading="lazy" src="evidence/recipe.png" alt="Recipe on Android" /><span
+            >Recipe</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Recipe · 320dp, 150% text"
+        >
+          <img
+            loading="lazy"
+            src="evidence/recipe-narrow.png"
+            alt="Recipe · 320dp, 150% text on Android"
+          /><span>Recipe · 320dp, 150% text</span></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Recipe back"
+        >
+          <img loading="lazy" src="evidence/recipe-back.png" alt="Recipe back on Android" /><span
+            >Recipe back</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Recipe save error"
+        >
+          <img
+            loading="lazy"
+            src="evidence/recipe-save-error.png"
+            alt="Recipe save error on Android"
+          /><span>Recipe save error</span></button
+        ><button
+          class="shot"
+          data-area="Library"
+          onclick="openShot(this)"
+          aria-label="Enlarge Recipe saved"
+        >
+          <img loading="lazy" src="evidence/recipe-saved.png" alt="Recipe saved on Android" /><span
+            >Recipe saved</span
+          >
+        </button>
+      </div>
+    </section>
+    <section data-area="Households">
+      <h2>Households</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          data-area="Households"
+          onclick="openShot(this)"
+          aria-label="Enlarge Households"
+        >
+          <img loading="lazy" src="evidence/households.png" alt="Households on Android" /><span
+            >Households</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Households"
+          onclick="openShot(this)"
+          aria-label="Enlarge Households empty"
+        >
+          <img
+            loading="lazy"
+            src="evidence/households-empty.png"
+            alt="Households empty on Android"
+          /><span>Households empty</span></button
+        ><button
+          class="shot"
+          data-area="Households"
+          onclick="openShot(this)"
+          aria-label="Enlarge Shared list"
+        >
+          <img loading="lazy" src="evidence/shared-list.png" alt="Shared list on Android" /><span
+            >Shared list</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Households"
+          onclick="openShot(this)"
+          aria-label="Enlarge New shared list"
+        >
+          <img
+            loading="lazy"
+            src="evidence/new-shared-list.png"
+            alt="New shared list on Android"
+          /><span>New shared list</span>
+        </button>
+      </div>
+    </section>
+    <section data-area="Account &amp; authentication">
+      <h2>Account &amp; authentication</h2>
+      <div class="grid">
+        <button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Account"
+        >
+          <img loading="lazy" src="evidence/account.png" alt="Account on Android" /><span
+            >Account</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge History"
+        >
+          <img loading="lazy" src="evidence/history.png" alt="History on Android" /><span
+            >History</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Report"
+        >
+          <img loading="lazy" src="evidence/report.png" alt="Report on Android" /><span
+            >Report</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Report validation"
+        >
+          <img
+            loading="lazy"
+            src="evidence/report-validation.png"
+            alt="Report validation on Android"
+          /><span>Report validation</span></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Sign in"
+        >
+          <img loading="lazy" src="evidence/sign-in.png" alt="Sign in on Android" /><span
+            >Sign in</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Sign up"
+        >
+          <img loading="lazy" src="evidence/sign-up.png" alt="Sign up on Android" /><span
+            >Sign up</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Verify email"
+        >
+          <img loading="lazy" src="evidence/verify-email.png" alt="Verify email on Android" /><span
+            >Verify email</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Verify error"
+        >
+          <img loading="lazy" src="evidence/verify-error.png" alt="Verify error on Android" /><span
+            >Verify error</span
+          ></button
+        ><button
+          class="shot"
+          data-area="Account &amp; authentication"
+          onclick="openShot(this)"
+          aria-label="Enlarge Reset password"
+        >
+          <img
+            loading="lazy"
+            src="evidence/reset-password.png"
+            alt="Reset password on Android"
+          /><span>Reset password</span>
+        </button>
+      </div>
+    </section>
+  </main>
+  <dialog id="preview">
+    <button onclick="preview.close()">Close preview</button><img id="full" alt="" />
+  </dialog>
+  <footer>
+    22 September 2026 · Android API 35 · Development tools may be visible in captures.
+  </footer>
+  <script>
+    const preview = document.getElementById("preview");
+    const full = document.getElementById("full");
+    function filter(area) {
+      document
+        .querySelectorAll("section")
+        .forEach((s) => (s.hidden = area !== "all" && s.dataset.area !== area));
+    }
+    function openShot(b) {
+      full.src = b.querySelector("img").src;
+      full.alt = b.querySelector("img").alt;
+      preview.showModal();
+    }
+    preview.addEventListener("click", (e) => {
+      if (e.target === preview) preview.close();
+    });
+  </script>
+</html>

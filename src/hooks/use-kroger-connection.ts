@@ -7,6 +7,7 @@ import { readableError } from "@/lib/auth";
 import {
   hasKrogerConnection,
   isKrogerConnection,
+  krogerConnectionError,
   rotatingTokenNonceFromCallback,
 } from "@/lib/connections";
 import { groceryQueryKeys } from "@/lib/query-keys";
@@ -47,7 +48,10 @@ export function useKrogerConnection() {
       });
       await user?.reload();
       if (linkedAccount.verification?.status !== "verified") {
-        throw new Error("Kroger returned without completing the account connection.");
+        throw new Error(
+          krogerConnectionError(linkedAccount) ||
+            "Kroger returned without completing the account connection.",
+        );
       }
       return true;
     },
@@ -102,7 +106,7 @@ export function useKrogerConnection() {
       ? readableError(authorization.error)
       : connection.error
         ? readableError(connection.error)
-        : "",
+        : krogerConnectionError(accounts.find(isKrogerConnection)),
     clearError: resetAuthorization,
     connect,
     reconnect,

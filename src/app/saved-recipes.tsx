@@ -1,12 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { BookMarked, ChevronRight, Plus, Save } from "lucide-react-native";
-import { memo, useState } from "react";
-import { Pressable, View } from "react-native";
+import { BookMarked, Plus, Save } from "lucide-react-native";
+import { useState } from "react";
+import { View } from "react-native";
 import { useGroceryAgent } from "@/components/grocery-agent-provider";
 import { SaveResourceDialog } from "@/components/save-resource-dialog";
 import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import {
+  CollectionToolbar,
+  type CollectionScope,
+  type CollectionSort,
+} from "@/components/ui/collection-toolbar";
+import { ErrorState } from "@/components/ui/error-state";
+import { NavigationRow } from "@/components/ui/navigation-row";
+import { RefreshControl } from "@/components/ui/refresh-control";
+import { Separator } from "@/components/ui/separator";
+import { filterCollection } from "@/lib/collection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -16,11 +25,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { useGroceryState } from "@/hooks/use-grocery-agent";
 import { useSavedResources } from "@/hooks/use-saved-resources";
-import type { Recipe } from "@/lib/household-api";
+
 import { groceryQueryKeys } from "@/lib/query-keys";
 
 export default function SavedRecipesScreen() {
   const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [scope, setScope] = useState<CollectionScope>("all");
+  const [sort, setSort] = useState<CollectionSort>("recent");
   const params = useLocalSearchParams<{ save?: string | string[] }>();
   const requestSave = Array.isArray(params.save) ? params.save[0] : params.save;
   const { isRunning } = useGroceryAgent();
@@ -31,12 +43,21 @@ export default function SavedRecipesScreen() {
     households,
     queryError,
     loading,
+    refreshing,
+    refresh,
     resources: recipes,
     userId,
   } = useSavedResources({
     queryKey: groceryQueryKeys.recipes,
     load: (api, householdId) => api.listRecipes(householdId),
   });
+  const filtered = filterCollection(
+    recipes,
+    search,
+    scope,
+    sort,
+    (recipe) => `${recipe.description} ${recipe.tags.join(" ")}`,
+  );
   const queryClient = useQueryClient();
   const [saveOpen, setSaveOpen] = useState(requestSave === "1" && Boolean(draft));
   const saveRecipe = useMutation({
@@ -57,6 +78,10 @@ export default function SavedRecipesScreen() {
     },
     onSuccess: async (saved) => {
       setSaveOpen(false);
+      if (requestSave === "1") {
+        if (router.canGoBack()) router.back();
+        else router.replace("/chat");
+      }
       await queryClient.invalidateQueries({
         queryKey: groceryQueryKeys.recipes(userId, saved.household_id),
       });
@@ -65,19 +90,21 @@ export default function SavedRecipesScreen() {
 
   return (
     <>
-      <Screen>
-        <View className="flex-row items-center gap-3">
-          <Text className="flex-1" variant="muted">
-            Personal and household recipes you can reuse or edit.
-          </Text>
-          <Badge
-            accessible
-            accessibilityLabel={`${recipes.length} saved recipes`}
-            variant="outline"
-          >
-            {String(recipes.length)}
-          </Badge>
-        </View>
+      <Screen
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} />}
+      >
+        <Text variant="muted">A little inspiration, saved for another day.</Text>
+        {recipes.length ? (
+          <CollectionToolbar
+            search={search}
+            onSearch={setSearch}
+            scope={scope}
+            onScope={setScope}
+            sort={sort}
+            onSort={setSort}
+            placeholder="Search recipes or tags"
+          />
+        ) : null}
 
         {draft ? (
           <Card>
@@ -104,19 +131,50 @@ export default function SavedRecipesScreen() {
         ) : null}
 
         {queryError instanceof Error ? (
-          <Alert title={queryError.message} variant="destructive" />
+          <ErrorState
+            inline={recipes.length > 0}
+            title="Couldn’t load your recipes"
+            message={queryError.message}
+            onRetry={() => void refresh()}
+          />
         ) : null}
-        {saveRecipe.data ? <Alert title={`${saveRecipe.data.title} saved`} /> : null}
+        {saveRecipe.data ? (
+          <Alert title={`${saveRecipe.data.title} saved`} variant="success" />
+        ) : null}
 
-        {loading ? (
+        {loading && !recipes.length ? (
           <View accessibilityLabel="Loading saved recipes" className="gap-3">
             <Skeleton className="h-28 rounded-2xl" />
             <Skeleton className="h-28 rounded-2xl" />
           </View>
+        ) : filtered.length ? (
+          <Card className="overflow-hidden p-0">
+            {filtered.map(({ resource: recipe, location }, index) => (
+              <View key={recipe.id}>
+                {index > 0 ? <Separator className="ml-17" /> : null}
+                <NavigationRow
+                  icon={BookMarked}
+                  title={recipe.title}
+                  description={`${location}${recipe.servings ? ` · ${recipe.servings} servings` : ""}${recipe.description ? ` · ${recipe.description}` : ""}`}
+                  onPress={() =>
+                    router.push({ pathname: "/saved-recipe", params: { recipeId: recipe.id } })
+                  }
+                />
+              </View>
+            ))}
+          </Card>
         ) : recipes.length ? (
-          recipes.map(({ resource: recipe, location }) => (
-            <RecipeCard key={recipe.id} location={location} recipe={recipe} />
-          ))
+          <EmptyState
+            title="No matching recipes"
+            description="Try a different name or show all your recipes."
+            action={{
+              label: "Clear filters",
+              onPress: () => {
+                setSearch("");
+                setScope("all");
+              },
+            }}
+          />
         ) : queryError instanceof Error ? null : (
           <EmptyState
             action={{
@@ -130,14 +188,16 @@ export default function SavedRecipesScreen() {
           />
         )}
 
-        <Button
-          icon={<Icon as={Plus} className="size-4.5 text-secondary-foreground" />}
-          onPress={() => router.push("/chat")}
-          size="lg"
-          variant="secondary"
-        >
-          Plan another recipe
-        </Button>
+        {recipes.length > 0 ? (
+          <Button
+            icon={<Icon as={Plus} className="size-4.5 text-secondary-foreground" />}
+            onPress={() => router.push("/chat")}
+            size="lg"
+            variant="secondary"
+          >
+            Plan another recipe
+          </Button>
+        ) : null}
       </Screen>
       <SaveResourceDialog
         defaultTitle={draft?.title ?? "Recipe"}
@@ -151,42 +211,3 @@ export default function SavedRecipesScreen() {
     </>
   );
 }
-
-const RecipeCard = memo(function RecipeCard({
-  location,
-  recipe,
-}: {
-  location: string;
-  recipe: Recipe;
-}) {
-  const router = useRouter();
-  return (
-    <Pressable
-      accessibilityLabel={`${recipe.title}, ${location}`}
-      accessibilityRole="button"
-      className="active:opacity-80"
-      onPress={() =>
-        router.push({
-          pathname: "/saved-recipe",
-          params: { recipeId: recipe.id },
-        })
-      }
-    >
-      <Card>
-        <CardHeader className="flex-row items-center gap-3">
-          <View className="flex-1 gap-1">
-            <CardTitle>{recipe.title}</CardTitle>
-            {recipe.description ? (
-              <CardDescription numberOfLines={2}>{recipe.description}</CardDescription>
-            ) : null}
-            <CardDescription>
-              {location}
-              {recipe.servings ? ` · ${recipe.servings} servings` : ""} · Open to edit
-            </CardDescription>
-          </View>
-          <Icon as={ChevronRight} className="size-5 text-muted-foreground" />
-        </CardHeader>
-      </Card>
-    </Pressable>
-  );
-});

@@ -25,6 +25,8 @@ export function useSavedResources<T>({
   api: HouseholdApi;
   households: Household[];
   loading: boolean;
+  refreshing: boolean;
+  refresh: () => Promise<void>;
   queryError: unknown;
   resources: SavedResource<T>[];
   userId: string | null | undefined;
@@ -59,10 +61,16 @@ export function useSavedResources<T>({
       })),
     ),
   ];
+  const paused = [personalQuery, householdsQuery, ...householdQueries].some(
+    (query) => query.fetchStatus === "paused",
+  );
   const queryError =
     personalQuery.error ??
     householdsQuery.error ??
-    householdQueries.find((query) => query.error)?.error;
+    householdQueries.find((query) => query.error)?.error ??
+    (paused
+      ? new Error("You’re offline. Your saved items will refresh when you reconnect.")
+      : null);
   const loading =
     personalQuery.isPending ||
     householdsQuery.isPending ||
@@ -71,7 +79,18 @@ export function useSavedResources<T>({
   return {
     api,
     households: householdsQuery.data ?? [],
-    loading,
+    loading: loading && !paused,
+    refreshing:
+      personalQuery.isRefetching ||
+      householdsQuery.isRefetching ||
+      householdQueries.some((query) => query.isRefetching),
+    refresh: async () => {
+      await Promise.all([
+        personalQuery.refetch(),
+        householdsQuery.refetch(),
+        ...householdQueries.map((query) => query.refetch()),
+      ]);
+    },
     queryError,
     resources,
     userId,
