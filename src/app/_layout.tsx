@@ -16,6 +16,7 @@ import { GroceryCopilotSession } from "@/components/grocery-copilot-session";
 import { QueryProvider } from "@/components/query-provider";
 import { SignInScreen } from "@/components/sign-in-screen";
 import { Spinner } from "@/components/ui/spinner";
+import { Text } from "@/components/ui/text";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { getClerkPublishableKey, getRuntimeUrl } from "@/lib/config";
 import { Sentry } from "@/lib/sentry";
@@ -70,8 +71,9 @@ function RootLayout() {
             >
               <QueryProvider>
                 <ClerkLoading>
-                  <View className="flex-1 items-center justify-center bg-background">
-                    <Spinner size="lg" />
+                  <View className="flex-1 items-center justify-center gap-3 bg-background">
+                    <Spinner accessibilityLabel="Restoring your session" size="lg" />
+                    <Text variant="muted">Getting your groceries ready…</Text>
                   </View>
                 </ClerkLoading>
                 <ClerkLoaded>
@@ -88,20 +90,18 @@ function RootLayout() {
                             headerStyle: { backgroundColor: background },
                             headerTintColor: foreground,
                             headerTitleAlign: "center",
-                            headerTitleStyle: { fontWeight: "800" },
+                            headerShadowVisible: false,
+                            headerTitleStyle: { fontWeight: "600" },
                           }}
                         >
                           <Stack.Screen name="index" options={{ title: "Grocery Agent" }} />
-                          <Stack.Screen name="chat" options={{ title: "Grocery Agent" }} />
+                          <Stack.Screen name="chat" options={{ title: "Plan in chat" }} />
                           <Stack.Screen name="list" options={{ title: "Your grocery plan" }} />
                           <Stack.Screen name="saved-lists" options={{ title: "Saved lists" }} />
-                          <Stack.Screen name="saved-list" options={{ title: "Edit list" }} />
+                          <Stack.Screen name="saved-list" options={{ title: "Saved list" }} />
                           <Stack.Screen name="saved-recipes" options={{ title: "Saved recipes" }} />
-                          <Stack.Screen name="saved-recipe" options={{ title: "Edit recipe" }} />
-                          <Stack.Screen
-                            name="households"
-                            options={{ title: "Shared households" }}
-                          />
+                          <Stack.Screen name="saved-recipe" options={{ title: "Recipe" }} />
+                          <Stack.Screen name="households" options={{ title: "Households" }} />
                           <Stack.Screen name="shared-list" options={{ title: "Shared list" }} />
                           <Stack.Screen name="chat-history" options={{ title: "Chat history" }} />
                           <Stack.Screen name="account" options={{ title: "Account" }} />

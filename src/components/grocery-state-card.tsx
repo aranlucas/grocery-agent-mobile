@@ -1,13 +1,6 @@
 import type { GroceryState } from "@agents/types";
 import { Pressable, View } from "react-native";
-import {
-  ArrowRight,
-  BookMarked,
-  Save,
-  ShoppingBasket,
-  ShoppingCart,
-  Sparkles,
-} from "lucide-react-native";
+import { ArrowRight, BookMarked, Save, ShoppingBasket, ShoppingCart } from "lucide-react-native";
 import { KrogerProductImage } from "@/components/kroger-product-image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,7 +17,8 @@ import { MarkdownText } from "@/components/ui/markdown-text";
 import { Price } from "@/components/ui/price";
 import { Text } from "@/components/ui/text";
 import { cartSubtotal, pantryNames } from "@/lib/grocery-state";
-import { cn } from "@/lib/utils";
+import { Disclosure } from "@/components/ui/disclosure";
+import { useState } from "react";
 
 export function GroceryStateCard({
   state,
@@ -43,6 +37,7 @@ export function GroceryStateCard({
   adding?: boolean;
   connected: boolean;
 }) {
+  const [mealOpen, setMealOpen] = useState(false);
   const list = state.shopping_list ?? [];
   const cart = state.cart ?? [];
   const matches = state.product_matches ?? [];
@@ -65,20 +60,23 @@ export function GroceryStateCard({
         <View className="flex-1 gap-0.5">
           <CardTitle>{connected ? "Kroger grocery plan" : "Your grocery plan"}</CardTitle>
           <CardDescription>
-            {state.status === "ready" ? "Ready to review" : "Building your matches"}
+            {adding
+              ? "Updating your plan…"
+              : state.status === "ready"
+                ? "Ready to review"
+                : "Plan in progress"}
           </CardDescription>
         </View>
-        {connected ? <Badge variant="secondary">Connected</Badge> : null}
+        {state.status === "ready" ? <Badge variant="outline">Ready</Badge> : null}
       </CardHeader>
 
       <CardContent className="gap-3.5">
         {state.meal_plan ? (
-          <View className="flex-row gap-2 rounded-2xl bg-muted p-3">
-            <Icon as={Sparkles} className="size-4 text-primary" />
-            <View className="min-w-0 flex-1">
+          <Disclosure label="Meal plan" open={mealOpen} onOpenChange={setMealOpen}>
+            <View className="min-w-0">
               <MarkdownText content={state.meal_plan} />
             </View>
-          </View>
+          </Disclosure>
         ) : null}
 
         {state.recipe ? (
@@ -112,46 +110,32 @@ export function GroceryStateCard({
         ) : null}
 
         {preview.length ? (
-          <View className="flex-row gap-2">
-            {preview.map((item, index) => (
-              <View
-                className={cn(
-                  "min-h-24 min-w-0 flex-1 justify-between rounded-2xl p-2",
-                  previewTone(index),
-                )}
-                key={`${item.name}-${index}`}
-              >
+          <View className="gap-2">
+            {preview.slice(0, 3).map((item, index) => (
+              <View className="flex-row items-center gap-3" key={`${item.name}-${index}`}>
                 <KrogerProductImage imageUrl={item.imageUrl} name={item.name} size="compact" />
-                <Text className="leading-4 font-semibold" numberOfLines={2}>
+                <Text className="flex-1" numberOfLines={2}>
                   {item.name}
                 </Text>
               </View>
             ))}
-            {list.length > preview.length ? (
-              <View className="min-h-24 min-w-0 flex-1 items-center justify-center rounded-2xl bg-muted p-2">
-                <Text className="text-secondary" variant="h4">
-                  +{list.length - preview.length}
-                </Text>
-                <Text variant="muted">more</Text>
-              </View>
-            ) : null}
           </View>
         ) : null}
 
         {list.length || cart.length ? (
           <Pressable
             accessibilityRole={onOpenList ? "button" : undefined}
-            className="flex-row items-center justify-between rounded-2xl bg-muted px-3.5 py-3 active:opacity-70"
+            className="min-h-14 flex-row items-center justify-between gap-3 rounded-2xl bg-primary-surface px-4 py-3 active:opacity-70"
             disabled={!onOpenList}
             onPress={onOpenList}
           >
-            <View>
+            <View className="flex-1">
               <Text variant="large">Review {Math.max(list.length, cart.length)} items</Text>
               {subtotal > 0 ? (
                 <Price
                   amount={subtotal}
                   prefix="Estimated subtotal"
-                  textClassName="text-xs text-muted-foreground"
+                  textClassName="text-sm text-muted-foreground"
                 />
               ) : (
                 <Text className="mt-0.5" variant="muted">
@@ -166,10 +150,10 @@ export function GroceryStateCard({
       </CardContent>
 
       {list.length > 0 && (onSaveList || (connected && onAddToCart)) ? (
-        <CardFooter className="items-stretch gap-2 pt-0">
+        <CardFooter className="flex-col items-stretch gap-2 pt-0 sm:flex-row">
           {onSaveList ? (
             <Button
-              className="flex-1"
+              className="w-full sm:w-auto sm:flex-1"
               disabled={adding || state.status !== "ready"}
               icon={<Icon as={Save} className="size-4.5 text-secondary-foreground" />}
               onPress={onSaveList}
@@ -181,9 +165,10 @@ export function GroceryStateCard({
           ) : null}
           {connected && onAddToCart ? (
             <Button
-              className="flex-1"
+              className="w-full sm:w-auto sm:flex-1"
               icon={<Icon as={ShoppingCart} className="size-4.5 text-primary-foreground" />}
               loading={adding}
+              disabled={!matches.length || state.status !== "ready"}
               onPress={onAddToCart}
               size="lg"
             >
@@ -194,8 +179,4 @@ export function GroceryStateCard({
       ) : null}
     </Card>
   );
-}
-
-function previewTone(index: number) {
-  return ["bg-muted", "bg-accent/40", "bg-primary/5", "bg-secondary/10"][index % 4];
 }

@@ -47,7 +47,7 @@ const errorMessages: Record<string, string> = {
   grocery_forbidden: "You no longer have access to that household.",
   grocery_invite_expired: "That invite has expired. Ask the household owner for a new one.",
   grocery_invite_exhausted: "That invite has reached its usage limit.",
-  grocery_not_found: "That shared list could not be found.",
+  grocery_not_found: "That item could not be found. Check the link or your access.",
   saved_recipe_not_found: "That saved recipe could not be found.",
   invalid_grocery_request: "Check the values and try again.",
 };

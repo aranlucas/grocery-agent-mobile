@@ -49,6 +49,13 @@ export function Button({
   );
   const customStyle = useResolveClassNames(className ?? "");
   const customTextStyle = useResolveClassNames(textClassName ?? "");
+  const constrained =
+    Boolean(customStyle.flex || customStyle.flexGrow || customStyle.width) ||
+    (customStyle.alignSelf !== "flex-start" &&
+      size !== "icon" &&
+      size !== "sm" &&
+      variant !== "ghost" &&
+      variant !== "link");
   const textColor = typeof customTextStyle.color === "string" ? customTextStyle.color : foreground;
   return (
     <UIHost
@@ -74,7 +81,7 @@ export function Button({
         variant={variant}
         onPress={onPress}
         disabled={isDisabled}
-        width={customStyle.flex || customStyle.flexGrow || customStyle.width ? width : undefined}
+        width={size === "icon" ? 56 : constrained ? width : undefined}
         background={
           typeof customStyle.backgroundColor === "string"
             ? customStyle.backgroundColor
@@ -103,9 +110,8 @@ export function Button({
           ) : null}
           {children ? (
             <NativeText
-              numberOfLines={1}
               textStyle={{
-                fontSize: customTextStyle.fontSize ?? (size === "lg" ? 18 : 16),
+                fontSize: customTextStyle.fontSize ?? (size === "sm" ? 14 : 16),
                 fontWeight: "600",
                 color: textColor,
               }}

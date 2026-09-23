@@ -1,0 +1,15 @@
+[
+  {
+    "error": {
+      "message": "That shared list could not be found.",
+      "status": 404
+    },
+    "hasData": false,
+    "key": [
+      "grocery-recipe",
+      "user_3Jh6IOii9bOmp4G27FAxXqW87sP",
+      "recipe_1b41037a8c1038b9d38bf1240e777fed"
+    ],
+    "status": "error"
+  }
+]

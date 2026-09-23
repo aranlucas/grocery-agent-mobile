@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { useWatch } from "react-hook-form";
 import {
   AlertDialog,
@@ -61,7 +61,7 @@ export function SaveResourceDialog({
     }
   });
   return (
-    <AlertDialog onOpenChange={onOpenChange} open={open}>
+    <AlertDialog busy={isSubmitting} onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Save {resource}</AlertDialogTitle>
@@ -74,6 +74,8 @@ export function SaveResourceDialog({
             accessibilityLabel={`${kind === "list" ? "List" : "Recipe"} title`}
             autoCapitalize="sentences"
             control={control}
+            label={kind === "list" ? "List title" : "Recipe title"}
+            disabled={isSubmitting}
             name="title"
             placeholder={kind === "list" ? "Weekly groceries" : "Recipe title"}
             rules={{
@@ -84,24 +86,33 @@ export function SaveResourceDialog({
             <Text className="font-semibold" variant="small">
               Save to
             </Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="gap-2"
+            <View
+              accessibilityLabel="Save to"
+              accessibilityRole="radiogroup"
+              className="flex-row flex-wrap gap-2"
             >
-              <Chip onPress={() => setValue("householdId", undefined)} selected={!householdId}>
+              <Chip
+                disabled={isSubmitting}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: !householdId }}
+                onPress={() => setValue("householdId", undefined)}
+                selected={!householdId}
+              >
                 Personal
               </Chip>
               {households.map((household) => (
                 <Chip
                   key={household.id}
+                  disabled={isSubmitting}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: householdId === household.id }}
                   onPress={() => setValue("householdId", household.id)}
                   selected={householdId === household.id}
                 >
                   {household.name}
                 </Chip>
               ))}
-            </ScrollView>
+            </View>
           </View>
           {error ? <Alert title={error} variant="destructive" /> : null}
         </View>
@@ -109,7 +120,11 @@ export function SaveResourceDialog({
           <AlertDialogCancel disabled={isSubmitting} onPress={() => onOpenChange(false)}>
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction disabled={isSubmitting} onPress={() => void submit()}>
+          <AlertDialogAction
+            testID="save-resource-submit"
+            loading={isSubmitting}
+            onPress={() => void submit()}
+          >
             {isSubmitting ? "Saving…" : "Save"}
           </AlertDialogAction>
         </AlertDialogFooter>

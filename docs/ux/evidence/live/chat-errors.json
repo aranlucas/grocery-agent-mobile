@@ -1,0 +1,22 @@
+{
+  "copilotKit": "1.73.2",
+  "count": 4,
+  "errors": [
+    {
+      "source": "console",
+      "message": "[CopilotKit] Error (agent_run_failed_event): Error: Software caused connection abort"
+    },
+    {
+      "source": "console",
+      "message": "Agent execution failed: Error: Software caused connection abort"
+    },
+    {
+      "source": "console",
+      "message": "[CopilotKit] Error (agent_run_failed): Error: Software caused connection abort"
+    },
+    {
+      "source": "console",
+      "message": "Error: Uncaught (in promise, id: 0) Error: Software caused connection abort"
+    }
+  ]
+}

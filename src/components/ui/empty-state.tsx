@@ -21,18 +21,25 @@ export function EmptyState({
   ...props
 }: EmptyStateProps) {
   return (
-    <View className={cn("items-center justify-center px-8 py-16", className)} {...props}>
-      {icon && <View className="mb-4">{icon}</View>}
-      <Text className="mb-1 text-center" variant="large">
+    <View className={cn("items-center justify-center gap-3 px-4 py-10", className)} {...props}>
+      {icon && (
+        <View
+          accessible={false}
+          className="size-16 items-center justify-center rounded-2xl bg-primary-surface"
+        >
+          {icon}
+        </View>
+      )}
+      <Text className="text-center" variant="h4">
         {title}
       </Text>
       {description && (
-        <Text className="mb-6 max-w-70 text-center" variant="muted">
+        <Text className="max-w-80 text-center" variant="muted">
           {description}
         </Text>
       )}
       {action && (
-        <Button onPress={action.onPress} size="lg">
+        <Button className="mt-2 w-full max-w-xs" onPress={action.onPress} size="lg">
           {action.label}
         </Button>
       )}

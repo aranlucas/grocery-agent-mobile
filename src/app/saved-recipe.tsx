@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
-import { Plus, Save, Trash2 } from "lucide-react-native";
-import { useEffect, useMemo } from "react";
-import { Pressable, View } from "react-native";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Plus, Save, Trash2, BookOpen, Pencil } from "lucide-react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Alert as NativeAlert, Pressable, View } from "react-native";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import { Icon } from "@/components/ui/icon";
 import { Screen } from "@/components/ui/screen";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { ErrorState } from "@/components/ui/error-state";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { useSubmitForm } from "@/hooks/use-submit-form";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { type Recipe, type RecipeContent } from "@/lib/household-api";
@@ -50,6 +52,8 @@ function recipeFormValues(recipe?: Recipe): RecipeFormValues {
 }
 
 export default function SavedRecipeScreen() {
+  const router = useRouter();
+  const [editing, setEditing] = useState(false);
   const recipeId = firstParam(useLocalSearchParams<{ recipeId?: string | string[] }>().recipeId);
   const { api, userId } = useHouseholdApi();
   const queryClient = useQueryClient();
@@ -62,16 +66,20 @@ export default function SavedRecipeScreen() {
   const values = useMemo(() => recipeFormValues(recipeQuery.data), [recipeQuery.data]);
   const {
     control,
-    formState: { dirtyFields, isSubmitting },
+    formState: { dirtyFields, isSubmitting, isDirty },
     handleSubmit,
     reset,
     setValue,
   } = useSubmitForm<RecipeFormValues>({ defaultValues: EMPTY_RECIPE_FORM });
+  const allowNavigation = useUnsavedChanges(editing && isDirty, () => {
+    reset(values);
+    setEditing(false);
+  });
   const keepDirtyValues = Object.keys(dirtyFields).length > 0;
 
   useEffect(() => {
     if (recipeQuery.data) {
-      reset(values, { keepDirtyValues });
+      reset(values, { keepDirtyValues, keepDirty: keepDirtyValues });
     }
   }, [keepDirtyValues, recipeQuery.data, reset, values]);
 
@@ -83,6 +91,10 @@ export default function SavedRecipeScreen() {
     onSuccess: async (recipe) => {
       queryClient.setQueryData(recipeKey, recipe);
       reset(recipeFormValues(recipe));
+      setEditing(false);
+      allowNavigation();
+      if (router.canGoBack()) router.back();
+      else router.replace("/saved-recipes");
       await queryClient.invalidateQueries({
         queryKey: groceryQueryKeys.recipes(userId, recipe.household_id),
       });
@@ -92,6 +104,7 @@ export default function SavedRecipeScreen() {
     try {
       await updateRecipe.mutateAsync({
         ...draft,
+        title: draft.title.trim(),
         tags: draft.tags
           .split(",")
           .map((tag) => tag.trim())
@@ -105,22 +118,37 @@ export default function SavedRecipeScreen() {
   if (!recipeId) {
     return (
       <Screen contentContainerClassName="flex-grow justify-center">
-        <Alert
-          title="This saved recipe link is incomplete. Go back and open it again."
-          variant="destructive"
+        <ErrorState
+          title="This recipe link is incomplete"
+          message="Open the recipe again from your saved recipes."
+          onRetry={() => router.replace("/saved-recipes")}
+          retryLabel="Open saved recipes"
         />
       </Screen>
     );
   }
 
-  if (recipeQuery.error instanceof Error) {
+  if (recipeQuery.error instanceof Error && !recipeQuery.data) {
     return (
       <Screen contentContainerClassName="flex-grow justify-center">
-        <Alert title={recipeQuery.error.message} variant="destructive" />
+        <ErrorState
+          message={recipeQuery.error.message}
+          onRetry={() => void recipeQuery.refetch()}
+        />
       </Screen>
     );
   }
 
+  if (recipeQuery.fetchStatus === "paused" && !recipeQuery.data)
+    return (
+      <Screen>
+        <ErrorState
+          title="You’re offline"
+          message="Reconnect to load this recipe."
+          onRetry={() => void recipeQuery.refetch()}
+        />
+      </Screen>
+    );
   if (recipeQuery.isPending || !recipeQuery.data) {
     return (
       <Screen>
@@ -131,10 +159,134 @@ export default function SavedRecipeScreen() {
     );
   }
 
+  const recipe = recipeQuery.data;
+  if (!editing)
+    return (
+      <Screen key="read">
+        <Stack.Screen options={{ title: "Recipe" }} />
+        <View className="gap-2">
+          <Text variant="h2" selectable>
+            {recipe.title}
+          </Text>
+          <Text variant="muted">
+            {recipe.servings ? `${recipe.servings} servings · ` : ""}
+            {recipe.household_id ? "Household recipe" : "Personal recipe"}
+          </Text>
+          {recipe.description ? <Text selectable>{recipe.description}</Text> : null}
+          {recipe.tags.length ? (
+            <Text className="text-primary" variant="small">
+              {recipe.tags.join(" · ")}
+            </Text>
+          ) : null}
+        </View>
+        <View className="gap-3">
+          <Text variant="h4">Ingredients</Text>
+          <Card className="gap-3">
+            {recipe.ingredients.length ? (
+              recipe.ingredients.map((ingredient, index) => (
+                <View key={index} className="flex-row gap-3">
+                  <Text className="text-primary">•</Text>
+                  <View className="flex-1">
+                    <Text selectable>
+                      {[ingredient.quantity, ingredient.unit, ingredient.name]
+                        .filter(Boolean)
+                        .join(" ")}
+                    </Text>
+                    {ingredient.note ? (
+                      <Text variant="muted" selectable>
+                        {ingredient.note}
+                      </Text>
+                    ) : null}
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text variant="muted">No ingredients saved yet. Add them in Edit recipe.</Text>
+            )}
+          </Card>
+        </View>
+        <View className="gap-4">
+          <Text variant="h4">Method</Text>
+          {recipe.steps.length ? (
+            recipe.steps.map((step, index) => (
+              <View className="flex-row items-start gap-3" key={index}>
+                <View className="size-8 items-center justify-center rounded-full bg-primary-surface">
+                  <Text variant="small" className="text-primary">
+                    {index + 1}
+                  </Text>
+                </View>
+                <Text className="flex-1" selectable>
+                  {step.instruction}
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text variant="muted">No instructions saved yet. Add them in Edit recipe.</Text>
+          )}
+        </View>
+        {recipe.notes ? (
+          <View className="gap-2">
+            <Text variant="h4">Notes</Text>
+            <Text selectable>{recipe.notes}</Text>
+          </View>
+        ) : null}
+        <Button
+          icon={<Icon as={Pencil} className="size-5 text-primary" />}
+          variant="outline"
+          onPress={() => {
+            updateRecipe.reset();
+            setEditing(true);
+          }}
+        >
+          Edit recipe
+        </Button>
+        <Button
+          icon={<Icon as={BookOpen} className="size-5 text-primary-foreground" />}
+          onPress={() =>
+            router.push({
+              pathname: "/chat",
+              params: {
+                prompt: `Build a grocery list for my saved recipe “${recipe.title}”. Ingredients: ${recipe.ingredients.map((item) => [item.quantity, item.unit, item.name].filter(Boolean).join(" ")).join(", ")}.`,
+              },
+            })
+          }
+        >
+          Plan groceries for this recipe
+        </Button>
+      </Screen>
+    );
+
   return (
-    <Screen>
+    <Screen key="edit">
+      <Stack.Screen options={{ title: "Edit recipe" }} />
+      <View className="flex-row flex-wrap items-center justify-between gap-2">
+        <Text variant="muted">{isDirty ? "Unsaved changes" : "No changes yet"}</Text>
+        <Button
+          variant="ghost"
+          disabled={isSubmitting}
+          onPress={() => {
+            if (!isDirty) {
+              setEditing(false);
+              return;
+            }
+            NativeAlert.alert("Discard changes?", "Your saved recipe will stay as it was.", [
+              { text: "Keep editing", style: "cancel" },
+              {
+                text: "Discard",
+                style: "destructive",
+                onPress: () => {
+                  reset(values);
+                  setEditing(false);
+                },
+              },
+            ]);
+          }}
+        >
+          Cancel editing
+        </Button>
+      </View>
       <Text selectable variant="muted">
-        Changes are available to Grocery Agent and every authorized household member.
+        Save when you’re finished. Your changes will be available wherever this recipe is shared.
       </Text>
 
       <Card className="p-0">
@@ -186,8 +338,11 @@ export default function SavedRecipeScreen() {
           </Button>
         </CardHeader>
         <CardContent className="gap-3 p-4 pt-2">
+          {ingredients.fields.length === 0 ? (
+            <Text variant="muted">Add an ingredient to start your recipe.</Text>
+          ) : null}
           {ingredients.fields.map((ingredient, index) => (
-            <View className="gap-2 rounded-2xl bg-muted p-3" key={ingredient.id}>
+            <View className="gap-3 border-t border-border pt-4" key={ingredient.id}>
               <View className="flex-row items-center gap-2">
                 <FormInput
                   accessibilityLabel={`Ingredient ${index + 1}`}
@@ -208,20 +363,22 @@ export default function SavedRecipeScreen() {
                   <Icon as={Trash2} className="size-5 text-muted-foreground" />
                 </Pressable>
               </View>
-              <View className="flex-col gap-2 sm:flex-row">
+              <View className="flex-row gap-3">
                 <FormInput
                   accessibilityLabel={`Ingredient ${index + 1} quantity`}
-                  containerClassName="w-full sm:flex-1"
+                  containerClassName="min-w-0 flex-1"
                   control={control}
                   name={`ingredients.${index}.quantity`}
-                  placeholder="Quantity"
+                  label="Quantity"
+                  placeholder="2"
                 />
                 <FormInput
                   accessibilityLabel={`Ingredient ${index + 1} unit`}
-                  containerClassName="w-full sm:flex-1"
+                  containerClassName="min-w-0 flex-1"
                   control={control}
                   name={`ingredients.${index}.unit`}
-                  placeholder="Unit"
+                  label="Unit"
+                  placeholder="cups"
                 />
               </View>
               <FormInput
@@ -248,6 +405,9 @@ export default function SavedRecipeScreen() {
           </Button>
         </CardHeader>
         <CardContent className="gap-3 p-4 pt-2">
+          {steps.length === 0 ? (
+            <Text variant="muted">Add the first cooking instruction.</Text>
+          ) : null}
           {steps.map((_, index) => (
             <View className="flex-row items-start gap-2" key={`step-${index}`}>
               <View className="mt-2 size-7 items-center justify-center rounded-full bg-muted">
@@ -300,9 +460,10 @@ export default function SavedRecipeScreen() {
       {updateRecipe.error instanceof Error ? (
         <Alert title={updateRecipe.error.message} variant="destructive" />
       ) : null}
-      {updateRecipe.data ? <Alert title="Recipe changes saved" /> : null}
+
       <Button
         icon={<Icon as={Save} className="size-5 text-primary-foreground" />}
+        disabled={!isDirty}
         loading={isSubmitting || updateRecipe.isPending}
         onPress={() => void submit()}
         size="lg"

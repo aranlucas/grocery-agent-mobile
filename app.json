@@ -20,7 +20,7 @@
       "package": "dev.agents.grocery",
       "versionCode": 4,
       "allowBackup": false,
-      "predictiveBackGestureEnabled": true,
+      "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [],
       "blockedPermissions": [

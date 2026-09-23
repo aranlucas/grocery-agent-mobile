@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Plus, Save } from "lucide-react-native";
 import { useEffect } from "react";
 import { View } from "react-native";
 import { GroceryListItemRow } from "@/components/grocery-list-item-row";
+import { ListProgress } from "@/components/list-progress";
+import { ErrorState } from "@/components/ui/error-state";
+import { RefreshControl } from "@/components/ui/refresh-control";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +16,7 @@ import { Screen } from "@/components/ui/screen";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { useSubmitForm } from "@/hooks/use-submit-form";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
 import { firstParam } from "@/lib/utils";
@@ -21,6 +25,7 @@ type TitleForm = { title: string };
 type AddItemForm = { name: string };
 
 export default function SavedListScreen() {
+  const router = useRouter();
   const listId = firstParam(useLocalSearchParams<{ listId?: string | string[] }>().listId);
   const { api, userId } = useHouseholdApi();
   const queryClient = useQueryClient();
@@ -40,6 +45,9 @@ export default function SavedListScreen() {
   const addItemForm = useSubmitForm<AddItemForm>({ defaultValues: { name: "" } });
   const list = listQuery.data;
   const keepDirtyValues = Object.keys(dirtyFields).length > 0;
+  const allowNavigation = useUnsavedChanges(Boolean(dirtyFields.title), () =>
+    reset({ title: list?.title ?? "" }),
+  );
 
   useEffect(() => {
     if (list) {
@@ -82,6 +90,11 @@ export default function SavedListScreen() {
           queryKey: groceryQueryKeys.lists(userId, list?.household_id),
         }),
       ]);
+      if (mutation.type === "title" && updatedList) {
+        allowNavigation();
+        if (router.canGoBack()) router.back();
+        else router.replace("/saved-lists");
+      }
     },
   });
   const saveTitle = handleSubmit(async ({ title }) => {
@@ -102,13 +115,25 @@ export default function SavedListScreen() {
   if (!listId) {
     return (
       <Screen contentContainerClassName="flex-grow justify-center">
-        <Alert
-          title="This saved list link is incomplete. Go back and open it again."
-          variant="destructive"
+        <ErrorState
+          title="This list link is incomplete"
+          message="Open the list again from your saved lists."
+          onRetry={() => router.replace("/saved-lists")}
+          retryLabel="Open saved lists"
         />
       </Screen>
     );
   }
+  if (listQuery.fetchStatus === "paused" && !list)
+    return (
+      <Screen>
+        <ErrorState
+          title="You’re offline"
+          message="Reconnect to load this list."
+          onRetry={() => void listQuery.refetch()}
+        />
+      </Screen>
+    );
   if (listQuery.isPending) {
     return (
       <Screen>
@@ -117,23 +142,36 @@ export default function SavedListScreen() {
       </Screen>
     );
   }
-  if (listQuery.error instanceof Error || !list) {
+  if (!list) {
     return (
       <Screen contentContainerClassName="flex-grow justify-center">
-        <Alert
-          title={listQuery.error instanceof Error ? listQuery.error.message : "List not found"}
-          variant="destructive"
+        <ErrorState
+          message={listQuery.error instanceof Error ? listQuery.error.message : "List not found"}
+          onRetry={() => void listQuery.refetch()}
         />
       </Screen>
     );
   }
 
   return (
-    <Screen>
-      <View className="flex-row items-center gap-2">
+    <Screen
+      refreshControl={
+        <RefreshControl
+          refreshing={listQuery.isRefetching}
+          onRefresh={() => void listQuery.refetch()}
+        />
+      }
+    >
+      {listQuery.error instanceof Error ? (
+        <ErrorState
+          inline
+          message={listQuery.error.message}
+          onRetry={() => void listQuery.refetch()}
+        />
+      ) : null}
+      <View className="gap-3">
         <FormInput
           accessibilityLabel="Grocery list title"
-          containerClassName="flex-1"
           control={control}
           label="List title"
           onSubmitEditing={() => void saveTitle()}
@@ -146,11 +184,13 @@ export default function SavedListScreen() {
         <Button
           accessibilityLabel="Save list title"
           loading={isSubmitting}
-          disabled={mutateList.isPending}
-          icon={<Icon as={Save} className="size-4.5 text-primary-foreground" />}
+          disabled={mutateList.isPending || !dirtyFields.title}
+          icon={<Icon as={Save} className="size-4.5 text-primary" />}
           onPress={() => void saveTitle()}
-          size="icon"
-        />
+          variant="outline"
+        >
+          Save title
+        </Button>
       </View>
 
       <Card className="overflow-hidden p-0">
@@ -158,7 +198,14 @@ export default function SavedListScreen() {
           <CardTitle>
             {list.items.length} {list.items.length === 1 ? "item" : "items"}
           </CardTitle>
-          <CardDescription>Changes sync with Grocery Agent and authorized members.</CardDescription>
+          <CardDescription>
+            {list.household_id
+              ? "Shared with your household. Changes save as you shop."
+              : "Your personal list. Changes save as you shop."}
+          </CardDescription>
+          <View className="pt-3">
+            <ListProgress items={list.items} />
+          </View>
         </CardHeader>
         <CardContent className="p-0">
           {list.items.length ? (
@@ -166,6 +213,7 @@ export default function SavedListScreen() {
               <GroceryListItemRow
                 key={item.id}
                 item={item}
+                busy={mutateList.isPending}
                 onDelete={() => mutateList.mutate({ type: "delete", itemId: item.id })}
                 onToggle={(checked) =>
                   mutateList.mutate({
@@ -211,6 +259,9 @@ export default function SavedListScreen() {
 
       {mutateList.error instanceof Error ? (
         <Alert title={mutateList.error.message} variant="destructive" />
+      ) : null}
+      {mutateList.isSuccess && mutateList.variables.type === "title" && !dirtyFields.title ? (
+        <Alert title="List title saved" variant="success" />
       ) : null}
     </Screen>
   );

@@ -1,0 +1,20 @@
+{
+  "light": {
+    "foreground / background": 15.63,
+    "muted-foreground / card": 5.15,
+    "muted-foreground / muted": 4.54,
+    "primary-foreground / primary": 5.02,
+    "secondary-foreground / secondary": 8.53,
+    "destructive / destructive-surface": 6.05,
+    "success / success-surface": 6.16
+  },
+  "dark": {
+    "foreground / background": 16.9,
+    "muted-foreground / card": 7.79,
+    "muted-foreground / muted": 6.41,
+    "primary-foreground / primary": 10.35,
+    "secondary-foreground / secondary": 13.77,
+    "destructive / destructive-surface": 5.48,
+    "success / success-surface": 8.48
+  }
+}

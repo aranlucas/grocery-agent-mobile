@@ -23,9 +23,9 @@ export function KrogerConnectionCard({
             <Icon as={ShoppingCart} className="size-6 text-primary" />
           </View>
           <View className="flex-1 gap-0.5">
-            <CardTitle>Connect Kroger when you’re ready</CardTitle>
+            <CardTitle>Shop with Kroger</CardTitle>
             <CardDescription selectable>
-              Optional for live products, prices, and cart actions.
+              Connect for store prices and your Kroger cart.
             </CardDescription>
           </View>
         </CardHeader>
