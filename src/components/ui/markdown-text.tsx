@@ -29,7 +29,7 @@ type MarkdownNode = {
   start?: number | null;
   checked?: boolean | null;
   url?: string;
-  align?: Array<"left" | "right" | "center" | null>;
+  align?: ("left" | "right" | "center" | null)[];
   children?: MarkdownNode[];
 };
 

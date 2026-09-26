@@ -37,7 +37,7 @@ The original gallery uses **isolated local sample data**; the later `evidence/li
 ## Automated checks
 
 - `npx @expo/agent-cli typecheck --json`: zero diagnostics.
-- `pnpm lint`: Oxlint passes with warnings denied.
+- `pnpm lint`: `expo lint` (ESLint with eslint-config-expo and Prettier) passes with warnings denied.
 - `pnpm test`: 10 tests pass, covering duplicate-submit serialization and collection search/scope/sort behavior.
 - `pnpm build`: Android and iOS production JavaScript exports.
 - Android development client built and installed successfully after the Back configuration change.

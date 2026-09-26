@@ -54,7 +54,7 @@ export async function runAuthenticated<TResult>({
 
 export function readableError(error: unknown): string {
   if (error && typeof error === "object" && "errors" in error) {
-    const errors = (error as { errors?: Array<{ longMessage?: string; message?: string }> }).errors;
+    const errors = (error as { errors?: { longMessage?: string; message?: string }[] }).errors;
     const first = errors?.[0];
     if (first?.longMessage || first?.message) return first.longMessage ?? first.message ?? "";
   }

@@ -10,7 +10,7 @@ import type {
   ShoppingPantryItem,
   ShoppingPreferredStore,
   ShoppingProfile,
-} from "@agents/types";
+} from "@/lib/grocery-contracts";
 
 export type DisplayTextMessage = {
   id: string;
