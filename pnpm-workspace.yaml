@@ -13,4 +13,4 @@ allowBuilds:
   unrs-resolver: false
 
 patchedDependencies:
-  "@clerk/expo@4.6.8": patches/@clerk__expo@4.6.8.patch
+  "@clerk/expo@4.7.1": patches/@clerk__expo@4.7.1.patch

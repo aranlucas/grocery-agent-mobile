@@ -1,20 +1,26 @@
 diff --git a/android/build.gradle b/android/build.gradle
-index 6bd6d5acf6ac3da78232170a6ea8c2b0f6e5504e..a13e63a0e1f413c7eb28661d0d80568ee4c80f36 100644
+index a447dabd7e566b6f1dd1b57836270c61b1a5ac25..5b0862aef4482151606f3ac9247c07180eef7604 100644
 --- a/android/build.gradle
 +++ b/android/build.gradle
-@@ -27,3 +27,4 @@ ext {
+@@ -27,6 +27,7 @@ ext {
    composeVersion = "1.7.0"
    activityComposeVersion = "1.9.0"
    lifecycleVersion = "2.8.0"
 +  savedStateComposeVersion = "1.3.0"
-@@ -146,3 +147,5 @@ dependencies {
+ }
+ 
+ def safeExtGet(prop, fallback) {
+@@ -146,6 +147,8 @@ dependencies {
    implementation "androidx.activity:activity-compose:$activityComposeVersion"
    implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion"
    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
 +  // SDK 58 no longer supplies the Compose SavedState adapter transitively.
 +  implementation "androidx.savedstate:savedstate-compose:$savedStateComposeVersion"
+ 
+   testImplementation "junit:junit:4.13.2"
+ }
 diff --git a/package.json b/package.json
-index 47f037d0f629eb0c35f83aee8fb2534db9f82879..4d3772d7c52a12f08784c535dbca94aa7297d525 100644
+index 95c79d99301202277c957060c2f5691c5f7de591..226e44b956d9c978b0afdbde27df1aa96e0df611 100644
 --- a/package.json
 +++ b/package.json
 @@ -131,7 +131,7 @@
