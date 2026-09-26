@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { memo, useMemo, useState } from "react";
 import { View } from "react-native";
 import { Save, ShoppingCart, ShoppingBasket } from "lucide-react-native";

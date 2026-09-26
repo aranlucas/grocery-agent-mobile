@@ -1,10 +1,4 @@
-packages:
-  - "packages/*"
-
 minimumReleaseAge: 0
-
-syncInjectedDepsAfterScripts:
-  - fmt
 
 allowBuilds:
   "@clerk/shared": true
@@ -16,6 +10,7 @@ allowBuilds:
   "core-js-pure": true
   esbuild: true
   "utf-8-validate": true
+  unrs-resolver: false
 
 patchedDependencies:
   "@clerk/expo@4.6.8": patches/@clerk__expo@4.6.8.patch

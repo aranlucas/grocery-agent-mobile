@@ -1,0 +1,11 @@
+AGENTS.md
+.agents/
+.claude/
+.expo/
+android/
+ios/
+dist/
+coverage/
+src/lib/grocery-gateway.d.ts
+src/uniwind-types.d.ts
+pnpm-lock.yaml

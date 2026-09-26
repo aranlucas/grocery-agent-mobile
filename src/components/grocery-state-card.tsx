@@ -1,4 +1,4 @@
-import type { GroceryState } from "@agents/types";
+import type { GroceryState } from "@/lib/grocery-contracts";
 import { Pressable, View } from "react-native";
 import { ArrowRight, BookMarked, Save, ShoppingBasket, ShoppingCart } from "lucide-react-native";
 import { KrogerProductImage } from "@/components/kroger-product-image";
@@ -43,7 +43,7 @@ export function GroceryStateCard({
   const matches = state.product_matches ?? [];
   const pantry = pantryNames(state.shopping_profile?.pantry ?? []);
   const skipped = list.filter((item) => pantry.has(item.trim().toLocaleLowerCase()));
-  const preview: Array<{ name: string; imageUrl?: string }> = matches.length
+  const preview: { name: string; imageUrl?: string }[] = matches.length
     ? matches.slice(0, 4).map((item) => ({ name: item.name, imageUrl: item.image_url }))
     : cart.length > 0
       ? cart.slice(0, 4).map((item) => ({ name: item.name }))
