@@ -83,8 +83,7 @@
     },
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true,
-      "noxcturnalTransformWorker": false
+      "reactCompiler": true
     }
   }
 }
