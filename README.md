@@ -11,7 +11,7 @@ Grocery Agent turns meal ideas, busy weeks, and budgets into a plan your househo
 
 ![Illustration of fresh groceries becoming a checked shared shopping list](docs/images/readme-cover.png)
 
-*Concept artwork for Grocery Agent; it is not a product screenshot.*
+_Concept artwork for Grocery Agent; it is not a product screenshot._
 
 ## Make the plan, then make it yours
 
@@ -28,18 +28,18 @@ Start with a request like:
 
 Requirements: Node.js from .node-version, pnpm 12.6, and an Expo development build for native features. Expo Go is not compatible with this project. Android builds need an Android SDK; local iOS builds need macOS and Xcode.
 
-~~~sh
+```sh
 pnpm install
 cp .env.example .env.local
-~~~
+```
 
 Set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in .env.local. The CopilotKit runtime URL defaults to the production Go gateway; you can override it with EXPO_PUBLIC_COPILOTKIT_RUNTIME_URL. EXPO_PUBLIC_SENTRY_DSN and EXPO_PUBLIC_GROCERY_MARKETING_URL are optional.
 
 Start the development server:
 
-~~~sh
+```sh
 pnpm start
-~~~
+```
 
 Use the Expo development build on a device or emulator. The repository also provides pnpm android, pnpm ios, and pnpm web scripts.
 
@@ -54,7 +54,7 @@ Use the Expo development build on a device or emulator. The repository also prov
 
 Run the repository checks sequentially:
 
-~~~sh
+```sh
 pnpm check
 pnpm test
-~~~
+```
