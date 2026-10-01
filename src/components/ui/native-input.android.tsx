@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { TextInput, type TextInputInstance, type TextInputProps } from "react-native";
+import { TextInput, type TextInputProps } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import type { NativeInputProps, NativeInputRef } from "./native-input";
 
@@ -22,7 +22,7 @@ export const NativeInput = forwardRef<NativeInputRef, NativeInputProps>(function
   },
   ref,
 ) {
-  const input = useRef<TextInputInstance>(null);
+  const input = useRef<TextInput>(null);
   const foreground = useThemeColor("--color-foreground", "#17201a");
   const muted = useThemeColor("--color-muted-foreground", "#667067");
   useImperativeHandle(

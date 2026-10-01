@@ -91,9 +91,10 @@ export default function SavedListScreen() {
         }),
       ]);
       if (mutation.type === "title" && updatedList) {
-        allowNavigation();
-        if (router.canGoBack()) router.back();
-        else router.replace("/saved-lists");
+        allowNavigation(() => {
+          if (router.canGoBack()) router.back();
+          else router.replace("/saved-lists");
+        });
       }
     },
   });
