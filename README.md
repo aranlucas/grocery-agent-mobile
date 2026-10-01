@@ -1,7 +1,7 @@
 # Grocery Agent
 
 [![CI](https://github.com/aranlucas/grocery-agent-mobile/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aranlucas/grocery-agent-mobile/actions/workflows/ci.yml)
-![Expo](https://img.shields.io/badge/Expo-58_preview-000020?logo=expo&logoColor=white)
+![Expo](https://img.shields.io/badge/Expo-57_stable-000020?logo=expo&logoColor=white)
 ![React Native](https://img.shields.io/badge/React_Native-mobile-61DAFB?logo=react&logoColor=111)
 ![Kroger](https://img.shields.io/badge/Kroger-optional_shop_connection-004F9F)
 

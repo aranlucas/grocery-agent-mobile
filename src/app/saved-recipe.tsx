@@ -92,9 +92,10 @@ export default function SavedRecipeScreen() {
       queryClient.setQueryData(recipeKey, recipe);
       reset(recipeFormValues(recipe));
       setEditing(false);
-      allowNavigation();
-      if (router.canGoBack()) router.back();
-      else router.replace("/saved-recipes");
+      allowNavigation(() => {
+        if (router.canGoBack()) router.back();
+        else router.replace("/saved-recipes");
+      });
       await queryClient.invalidateQueries({
         queryKey: groceryQueryKeys.recipes(userId, recipe.household_id),
       });
