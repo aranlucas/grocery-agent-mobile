@@ -22,12 +22,14 @@ export const CONNECT_FATAL_CODES = new Set([...RUN_FATAL_CODES, "agent_connect_f
 export async function observeCopilotOperation({
   source,
   agentId,
+  threadId,
   fatalCodes,
   isStopped,
   run,
 }: {
   source: CopilotErrorSource;
   agentId: string;
+  threadId?: string;
   fatalCodes: ReadonlySet<string>;
   isStopped: () => boolean;
   run: () => Promise<unknown>;
@@ -37,6 +39,10 @@ export async function observeCopilotOperation({
     onError: ({ code, context, error }) => {
       if (isStopped() || emittedError) return;
       if (context.agentId !== agentId || !fatalCodes.has(code)) return;
+      // Replay tool processing can report an error after a previous thread's
+      // connect promise has settled. Unscoped SDK errors still belong to the
+      // serialized active operation, but explicitly different threads do not.
+      if (threadId && typeof context.threadId === "string" && context.threadId !== threadId) return;
       emittedError = error;
     },
   });

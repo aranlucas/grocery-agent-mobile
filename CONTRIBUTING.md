@@ -23,8 +23,12 @@ the workspace packages. `pnpm build` checks Android and iOS JavaScript exports
 with placeholder public configuration; it does not produce a signed app or
 verify runtime behavior. Use `pnpm fmt` to fix formatting before validation.
 
-There is currently no automated runtime test suite. For changes to native flows,
-record emulator/device results in the pull request: keyboard avoidance, Android
+`pnpm test` runs the Node script tests, including the actual grocery controller's
+send, retry, stop, and thread-transition commands with mocked Clerk/CopilotKit
+adapters. Run just those lifecycle tests with
+`node --test scripts/grocery-agent.test.mjs`. They do not exercise native UI or
+live grocery services. For changes to native flows, record emulator/device
+results in the pull request: keyboard avoidance, Android
 back navigation, accessibility labels, dark mode, reduced motion, and narrow and
 wide layouts. State which platforms and checks were actually exercised.
 

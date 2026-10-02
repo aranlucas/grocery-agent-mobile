@@ -36,7 +36,8 @@ type GroceryOperationKind = "send" | "retry" | "new-chat" | "open-thread";
 
 type ActiveGroceryOperation = {
   kind: GroceryOperationKind;
-  stopRequested: boolean;
+  cancellation: AbortController;
+  detached: boolean;
   sdkStarted: boolean;
   promise: Promise<GroceryOperationOutcome>;
 };
@@ -68,6 +69,19 @@ export function useGroceryAgentController(onRunComplete: () => void) {
     }
   }, [agent, copilotkit.runtimeConnectionStatus]);
 
+  useEffect(() => {
+    return () => {
+      const operation = activeOperation.current;
+      if (!operation) return;
+      // A disposed session must neither start work after auth resolves nor
+      // restore its snapshot over a conversation owned by a new controller.
+      operation.detached = true;
+      if (operation.cancellation.signal.aborted) return;
+      operation.cancellation.abort();
+      if (operation.sdkStarted && agent) copilotkit.stopAgent({ agent });
+    };
+  }, [agent, copilotkit, userId]);
+
   const finishOperation = useCallback((operation: ActiveGroceryOperation) => {
     if (activeOperation.current !== operation) return;
     activeOperation.current = null;
@@ -87,7 +101,8 @@ export function useGroceryAgentController(onRunComplete: () => void) {
       };
       const operation: ActiveGroceryOperation = {
         kind,
-        stopRequested: false,
+        cancellation: new AbortController(),
+        detached: false,
         sdkStarted: false,
         promise: Promise.resolve(stopped("noop")),
       };
@@ -107,8 +122,9 @@ export function useGroceryAgentController(onRunComplete: () => void) {
             transport: copilotkit,
             getToken,
             userId,
+            signal: operation.cancellation.signal,
             run: async () => {
-              if (operation.stopRequested) return null;
+              if (operation.cancellation.signal.aborted) return null;
               agent.addMessage({
                 id: `user_${Date.now()}_${Math.random().toString(36).slice(2)}`,
                 role: "user",
@@ -118,14 +134,15 @@ export function useGroceryAgentController(onRunComplete: () => void) {
               return observeCopilotOperation({
                 source: copilotkit as unknown as CopilotErrorSource,
                 agentId: "grocery",
+                threadId: agent.threadId,
                 fatalCodes: RUN_FATAL_CODES,
-                isStopped: () => operation.stopRequested,
+                isStopped: () => operation.cancellation.signal.aborted,
                 run: () => copilotkit.runAgent({ agent }),
               });
             },
           });
 
-          if (operation.stopRequested) {
+          if (operation.cancellation.signal.aborted) {
             setFailure(null);
             return stopped("cancelled");
           }
@@ -140,7 +157,7 @@ export function useGroceryAgentController(onRunComplete: () => void) {
           onRunComplete();
           return success();
         } catch (caught) {
-          if (operation.stopRequested) {
+          if (operation.cancellation.signal.aborted) {
             setFailure(null);
             return stopped("cancelled");
           }
@@ -172,8 +189,8 @@ export function useGroceryAgentController(onRunComplete: () => void) {
     const operation = activeOperation.current;
     if (!operation) return stopped("noop");
 
-    operation.stopRequested = true;
-    if (operation.sdkStarted && agent) copilotkit.stopAgent({ agent });
+    operation.cancellation.abort();
+    if (operation.sdkStarted && !operation.detached && agent) copilotkit.stopAgent({ agent });
     await operation.promise;
     return stopped("cancelled");
   }, [agent, copilotkit]);
@@ -190,7 +207,8 @@ export function useGroceryAgentController(onRunComplete: () => void) {
 
       const operation: ActiveGroceryOperation = {
         kind,
-        stopRequested: false,
+        cancellation: new AbortController(),
+        detached: false,
         sdkStarted: false,
         promise: Promise.resolve(stopped("noop")),
       };
@@ -200,11 +218,11 @@ export function useGroceryAgentController(onRunComplete: () => void) {
       operation.promise = (async () => {
         try {
           if (previous) {
-            previous.stopRequested = true;
-            if (previous.sdkStarted && agent) copilotkit.stopAgent({ agent });
+            previous.cancellation.abort();
+            if (previous.sdkStarted && !previous.detached && agent) copilotkit.stopAgent({ agent });
             await previous.promise;
           }
-          if (operation.stopRequested) return stopped("cancelled");
+          if (operation.cancellation.signal.aborted) return stopped("cancelled");
           return await run(operation);
         } finally {
           finishOperation(operation);
@@ -261,27 +279,30 @@ export function useGroceryAgentController(onRunComplete: () => void) {
             transport: copilotkit,
             getToken,
             userId,
+            signal: operation.cancellation.signal,
             run: async () => {
-              if (operation.stopRequested) return null;
+              if (operation.cancellation.signal.aborted) return null;
               operation.sdkStarted = true;
               return observeCopilotOperation({
                 source: copilotkit as unknown as CopilotErrorSource,
                 agentId: "grocery",
+                threadId: nextThreadId,
                 fatalCodes: CONNECT_FATAL_CODES,
-                isStopped: () => operation.stopRequested,
+                isStopped: () => operation.cancellation.signal.aborted,
                 run: () => copilotkit.connectAgent({ agent }),
               });
             },
           });
 
-          if (operation.stopRequested) {
-            restoreSnapshot();
+          if (operation.cancellation.signal.aborted) {
+            if (!operation.detached) restoreSnapshot();
             return stopped("cancelled");
           }
           if (emittedError) throw emittedError;
           return success();
         } catch (caught) {
-          restoreSnapshot();
+          if (!operation.detached) restoreSnapshot();
+          if (operation.cancellation.signal.aborted) return stopped("cancelled");
           const error = caught instanceof Error ? caught : new Error(readableError(caught));
           const message = readableError(error);
           setFailure({
