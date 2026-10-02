@@ -24,6 +24,7 @@ type AuthenticatedRunOptions<TResult> = {
   transport: HeaderTransport;
   getToken: () => Promise<string | null>;
   userId: string | null | undefined;
+  signal?: AbortSignal;
   run: () => Promise<TResult>;
 };
 
@@ -31,8 +32,10 @@ export async function runAuthenticated<TResult>({
   transport,
   getToken,
   userId,
+  signal,
   run,
 }: AuthenticatedRunOptions<TResult>): Promise<TResult> {
+  assertNotAborted(signal);
   if (!userId) throw new Error("Your session has expired. Please sign in again.");
   let token: string | null = null;
   try {
@@ -41,6 +44,7 @@ export async function runAuthenticated<TResult>({
     // Clerk Core 3 throws ClerkOfflineError instead of returning null.
     throw new Error("You appear to be offline. Check your connection and try again.");
   }
+  assertNotAborted(signal);
   if (!token) throw new Error("We could not refresh your session. Please sign in again.");
 
   transport.setHeaders({
@@ -50,6 +54,13 @@ export async function runAuthenticated<TResult>({
   });
 
   return run();
+}
+
+function assertNotAborted(signal?: AbortSignal) {
+  if (!signal?.aborted) return;
+  const error = new Error("Operation cancelled.");
+  error.name = "AbortError";
+  throw error;
 }
 
 export function readableError(error: unknown): string {
