@@ -19,6 +19,26 @@ function configure({ config }) {
     ...appJson.expo.extra,
     ...config.extra,
   };
+  // An isolated, credential-free simulator pilot. EAS production keeps its
+  // existing remote version source, identity, plugins, and environment.
+  if (process.env.GROCERY_FEEL_SIMULATOR === "1") {
+    return {
+      ...baseConfig,
+      name: "Grocery Agent Feel Pilot",
+      scheme: "grocery-agent-feel-pilot",
+      ios: {
+        ...baseConfig.ios,
+        bundleIdentifier: "dev.agents.grocery.feelpilot",
+        buildNumber: "1",
+      },
+      extra: {
+        ...baseExtra,
+        clerkPublishableKey: "",
+        copilotKitRuntimeUrl: "https://example.invalid/copilotkit",
+        marketingBaseUrl: "https://example.invalid/grocery",
+      },
+    };
+  }
   const clerkPublishableKey = envOrFallback(
     "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY",
     baseExtra.clerkPublishableKey,

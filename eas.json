@@ -42,6 +42,24 @@
       "ios": {
         "simulator": true
       }
+    },
+    "feel-simulator": {
+      "distribution": "internal",
+      "developmentClient": false,
+      "autoIncrement": false,
+      "withoutCredentials": true,
+      "node": "24.18.1",
+      "pnpm": "12.8.1",
+      "env": {
+        "GROCERY_FEEL_SIMULATOR": "1",
+        "EXPO_NO_DOTENV": "1",
+        "EXPO_NO_TELEMETRY": "1",
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+      },
+      "ios": {
+        "simulator": true,
+        "buildConfiguration": "Release"
+      }
     }
   },
   "submit": {
