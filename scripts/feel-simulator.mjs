@@ -149,6 +149,13 @@ function main() {
   assert.equal(info.CFBundleVersion, "1");
   assert.equal(info.DTPlatformName, "iphonesimulator");
   assert.ok(info.CFBundleSupportedPlatforms.includes("iPhoneSimulator"));
+  assert.equal(info.UIApplicationSceneManifest?.UIApplicationSupportsMultipleScenes, false);
+  assert.equal(
+    info.UIApplicationSceneManifest?.UISceneConfigurations?.UIWindowSceneSessionRoleApplication?.[0]
+      ?.UISceneDelegateClassName,
+    "EXExpoAppSceneDelegate",
+    "Simulator app must adopt Expo's scene lifecycle",
+  );
   assert.equal(existsSync(join(app, "embedded.mobileprovision")), false);
   assert.equal(existsSync(join(app, "_CodeSignature")), false);
   assert.ok(existsSync(join(app, "main.jsbundle")), "Release app needs its embedded JS bundle");

@@ -14,6 +14,9 @@ on:
       - scripts/feel-simulator*
       - docs/feel-deploy-pilot.md
       - app.config.js
+      - app.json
+      - package.json
+      - pnpm-lock.yaml
       - eas.json
   workflow_dispatch:
     inputs:

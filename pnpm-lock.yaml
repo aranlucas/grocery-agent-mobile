@@ -215,6 +215,9 @@ importers:
       expo-auth-session:
         specifier: ~57.0.13
         version: 57.0.13(expo@57.0.26)(react-native@0.86.3(@babel/core@7.29.7(supports-color@11.0.0))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@11.0.0))(bufferutil@4.1.0)(supports-color@11.0.0)(utf-8-validate@6.0.6))(@types/react@19.2.18)(bufferutil@4.1.0)(react@19.2.3)(supports-color@11.0.0)(utf-8-validate@6.0.6))(react@19.2.3)(supports-color@11.0.0)
+      expo-build-properties:
+        specifier: ~57.0.22
+        version: 57.0.22(expo@57.0.26)
       expo-constants:
         specifier: ~57.0.20
         version: 57.0.20(expo@57.0.26)(react-native@0.86.3(@babel/core@7.29.7(supports-color@11.0.0))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@11.0.0))(bufferutil@4.1.0)(supports-color@11.0.0)(utf-8-validate@6.0.6))(@types/react@19.2.18)(bufferutil@4.1.0)(react@19.2.3)(supports-color@11.0.0)(utf-8-validate@6.0.6))(supports-color@11.0.0)
@@ -3541,6 +3544,11 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  expo-build-properties@57.0.22:
+    resolution: {integrity: sha512-A5oRf2I02XDRu2NnqKo7Au5kUu244unvyoRMUsB+xvg/BOlsR+G/oyDFGkjbda1cJbeKm9eqposIXbA2ri5UrQ==}
+    peerDependencies:
+      expo: '*'
 
   expo-constants@57.0.20:
     resolution: {integrity: sha512-WycPVvBgbluSa6yAh6DKnX646ZHrae0gV2ZLum5fioNkR+DiWyulq1+UfS++Jc6yfAh/l55NOirv6mt5cnQhSw==}
@@ -10605,6 +10613,13 @@ snapshots:
     transitivePeerDependencies:
       - expo
       - supports-color
+
+  expo-build-properties@57.0.22(expo@57.0.26):
+    dependencies:
+      '@expo/schema-utils': 57.0.2
+      expo: 57.0.26(82c335c2c01153bf5a8baced835e65a3)
+      resolve-from: 5.0.0
+      semver: 7.8.5
 
   expo-constants@57.0.20(expo@57.0.26)(react-native@0.86.3(@babel/core@7.29.7(supports-color@11.0.0))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@11.0.0))(bufferutil@4.1.0)(supports-color@11.0.0)(utf-8-validate@6.0.6))(@types/react@19.2.18)(bufferutil@4.1.0)(react@19.2.3)(supports-color@11.0.0)(utf-8-validate@6.0.6))(supports-color@11.0.0):
     dependencies:
