@@ -34,6 +34,7 @@ test("simulator environment discards credentials and private service settings", 
   assert.equal(env.EXPO_PUBLIC_COPILOTKIT_RUNTIME_URL, "https://example.invalid/copilotkit");
   assert.equal(env.EXPO_NO_DOTENV, "1");
   assert.equal(env.SENTRY_DISABLE_AUTO_UPLOAD, "true");
+  assert.equal(env.SENTRY_CLI_EXECUTABLE, "/usr/bin/false");
 });
 
 test("resolved profile rejects store, signed, Android, submit, and inherited production plans", () => {

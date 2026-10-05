@@ -54,7 +54,8 @@
         "GROCERY_FEEL_SIMULATOR": "1",
         "EXPO_NO_DOTENV": "1",
         "EXPO_NO_TELEMETRY": "1",
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "SENTRY_CLI_EXECUTABLE": "/usr/bin/false"
       },
       "ios": {
         "simulator": true,

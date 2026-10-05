@@ -71,6 +71,9 @@ export function buildEnvironment(profile, source = process.env) {
     EXPO_PUBLIC_GROCERY_MARKETING_URL: "https://example.invalid/grocery",
     EXPO_PUBLIC_SENTRY_DSN: "",
     SENTRY_DISABLE_AUTO_UPLOAD: "true",
+    // Sentry resolves the CLI before checking its upload-disable flag. A local
+    // failure command bypasses that resolution and can never upload anything.
+    SENTRY_CLI_EXECUTABLE: "/usr/bin/false",
   };
 }
 
@@ -158,7 +161,9 @@ function main() {
   run("tar", ["-czf", archive, "-C", products, apps[0]]);
   writeFileSync(
     join(output, "artifact.json"),
-    `${JSON.stringify({ app, archive, bundleId, version: info.CFBundleShortVersionString, buildNumber: info.CFBundleVersion, platform: info.DTPlatformName, architectures, signed: false, embeddedBundle: true }, null, 2)}\n`,
+    // Simulator Mach-O files may retain automatic ad hoc linker signatures;
+    // this build has no developer signing identity or device provisioning.
+    `${JSON.stringify({ app, archive, bundleId, version: info.CFBundleShortVersionString, buildNumber: info.CFBundleVersion, platform: info.DTPlatformName, architectures, deviceSigned: false, codeSigningAllowed: false, embeddedBundle: true }, null, 2)}\n`,
   );
   console.log(`Verified unsigned simulator artifact: ${archive}`);
 }
