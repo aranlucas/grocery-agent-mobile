@@ -11,6 +11,7 @@ on:
   pull_request:
     paths:
       - .github/workflows/eas-build.yml
+      - .node-version
       - scripts/feel-simulator*
       - docs/feel-deploy-pilot.md
       - app.config.js
@@ -74,7 +75,6 @@ jobs:
           persist-credentials: false
       - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
         with:
-          runtime: node@24.18.1
           cache: true
           require-lockfile: true
       - name: Inspect and resolve the pinned Deploy profile
