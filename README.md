@@ -41,34 +41,7 @@ Start the development server:
 pnpm start
 ```
 
-Use the Expo development build on a device or emulator. The repository also provides pnpm android, pnpm ios, and pnpm web scripts.
-
-## Local URLs with Portless
-
-This command runs the browser preview through the project's Expo Agent CLI.
-The inner shell passes Portless's assigned port to Metro explicitly.
-
-The standard development command uses [Portless](https://github.com/vercel-labs/portless).
-Install its pinned CLI once with Node.js 24 or newer, then run this repository's command after the
-normal dependency and environment setup:
-
-```sh
-npm install -g portless@0.15.7
-pnpm web
-```
-
-The main checkout uses `https://grocery-agent-mobile.localhost` with the default proxy settings.
-Use the URL printed by Portless if you have changed its proxy port, TLS, or TLD.
-Linked Git worktrees get a branch prefix, so each checkout has its own origin.
-The first HTTPS run can request local administrator permission to bind port 443,
-trust its development certificate, and synchronize local hostnames. Ctrl+C stops
-the child server and removes its route.
-
-Use `pnpm start` and the existing native development-build workflows on phones
-and emulators. `.localhost` is local to the browser
-computer, so keep the existing gateway URL and connection method on phones and
-emulators. Browser authentication and API calls still require a development Clerk
-instance and a gateway that accepts the exact origin printed by Portless.
+Use the Expo development build on a device or emulator. The repository also provides pnpm android, pnpm ios, and pnpm web scripts. `pnpm web` serves the browser build at `https://grocery-mobile.localhost` through [Portless](https://github.com/vercel-labs/portless) (a dev dependency); its first run may ask for `sudo` to bind port 443 and trust a local certificate.
 
 ## Find the main pieces
 
