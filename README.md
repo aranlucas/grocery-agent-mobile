@@ -41,7 +41,7 @@ Start the development server:
 pnpm start
 ```
 
-Use the Expo development build on a device or emulator. The repository also provides pnpm android, pnpm ios, and pnpm web scripts.
+Use the Expo development build on a device or emulator. The repository also provides pnpm android, pnpm ios, and pnpm web scripts. `pnpm web` serves the browser build at `https://grocery-mobile.localhost` through [Portless](https://github.com/vercel-labs/portless) (a dev dependency); its first run may ask for `sudo` to bind port 443 and trust a local certificate.
 
 ## Find the main pieces
 
