@@ -12,7 +12,7 @@
     "agent:skills": "expo-agent-cli skills:sync",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web",
+    "web": "portless run --name grocery-agent-mobile sh -c 'exec expo-agent-cli start --web --localhost --port \"$PORT\"'",
     "build": "pnpm build:android && pnpm build:ios",
     "build:android": "node ./scripts/native-export.mjs android",
     "build:ios": "node ./scripts/native-export.mjs ios",
@@ -33,7 +33,8 @@
     "validate": "pnpm check && pnpm test && pnpm exec expo install --check",
     "test": "node --test scripts/*.test.mjs",
     "review:ui": "node scripts/ui-review.mjs",
-    "postinstall": "node ./scripts/postinstall.mjs"
+    "postinstall": "node ./scripts/postinstall.mjs",
+    "web:direct": "expo start --web"
   },
   "dependencies": {
     "@clerk/expo": "4.7.3",
