@@ -33,8 +33,7 @@
     "validate": "pnpm check && pnpm test && pnpm exec expo install --check",
     "test": "node --test scripts/*.test.mjs",
     "review:ui": "node scripts/ui-review.mjs",
-    "postinstall": "node ./scripts/postinstall.mjs",
-    "web:direct": "expo start --web"
+    "postinstall": "node ./scripts/postinstall.mjs"
   },
   "dependencies": {
     "@clerk/expo": "4.7.3",

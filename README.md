@@ -43,7 +43,6 @@ pnpm start
 
 Use the Expo development build on a device or emulator. The repository also provides pnpm android, pnpm ios, and pnpm web scripts.
 
-
 ## Local URLs with Portless
 
 This command runs the browser preview through the project's Expo Agent CLI.
@@ -63,11 +62,10 @@ Use the URL printed by Portless if you have changed its proxy port, TLS, or TLD.
 Linked Git worktrees get a branch prefix, so each checkout has its own origin.
 The first HTTPS run can request local administrator permission to bind port 443,
 trust its development certificate, and synchronize local hostnames. Ctrl+C stops
-the child server and removes its route. The direct fallback below starts the
-server without the proxy.
+the child server and removes its route.
 
-Use `pnpm web:direct` for the direct browser server; the existing `pnpm start` and native
-development-build workflows remain available. `.localhost` is local to the browser
+Use `pnpm start` and the existing native development-build workflows on phones
+and emulators. `.localhost` is local to the browser
 computer, so keep the existing gateway URL and connection method on phones and
 emulators. Browser authentication and API calls still require a development Clerk
 instance and a gateway that accepts the exact origin printed by Portless.
