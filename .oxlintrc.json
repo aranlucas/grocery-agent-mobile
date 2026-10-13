@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": [
+    "./node_modules/@aranlucas/oxforge/configs/recommended.json",
+    "./node_modules/@aranlucas/oxforge/configs/react.json",
+    "./node_modules/@aranlucas/oxforge/configs/tailwind.json",
+    "./node_modules/@aranlucas/oxforge/configs/type-aware.json"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/.next/**",
+    "**/.expo/**",
+    "**/.vercel/**",
+    "**/.agent/**",
+    "**/.agents/**",
+    "**/.claude/**",
+    "**/.codex/**",
+    "**/.continue/**",
+    "**/.cursor/**",
+    "**/.gemini/**",
+    "**/.opencode/**",
+    "**/.pi/**",
+    "**/.roo/**",
+    "**/.windsurf/**"
+  ]
+}
