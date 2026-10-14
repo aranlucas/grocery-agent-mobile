@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "vitest";
-import { buildEnvironment, validateDispatch, validateProfile } from "./feel-simulator.mjs";
+import { buildEnvironment, validateDispatch, validateProfile } from "../scripts/feel-simulator.mjs";
 
 const require = createRequire(import.meta.url);
 const configure = require("../app.config.js");

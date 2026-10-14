@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import { onTestFinished, test } from "vitest";
 import { createElement } from "react";
 import { act, create } from "react-test-renderer";
-import { createSession, SessionContext } from "./test-support/grocery-agent.mjs";
+import { createSession, SessionContext } from "@test/helpers/grocery-agent.mjs";
 
 // Vitest resolves Metro aliases and the same deterministic external adapters
 // through its test-only configuration; native SDKs stay outside these tests.
-const { useGroceryAgentController } = await import("../src/hooks/use-grocery-agent.ts");
+const { useGroceryAgentController } = await import("@/hooks/use-grocery-agent.ts");
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 async function mountController(session = createSession()) {
