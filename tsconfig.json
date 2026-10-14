@@ -15,7 +15,8 @@
     "target": "ESNext",
     "strict": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     },
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,

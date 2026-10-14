@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { waitForKrogerConnection } from "../src/lib/connections.ts";
+import { waitForKrogerConnection } from "@/lib/connections.ts";
 
 test("a rejected Kroger callback reports the account conflict without polling to a timeout", async () => {
   let reloads = 0;

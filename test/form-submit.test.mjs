@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createFormControl } from "react-hook-form";
 import { MutationObserver, QueryClient } from "@tanstack/react-query";
-import { createSingleSubmit } from "../src/lib/form-submit.ts";
+import { createSingleSubmit } from "@/lib/form-submit.ts";
 
 function deferred() {
   return Promise.withResolvers();

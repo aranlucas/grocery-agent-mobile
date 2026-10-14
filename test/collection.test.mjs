@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { filterCollection } from "../src/lib/collection.ts";
+import { filterCollection } from "@/lib/collection.ts";
 const rows = [
   {
     resource: {
