@@ -13,7 +13,7 @@ export function ConfigurationError({ message }: { message: string }) {
     <SafeArea>
       <ScrollView
         className="w-full max-w-md self-center"
-        contentContainerClassName="flex-grow justify-center gap-6 p-6"
+        contentContainerClassName="grow justify-center gap-6 p-6"
         contentInsetAdjustmentBehavior="automatic"
       >
         <BrandMark size="lg" />

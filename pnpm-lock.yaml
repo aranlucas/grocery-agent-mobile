@@ -307,8 +307,8 @@ importers:
         version: 1.12.2(@expo/metro-config@57.0.13(bufferutil@4.1.0)(expo@57.0.29)(supports-color@11.0.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(metro-cache@0.87.1(supports-color@11.0.0))(metro-transform-worker@0.87.1(bufferutil@4.1.0)(supports-color@11.0.0)(utf-8-validate@6.0.6))(metro@0.87.1(bufferutil@4.1.0)(supports-color@11.0.0)(utf-8-validate@6.0.6))(react-native@0.86.3(@babel/core@7.29.7(supports-color@11.0.0))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@11.0.0))(bufferutil@4.1.0)(supports-color@11.0.0)(utf-8-validate@6.0.6))(@types/react@19.2.18)(bufferutil@4.1.0)(react@19.2.3)(supports-color@11.0.0)(utf-8-validate@6.0.6))(react@19.2.3)(tailwindcss@4.3.3)
     devDependencies:
       '@aranlucas/oxforge':
-        specifier: ^0.2.0
-        version: 0.2.0(oxfmt@0.73.0)(oxlint-tsgolint@7.0.2004)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
+        specifier: ^0.2.2
+        version: 0.2.2(oxfmt@0.73.0)(oxlint-tailwindcss@1.16.0)(oxlint-tsgolint@7.0.2004)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@babel/core':
         specifier: ^7.29.7
         version: 7.29.7(supports-color@11.0.0)
@@ -348,6 +348,9 @@ importers:
       oxlint:
         specifier: 1.88.0
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
+      oxlint-tailwindcss:
+        specifier: 1.16.0
+        version: 1.16.0
       portless:
         specifier: 0.15.7
         version: 0.15.7
@@ -412,8 +415,8 @@ packages:
   '@antfu/install-pkg@2.1.0':
     resolution: {integrity: sha512-sdg9NxU3zR4Mnawfbc/x6GB5Wf17WYud5qOuEuxXjaKpYpMkISSJEjItGebXJ2bQ4DIcly4NYH23mtkGJjvKUw==}
 
-  '@aranlucas/oxforge@0.2.0':
-    resolution: {integrity: sha512-fba4paqnWrKEWHvi+0nWrgZoeEZfjgOVRyjRuAn5K6CVzYuqbFT8KST7+hCvt0Ijo3l5aLL0HywUTgtzo57Jyg==}
+  '@aranlucas/oxforge@0.2.2':
+    resolution: {integrity: sha512-5zmYmM1r4Y+F2TGKwGnzD4lS5wBS+IVVm6bOngWAMxyvuz1ipKtOCjoqRqMBP95b/p+iUtZmQqPsZ+OvoM5/6w==}
     engines: {node: '>=22.18.0'}
     hasBin: true
     peerDependencies:
@@ -5897,6 +5900,10 @@ packages:
       vite-plus:
         optional: true
 
+  oxlint-tailwindcss@1.16.0:
+    resolution: {integrity: sha512-qwkw3gahMiLOVkZAInULbvnFaFceanEnk+GxpMyNZU4bq2nRmZd3xD4En0EhIakEBiIt15RiGwQ7AuhrllNoNw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+
   oxlint-tsgolint@7.0.2004:
     resolution: {integrity: sha512-vQ9WDF3fiZJvRdSDosNOflerOCOpwol6vWzVDxW76RcU19cjTh7engvkHLvmv+tzedR8fAiJUVUGr6IVZdkzXQ==}
     hasBin: true
@@ -7384,13 +7391,14 @@ snapshots:
       package-manager-detector: 1.9.0
       tinyexec: 1.3.1
 
-  '@aranlucas/oxforge@0.2.0(oxfmt@0.73.0)(oxlint-tsgolint@7.0.2004)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))':
+  '@aranlucas/oxforge@0.2.2(oxfmt@0.73.0)(oxlint-tailwindcss@1.16.0)(oxlint-tsgolint@7.0.2004)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))':
     dependencies:
       '@aranlucas/oxlint-plugin-anti-slop': 0.1.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@oxlint/plugins': 1.88.0
       oxfmt: 0.73.0
       oxlint: 1.88.0(oxlint-tsgolint@7.0.2004)
     optionalDependencies:
+      oxlint-tailwindcss: 1.16.0
       oxlint-tsgolint: 7.0.2004
 
   '@aranlucas/oxlint-plugin-anti-slop@0.1.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))':
@@ -14071,6 +14079,11 @@ snapshots:
       '@oxfmt/binding-win32-arm64-msvc': 0.73.0
       '@oxfmt/binding-win32-ia32-msvc': 0.73.0
       '@oxfmt/binding-win32-x64-msvc': 0.73.0
+
+  oxlint-tailwindcss@1.16.0:
+    dependencies:
+      '@tailwindcss/node': 4.3.3
+      tailwindcss: 4.3.3
 
   oxlint-tsgolint@7.0.2004:
     optionalDependencies:

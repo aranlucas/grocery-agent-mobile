@@ -118,7 +118,7 @@ export default function SavedRecipeScreen() {
 
   if (!recipeId) {
     return (
-      <Screen contentContainerClassName="flex-grow justify-center">
+      <Screen contentContainerClassName="grow justify-center">
         <ErrorState
           title="This recipe link is incomplete"
           message="Open the recipe again from your saved recipes."
@@ -131,7 +131,7 @@ export default function SavedRecipeScreen() {
 
   if (recipeQuery.error instanceof Error && !recipeQuery.data) {
     return (
-      <Screen contentContainerClassName="flex-grow justify-center">
+      <Screen contentContainerClassName="grow justify-center">
         <ErrorState
           message={recipeQuery.error.message}
           onRetry={() => void recipeQuery.refetch()}

@@ -24,17 +24,18 @@
     "build:production:ios": "pnpm dlx eas-cli build --profile production --platform ios",
     "build:production-apk:android": "node ./scripts/android-release.mjs build",
     "publish:production-apk:android": "node ./scripts/android-release.mjs publish",
-    "lint": "expo lint --max-warnings 0",
+    "lint": "expo lint --max-warnings 0 && pnpm lint:tailwind",
     "fmt": "pnpm styles:prepare && oxfmt --threads=2 --write .",
     "fmt:check": "pnpm styles:prepare && oxfmt --threads=2 --check .",
     "typecheck": "GOMAXPROCS=2 tsc --noEmit -p tsconfig.json",
     "check": "pnpm lint && pnpm fmt:check && pnpm typecheck",
-    "lint:fix": "expo lint --fix --max-warnings 0",
+    "lint:fix": "expo lint --fix --max-warnings 0 && pnpm lint:tailwind --fix",
     "validate": "pnpm check && pnpm test && pnpm exec expo install --check",
     "test": "vitest run",
     "review:ui": "node scripts/ui-review.mjs",
     "postinstall": "node ./scripts/postinstall.mjs && pnpm styles:prepare",
-    "styles:prepare": "uniwind generate-artifacts --css ./src/global.css --dts ./src/uniwind-types.d.ts"
+    "styles:prepare": "uniwind generate-artifacts --css ./src/global.css --dts ./src/uniwind-types.d.ts",
+    "lint:tailwind": "oxlint --config .oxlintrc.json src scripts --deny-warnings"
   },
   "dependencies": {
     "@clerk/expo": "4.10.1",
@@ -83,7 +84,7 @@
     "uniwind": "^1.12.2"
   },
   "devDependencies": {
-    "@aranlucas/oxforge": "^0.2.0",
+    "@aranlucas/oxforge": "^0.2.2",
     "@babel/core": "^7.29.7",
     "@eslint/compat": "2.1.1",
     "@expo/agent-cli": "1.0.18",
@@ -97,6 +98,7 @@
     "eslint-config-prettier": "^10.1.8",
     "oxfmt": "0.73.0",
     "oxlint": "1.88.0",
+    "oxlint-tailwindcss": "1.16.0",
     "portless": "0.15.7",
     "react-test-renderer": "19.3.0",
     "supports-color": "11.0.0",

@@ -30,7 +30,7 @@ function activityLabel(value: string): string {
 }
 
 function HistorySeparator() {
-  return <Separator className="ml-16" />;
+  return <Separator className="ms-16" />;
 }
 
 const ChatHistoryRow = memo(function ChatHistoryRow({

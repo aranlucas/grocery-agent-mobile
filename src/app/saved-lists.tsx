@@ -79,7 +79,7 @@ export default function SavedListsScreen() {
           <Card className="overflow-hidden p-0">
             {filtered.map(({ resource: list, location }, index) => (
               <View key={list.id}>
-                {index > 0 ? <Separator className="ml-17" /> : null}
+                {index > 0 ? <Separator className="ms-17" /> : null}
                 <NavigationRow
                   icon={ListChecks}
                   title={list.title}

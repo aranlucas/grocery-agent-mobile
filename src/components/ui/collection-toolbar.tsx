@@ -18,7 +18,7 @@ export function SearchField({
   placeholder: string;
 }) {
   return (
-    <View className="flex-row items-center rounded-xl border border-input bg-card pl-4">
+    <View className="flex-row items-center rounded-xl border border-input bg-card ps-4">
       <Icon as={Search} className="size-5 text-muted-foreground" />
       <Input
         testID="collection-search"
