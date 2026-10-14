@@ -2,12 +2,12 @@
 const { defineConfig } = require("eslint/config");
 const { fixupConfigRules } = require("@eslint/compat");
 const expoConfig = require("eslint-config-expo/flat");
-const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
+const prettierConfig = require("eslint-config-prettier");
 
 module.exports = defineConfig([
   // Expo's React rules still use context methods removed in ESLint 10.
   ...fixupConfigRules(expoConfig),
-  eslintPluginPrettierRecommended,
+  prettierConfig,
   {
     ignores: [
       "src/lib/grocery-gateway.d.ts",

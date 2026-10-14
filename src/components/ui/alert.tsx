@@ -18,7 +18,7 @@ const alertVariants = cva("rounded-lg border p-4", {
   },
 });
 
-const alertTitleVariants = cva("text-base font-semibold mb-1", {
+const alertTitleVariants = cva("mb-1 text-base font-semibold", {
   variants: {
     variant: {
       default: "text-foreground",

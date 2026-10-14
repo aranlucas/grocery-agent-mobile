@@ -47,7 +47,13 @@ type SharedFieldProps = {
 };
 
 type OmittedControlProps =
-  "defaultValue" | "disabled" | "name" | "onBlur" | "onChange" | "onChangeText" | "value";
+  | "defaultValue"
+  | "disabled"
+  | "name"
+  | "onBlur"
+  | "onChange"
+  | "onChangeText"
+  | "value";
 
 type FormTextControlProps<
   TFieldValues extends FieldValues,

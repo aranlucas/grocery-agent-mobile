@@ -25,15 +25,16 @@
     "build:production-apk:android": "node ./scripts/android-release.mjs build",
     "publish:production-apk:android": "node ./scripts/android-release.mjs publish",
     "lint": "expo lint --max-warnings 0",
-    "fmt": "prettier --write .",
-    "fmt:check": "prettier --check .",
+    "fmt": "pnpm styles:prepare && oxfmt --threads=2 --write .",
+    "fmt:check": "pnpm styles:prepare && oxfmt --threads=2 --check .",
     "typecheck": "GOMAXPROCS=2 tsc --noEmit -p tsconfig.json",
     "check": "pnpm lint && pnpm fmt:check && pnpm typecheck",
     "lint:fix": "expo lint --fix --max-warnings 0",
     "validate": "pnpm check && pnpm test && pnpm exec expo install --check",
     "test": "vitest run",
     "review:ui": "node scripts/ui-review.mjs",
-    "postinstall": "node ./scripts/postinstall.mjs"
+    "postinstall": "node ./scripts/postinstall.mjs && pnpm styles:prepare",
+    "styles:prepare": "uniwind generate-artifacts --css ./src/global.css --dts ./src/uniwind-types.d.ts"
   },
   "dependencies": {
     "@clerk/expo": "4.10.1",
@@ -82,6 +83,7 @@
     "uniwind": "^1.12.2"
   },
   "devDependencies": {
+    "@aranlucas/oxforge": "^0.2.0",
     "@babel/core": "^7.29.7",
     "@eslint/compat": "2.1.1",
     "@expo/agent-cli": "1.0.18",
@@ -93,9 +95,9 @@
     "eslint": "^10.12.0",
     "eslint-config-expo": "~57.0.2",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.7",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
     "portless": "0.15.7",
-    "prettier": "^3.9.10",
     "react-test-renderer": "19.3.0",
     "supports-color": "11.0.0",
     "typescript": "~6.0.3",
