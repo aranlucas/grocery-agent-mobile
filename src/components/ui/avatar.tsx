@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 const avatarVariants = cva("items-center justify-center overflow-hidden rounded-full bg-muted", {
   variants: {
     size: {
-      sm: "h-8 w-8",
-      md: "h-10 w-10",
-      lg: "h-14 w-14",
+      sm: "size-8",
+      md: "size-10",
+      lg: "size-14",
     },
   },
   defaultVariants: {

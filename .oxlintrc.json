@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": ["./node_modules/@aranlucas/oxforge/configs/tailwind.json"],
+  "categories": {
+    "correctness": "off"
+  },
+  "settings": {
+    "tailwindcss": {
+      "entryPoint": "src/global.css",
+      "attributePatterns": ["ClassName$"]
+    }
+  },
+  "ignorePatterns": ["src/lib/grocery-gateway.d.ts", "src/uniwind-types.d.ts"],
+  "rules": {
+    "tailwindcss/enforce-logical": [
+      "error",
+      {
+        "direction": "inline",
+        "allowlist": ["text-left", "text-right"]
+      }
+    ]
+  }
+}

@@ -188,7 +188,7 @@ export function SignInScreen() {
         <ScrollView
           className="w-full max-w-md self-center"
           contentInsetAdjustmentBehavior="automatic"
-          contentContainerClassName="flex-grow gap-6 p-4 py-8 sm:p-6"
+          contentContainerClassName="grow gap-6 p-4 py-8 sm:p-6"
           keyboardShouldPersistTaps="handled"
         >
           <View className="gap-4">

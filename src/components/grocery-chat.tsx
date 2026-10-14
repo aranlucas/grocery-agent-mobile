@@ -246,7 +246,7 @@ function messageKey(message: DisplayMessage) {
 const UserMessage = memo(function UserMessage({ content, id }: { content: string; id: string }) {
   return (
     <View className="w-full items-end" nativeID={id}>
-      <View className="max-w-9/10 rounded-2xl rounded-br-sm bg-primary-surface px-4 py-3">
+      <View className="max-w-9/10 rounded-2xl rounded-ee-sm bg-primary-surface px-4 py-3">
         <Text selectable>{content}</Text>
       </View>
     </View>
@@ -410,7 +410,7 @@ function ReasoningSection({
       open={expanded}
       label={reasoningLabel}
     >
-      <View className="ml-2 self-start border-l border-border py-1 pl-3.5">
+      <View className="ms-2 self-start border-s border-border py-1 ps-3.5">
         <Text className="leading-5" variant="muted">
           {content}
         </Text>
@@ -440,7 +440,7 @@ function ToolCallSection({
       label={`${label} · ${status === "running" ? "Running" : status === "failed" ? "Failed" : "Done"}`}
     >
       {expanded ? (
-        <View className="ml-2 max-h-39 border-l border-border py-1 pl-3.5">
+        <View className="ms-2 max-h-39 border-s border-border py-1 ps-3.5">
           <ScrollView nestedScrollEnabled>
             <Text className="mb-0.5 font-semibold text-muted-foreground" variant="small">
               Input

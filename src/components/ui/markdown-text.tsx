@@ -117,7 +117,7 @@ function renderBlock(node: MarkdownNode, key: string, context?: RenderContext): 
         <View
           key={key}
           className={cn(
-            "gap-1 rounded-md border-l-4 border-border bg-background/60 py-1.5 pl-3",
+            "gap-1 rounded-md border-s-4 border-border bg-background/60 py-1.5 ps-3",
             !context?.isLast && "mb-3",
           )}
         >
@@ -213,7 +213,7 @@ function renderTable(node: MarkdownNode, key: string, isLast?: boolean): ReactNo
                 key={`${key}-cell-${rowIndex}-${colIndex}`}
                 className={cn(
                   "min-w-24 justify-center px-2.5 py-2",
-                  colIndex > 0 && "border-l border-border",
+                  colIndex > 0 && "border-s border-border",
                 )}
               >
                 <Text

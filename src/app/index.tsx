@@ -66,7 +66,7 @@ export default function GroceryHomeScreen() {
               }
               onPress={() => router.push("/list")}
             />
-            <Separator className="ml-17" />
+            <Separator className="ms-17" />
             <NavigationRow
               testID="home-households"
               icon={Users}
@@ -86,7 +86,7 @@ export default function GroceryHomeScreen() {
               description="Shop a familiar list again"
               onPress={() => router.push("/saved-lists")}
             />
-            <Separator className="ml-17" />
+            <Separator className="ms-17" />
             <NavigationRow
               testID="home-recipes"
               icon={BookMarked}
@@ -94,7 +94,7 @@ export default function GroceryHomeScreen() {
               description="Your ingredients and instructions"
               onPress={() => router.push("/saved-recipes")}
             />
-            <Separator className="ml-17" />
+            <Separator className="ms-17" />
             <NavigationRow
               testID="home-history"
               icon={History}

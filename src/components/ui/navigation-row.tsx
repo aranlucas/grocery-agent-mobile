@@ -25,7 +25,7 @@ export function NavigationRow({
       accessibilityRole="button"
       accessibilityLabel={description ? `${title}. ${description}` : title}
       onPress={onPress}
-      className="min-h-18 flex-row items-center gap-3 px-4 py-4 active:bg-muted"
+      className="min-h-18 flex-row items-center gap-3 p-4 active:bg-muted"
     >
       <View accessible={false} className="size-10 items-center justify-center rounded-xl bg-muted">
         <Icon as={icon} className={cn("size-5 text-primary", destructive && "text-destructive")} />

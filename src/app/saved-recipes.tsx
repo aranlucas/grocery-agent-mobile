@@ -151,7 +151,7 @@ export default function SavedRecipesScreen() {
           <Card className="overflow-hidden p-0">
             {filtered.map(({ resource: recipe, location }, index) => (
               <View key={recipe.id}>
-                {index > 0 ? <Separator className="ml-17" /> : null}
+                {index > 0 ? <Separator className="ms-17" /> : null}
                 <NavigationRow
                   icon={BookMarked}
                   title={recipe.title}

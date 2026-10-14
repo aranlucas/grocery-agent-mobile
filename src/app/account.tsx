@@ -104,19 +104,19 @@ export default function AccountScreen() {
             title="Grocery plan"
             onPress={() => router.push("/list")}
           />
-          <Separator className="ml-17" />
+          <Separator className="ms-17" />
           <NavigationRow
             icon={ListChecks}
             title="Saved lists"
             onPress={() => router.push("/saved-lists")}
           />
-          <Separator className="ml-17" />
+          <Separator className="ms-17" />
           <NavigationRow
             icon={BookMarked}
             title="Saved recipes"
             onPress={() => router.push("/saved-recipes")}
           />
-          <Separator className="ml-17" />
+          <Separator className="ms-17" />
           <NavigationRow
             icon={Users}
             title="Households"
@@ -132,25 +132,25 @@ export default function AccountScreen() {
             title="Report a problem"
             onPress={() => router.push("/report")}
           />
-          <Separator className="ml-17" />
+          <Separator className="ms-17" />
           <NavigationRow
             icon={CircleHelp}
             title="Help and support"
             onPress={() => void open(links.support)}
           />
-          <Separator className="ml-17" />
+          <Separator className="ms-17" />
           <NavigationRow
             icon={Shield}
             title="Privacy policy"
             onPress={() => void open(links.privacy)}
           />
-          <Separator className="ml-17" />
+          <Separator className="ms-17" />
           <NavigationRow
             icon={FileText}
             title="Terms of use"
             onPress={() => void open(links.terms)}
           />
-          <Separator className="ml-17" />
+          <Separator className="ms-17" />
           <NavigationRow
             destructive
             icon={Trash2}

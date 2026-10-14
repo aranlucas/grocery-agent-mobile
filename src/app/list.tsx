@@ -47,7 +47,7 @@ const GroceryItemRow = memo(function GroceryItemRow({
           <Text variant="muted">{item.detail}</Text>
         </View>
       </View>
-      {!isLast ? <Separator className="ml-19" /> : null}
+      {!isLast ? <Separator className="ms-19" /> : null}
     </View>
   );
 });

@@ -115,7 +115,7 @@ export default function SavedListScreen() {
 
   if (!listId) {
     return (
-      <Screen contentContainerClassName="flex-grow justify-center">
+      <Screen contentContainerClassName="grow justify-center">
         <ErrorState
           title="This list link is incomplete"
           message="Open the list again from your saved lists."
@@ -145,7 +145,7 @@ export default function SavedListScreen() {
   }
   if (!list) {
     return (
-      <Screen contentContainerClassName="flex-grow justify-center">
+      <Screen contentContainerClassName="grow justify-center">
         <ErrorState
           message={listQuery.error instanceof Error ? listQuery.error.message : "List not found"}
           onRetry={() => void listQuery.refetch()}
