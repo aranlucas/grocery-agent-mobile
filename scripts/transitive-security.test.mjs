@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
-import { test } from "node:test";
+import { test } from "vitest";
 
 const require = createRequire(import.meta.url);
 const routerRequire = createRequire(require.resolve("expo-router"));
@@ -24,7 +24,7 @@ function readPackageManifest(entry, name) {
   }
 }
 
-void test("Expo Router query strings use the patched decoder with CommonJS interop", () => {
+test("Expo Router query strings use the patched decoder with CommonJS interop", () => {
   const decoder = queryRequire("decode-uri-component");
   const [major, minor] = readPackageManifest(
     queryRequire.resolve("decode-uri-component"),
@@ -46,7 +46,7 @@ void test("Expo Router query strings use the patched decoder with CommonJS inter
   assert.doesNotThrow(() => queryString.parse(`x=${"%E0%A4%A".repeat(10000)}`));
 });
 
-void test("Expo config plugins generate Xcode project IDs with patched UUID", () => {
+test("Expo config plugins generate Xcode project IDs with patched UUID", () => {
   const expoRequire = createRequire(require.resolve("expo"));
   const pluginsRequire = createRequire(expoRequire.resolve("@expo/config-plugins"));
   const xcodePath = pluginsRequire.resolve("xcode");
@@ -66,7 +66,7 @@ void test("Expo config plugins generate Xcode project IDs with patched UUID", ()
   for (const id of ids) assert.match(id, /^[A-F0-9]{24}$/u);
 });
 
-void test("Clerk's optional Solana client is absent or preserves safe single and batch requests", async (t) => {
+test("Clerk's optional Solana client is absent or preserves safe single and batch requests", async () => {
   let dependencyRequire = require;
   for (const dependency of ["@clerk/expo", "@clerk/clerk-js"]) {
     dependencyRequire = createRequire(dependencyRequire.resolve(dependency));
@@ -83,7 +83,7 @@ void test("Clerk's optional Solana client is absent or preserves safe single and
     assert.equal(clerkManifest.dependencies?.["@solana/wallet-adapter-base"], undefined);
     const lockfile = readFileSync(new URL("../pnpm-lock.yaml", import.meta.url), "utf8");
     assert.doesNotMatch(lockfile, /^  ['"]?(?:@solana\/wallet-adapter-base|jayson)@/mu);
-    t.diagnostic("The installed Clerk version and lockfile do not include Solana or jayson.");
+    console.info("The installed Clerk version and lockfile do not include Solana or jayson.");
     return;
   }
   // Retain the behavioral regression if a future Clerk version restores this

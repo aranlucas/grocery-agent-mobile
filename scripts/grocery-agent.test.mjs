@@ -1,33 +1,15 @@
 import assert from "node:assert/strict";
-import { registerHooks } from "node:module";
-import { test } from "node:test";
+import { onTestFinished, test } from "vitest";
 import { createElement } from "react";
 import { act, create } from "react-test-renderer";
 import { createSession, SessionContext } from "./test-support/grocery-agent.mjs";
 
-// Node's built-in TypeScript support does not resolve Metro's @/ alias. Keep
-// native SDKs out of these tests and supply deterministic external adapters.
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    if (["@clerk/expo", "@copilotkit/react-native/headless"].includes(specifier)) {
-      return {
-        url: new URL("./test-support/grocery-agent.mjs", import.meta.url).href,
-        shortCircuit: true,
-      };
-    }
-    if (specifier.startsWith("@/")) {
-      return {
-        url: new URL(`../src/${specifier.slice(2)}.ts`, import.meta.url).href,
-        shortCircuit: true,
-      };
-    }
-    return nextResolve(specifier, context);
-  },
-});
+// Vitest resolves Metro aliases and the same deterministic external adapters
+// through its test-only configuration; native SDKs stay outside these tests.
 const { useGroceryAgentController } = await import("../src/hooks/use-grocery-agent.ts");
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-async function mountController(t, session = createSession()) {
+async function mountController(session = createSession()) {
   let current;
   let renderer;
   function Probe() {
@@ -40,7 +22,7 @@ async function mountController(t, session = createSession()) {
   const unmount = async () => {
     await act(async () => renderer.unmount());
   };
-  t.after(unmount);
+  onTestFinished(unmount);
   return {
     session,
     unmount,
@@ -69,11 +51,11 @@ async function mountController(t, session = createSession()) {
   };
 }
 
-await test("rapid sends reserve during auth; stopping prevents a late SDK run", async (t) => {
+test("rapid sends reserve during auth; stopping prevents a late SDK run", async () => {
   const session = createSession();
   const token = Promise.withResolvers();
   session.auth.getToken = () => token.promise;
-  const control = await mountController(t, session);
+  const control = await mountController(session);
   const first = await control.start((agent) => agent.send("  Milk  "));
   assert.equal(control.current.isRunning, true);
   assert.deepEqual(await control.current.send("Eggs"), { status: "stopped", reason: "busy" });
@@ -89,8 +71,8 @@ await test("rapid sends reserve during auth; stopping prevents a late SDK run", 
   assert.equal(control.session.calls.completed, 0);
 });
 
-await test("emitted run failure rolls back and exposes the same input for retry", async (t) => {
-  const control = await mountController(t);
+test("emitted run failure rolls back and exposes the same input for retry", async () => {
+  const control = await mountController();
   const { session } = control;
   const before = session.snapshot();
   const error = new Error("Network unavailable");
@@ -115,8 +97,8 @@ await test("emitted run failure rolls back and exposes the same input for retry"
   assert.equal(session.subscriptions, 0);
 });
 
-await test("unrelated agent errors and nonfatal errors do not fail the active send", async (t) => {
-  const control = await mountController(t);
+test("unrelated agent errors and nonfatal errors do not fail the active send", async () => {
+  const control = await mountController();
   control.session.handlers.run = async () => {
     control.session.emit(new Error("Other agent"), { agentId: "another-agent" });
     control.session.emit(new Error("Nonfatal"), { code: "diagnostic" });
@@ -125,8 +107,8 @@ await test("unrelated agent errors and nonfatal errors do not fail the active se
   assert.equal(control.session.subscriptions, 0);
 });
 
-await test("rejected runs restore conversation state and clean up subscriptions", async (t) => {
-  const control = await mountController(t);
+test("rejected runs restore conversation state and clean up subscriptions", async () => {
+  const control = await mountController();
   const before = control.session.snapshot();
   control.session.handlers.run = async () => {
     throw new Error("Disconnected");
@@ -138,8 +120,8 @@ await test("rejected runs restore conversation state and clean up subscriptions"
   assert.equal(control.current.isRunning, false);
 });
 
-await test("opening a thread joins the stopped run and restores it if connection fails", async (t) => {
-  const control = await mountController(t);
+test("opening a thread joins the stopped run and restores it if connection fails", async () => {
+  const control = await mountController();
   const { session } = control;
   const run = Promise.withResolvers();
   session.handlers.run = () => run.promise;
@@ -168,11 +150,11 @@ await test("opening a thread joins the stopped run and restores it if connection
 });
 
 for (const authOutcome of ["resolved", "rejected"]) {
-  await test(`stopping a thread open during ${authOutcome} auth restores the chat without an error`, async (t) => {
+  test(`stopping a thread open during ${authOutcome} auth restores the chat without an error`, async () => {
     const session = createSession();
     const token = Promise.withResolvers();
     session.auth.getToken = () => token.promise;
-    const control = await mountController(t, session);
+    const control = await mountController(session);
     const before = session.snapshot();
     const opening = await control.start((agent) => agent.openThread("another-thread"));
     const stop = await control.start((agent) => agent.stop());
@@ -189,8 +171,8 @@ for (const authOutcome of ["resolved", "rejected"]) {
   });
 }
 
-await test("stopping a rejected SDK connection is cancellation, not a failed thread open", async (t) => {
-  const control = await mountController(t);
+test("stopping a rejected SDK connection is cancellation, not a failed thread open", async () => {
+  const control = await mountController();
   const before = control.session.snapshot();
   const connection = Promise.withResolvers();
   control.session.handlers.connect = () => connection.promise;
@@ -207,8 +189,8 @@ await test("stopping a rejected SDK connection is cancellation, not a failed thr
   assert.equal(control.session.subscriptions, 0);
 });
 
-await test("new chat waits for the old run; its late rejection cannot restore the old chat", async (t) => {
-  const control = await mountController(t);
+test("new chat waits for the old run; its late rejection cannot restore the old chat", async () => {
+  const control = await mountController();
   const run = Promise.withResolvers();
   control.session.handlers.run = () => run.promise;
   const sending = await control.start((agent) => agent.send("Milk"));
@@ -226,8 +208,8 @@ await test("new chat waits for the old run; its late rejection cannot restore th
   assert.equal(control.session.subscriptions, 0);
 });
 
-await test("late errors from an old thread do not roll back a newer thread connection", async (t) => {
-  const control = await mountController(t);
+test("late errors from an old thread do not roll back a newer thread connection", async () => {
+  const control = await mountController();
   const { session } = control;
   session.handlers.connect = async (agent) => {
     agent.setMessages([{ id: "new", role: "assistant", content: "New conversation" }]);
@@ -245,11 +227,11 @@ await test("late errors from an old thread do not roll back a newer thread conne
   assert.equal(session.subscriptions, 0);
 });
 
-await test("unmount while refreshing auth prevents a late send", async (t) => {
+test("unmount while refreshing auth prevents a late send", async () => {
   const session = createSession();
   const token = Promise.withResolvers();
   session.auth.getToken = () => token.promise;
-  const control = await mountController(t, session);
+  const control = await mountController(session);
   const sending = await control.start((agent) => agent.send("Milk"));
   await control.unmount();
   token.resolve("test-token");
@@ -259,8 +241,8 @@ await test("unmount while refreshing auth prevents a late send", async (t) => {
   assert.deepEqual(control.session.copilotkit.headers, {});
 });
 
-await test("unmount stops the in-flight run and ignores its late completion", async (t) => {
-  const control = await mountController(t);
+test("unmount stops the in-flight run and ignores its late completion", async () => {
+  const control = await mountController();
   const run = Promise.withResolvers();
   control.session.handlers.run = () => run.promise;
   const sending = await control.start((agent) => agent.send("Milk"));
@@ -272,15 +254,15 @@ await test("unmount stops the in-flight run and ignores its late completion", as
   assert.equal(control.session.subscriptions, 0);
 });
 
-await test("a disposed thread open cannot restore its snapshot over a remounted controller", async (t) => {
+test("a disposed thread open cannot restore its snapshot over a remounted controller", async () => {
   const session = createSession();
-  const oldController = await mountController(t, session);
+  const oldController = await mountController(session);
   const connection = Promise.withResolvers();
   session.handlers.connect = () => connection.promise;
   const opening = await oldController.start((agent) => agent.openThread("abandoned-thread"));
   await oldController.unmount();
 
-  const nextController = await mountController(t, session);
+  const nextController = await mountController(session);
   session.handlers.connect = async (agent) => {
     agent.setMessages([{ id: "new", role: "assistant", content: "New conversation" }]);
   };
@@ -295,8 +277,8 @@ await test("a disposed thread open cannot restore its snapshot over a remounted 
   assert.equal(session.subscriptions, 0);
 });
 
-await test("blank commands, retry without a failure, and idle stop leave the chat alone", async (t) => {
-  const control = await mountController(t);
+test("blank commands, retry without a failure, and idle stop leave the chat alone", async () => {
+  const control = await mountController();
   const before = control.session.snapshot();
   for (const command of [
     (agent) => agent.send("  "),
@@ -314,8 +296,8 @@ await test("blank commands, retry without a failure, and idle stop leave the cha
   assert.equal(control.session.calls.run, 0);
 });
 
-await test("replacing the SDK agent cancels old work without stopping the replacement", async (t) => {
-  const control = await mountController(t);
+test("replacing the SDK agent cancels old work without stopping the replacement", async () => {
+  const control = await mountController();
   const { session } = control;
   const oldAgent = session.agent;
   const stoppedAgents = [];

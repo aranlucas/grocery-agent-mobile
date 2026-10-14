@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vitest";
 import { createFormControl } from "react-hook-form";
 import { MutationObserver, QueryClient } from "@tanstack/react-query";
 import { createSingleSubmit } from "../src/lib/form-submit.ts";
@@ -14,7 +14,7 @@ function formWithName(name = "Milk") {
   return { form, handleSubmit: createSingleSubmit(form.handleSubmit) };
 }
 
-await test("keyboard and button submissions in one render produce one mutation", async () => {
+test("keyboard and button submissions in one render produce one mutation", async () => {
   const { form, handleSubmit } = formWithName();
   const request = deferred();
   const started = deferred();
@@ -48,7 +48,7 @@ await test("keyboard and button submissions in one render produce one mutation",
   client.clear();
 });
 
-await test("the gate stays closed during asynchronous validation", async () => {
+test("the gate stays closed during asynchronous validation", async () => {
   const validation = deferred();
   let validations = 0;
   let calls = 0;
@@ -72,7 +72,7 @@ await test("the gate stays closed during asynchronous validation", async () => {
   assert.equal(calls, 1);
 });
 
-await test("invalid input can be corrected and resubmitted", async () => {
+test("invalid input can be corrected and resubmitted", async () => {
   const { form, handleSubmit } = formWithName(" ");
   let calls = 0;
   let invalid = 0;
@@ -92,7 +92,7 @@ await test("invalid input can be corrected and resubmitted", async () => {
   assert.equal(calls, 1);
 });
 
-await test("failed requests release the gate and preserve input for retry", async () => {
+test("failed requests release the gate and preserve input for retry", async () => {
   const { form, handleSubmit } = formWithName();
   let attempts = 0;
   const submit = handleSubmit(async () => {
@@ -104,7 +104,7 @@ await test("failed requests release the gate and preserve input for retry", asyn
   assert.equal(attempts, 2);
 });
 
-await test("new render callbacks share the gate and use the latest callback after completion", async () => {
+test("new render callbacks share the gate and use the latest callback after completion", async () => {
   const { handleSubmit } = formWithName();
   const request = deferred();
   const started = deferred();
@@ -125,7 +125,7 @@ await test("new render callbacks share the gate and use the latest callback afte
   assert.equal(nextCalls, 1);
 });
 
-await test("resetting fields during a request does not reopen the gate", async () => {
+test("resetting fields during a request does not reopen the gate", async () => {
   const { form, handleSubmit } = formWithName();
   const request = deferred();
   const started = deferred();
@@ -144,7 +144,7 @@ await test("resetting fields during a request does not reopen the gate", async (
   await first;
 });
 
-await test("separate forms can submit independently", async () => {
+test("separate forms can submit independently", async () => {
   const firstForm = formWithName();
   const secondForm = formWithName();
   const request = deferred();

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vitest";
 import { waitForKrogerConnection } from "../src/lib/connections.ts";
 
-void test("a rejected Kroger callback reports the account conflict without polling to a timeout", async () => {
+test("a rejected Kroger callback reports the account conflict without polling to a timeout", async () => {
   let reloads = 0;
   await assert.rejects(
     waitForKrogerConnection({
@@ -27,7 +27,7 @@ void test("a rejected Kroger callback reports the account conflict without polli
   assert.equal(reloads, 1);
 });
 
-void test("a pending Kroger callback keeps polling and ignores errors from unrelated providers", async () => {
+test("a pending Kroger callback keeps polling and ignores errors from unrelated providers", async () => {
   let reloads = 0;
   const user = await waitForKrogerConnection({
     reload: async () => ({
@@ -48,7 +48,7 @@ void test("a pending Kroger callback keeps polling and ignores errors from unrel
   assert.equal(user.externalAccounts[1].verification.status, "verified");
 });
 
-void test("a verified Kroger connection wins over a stale verification error", async () => {
+test("a verified Kroger connection wins over a stale verification error", async () => {
   const user = {
     externalAccounts: [
       {

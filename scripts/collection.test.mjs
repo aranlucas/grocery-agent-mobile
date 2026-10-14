@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vitest";
 import { filterCollection } from "../src/lib/collection.ts";
 const rows = [
   {
@@ -27,7 +27,7 @@ const rows = [
     location: "Personal",
   },
 ];
-void test("scope uses ownership, even when a household is named Personal", () => {
+test("scope uses ownership, even when a household is named Personal", () => {
   assert.deepEqual(
     filterCollection(rows, "", "personal", "recent").map(({ resource }) => resource.id),
     ["p"],
@@ -37,7 +37,7 @@ void test("scope uses ownership, even when a household is named Personal", () =>
     ["h", "h2"],
   );
 });
-void test("search supports case, whitespace, location, and recipe tags", () => {
+test("search supports case, whitespace, location, and recipe tags", () => {
   assert.equal(filterCollection(rows, "  MAPLE  ", "all", "recent")[0].resource.id, "h");
   assert.equal(
     filterCollection(rows, "vegetarian", "all", "title", (item) => item.tags.join(" "))[0].resource
@@ -46,7 +46,7 @@ void test("search supports case, whitespace, location, and recipe tags", () => {
   );
   assert.deepEqual(filterCollection(rows, "missing", "all", "recent"), []);
 });
-void test("sorts numerically by timestamps or alphabetically without changing cached data", () => {
+test("sorts numerically by timestamps or alphabetically without changing cached data", () => {
   assert.deepEqual(
     filterCollection(rows, "", "all", "recent").map(({ resource }) => resource.id),
     ["h", "h2", "p"],
