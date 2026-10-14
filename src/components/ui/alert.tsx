@@ -81,5 +81,5 @@ export interface AlertDescriptionProps extends React.ComponentPropsWithoutRef<ty
 }
 
 export function AlertDescription({ className, ...props }: AlertDescriptionProps) {
-  return <Text className={cn("text-muted-foreground text-sm leading-5", className)} {...props} />;
+  return <Text className={cn("text-sm leading-5 text-muted-foreground", className)} {...props} />;
 }

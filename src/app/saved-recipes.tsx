@@ -109,8 +109,8 @@ export default function SavedRecipesScreen() {
         {draft ? (
           <Card>
             <CardHeader className="flex-row items-center gap-3 pb-2">
-              <View className="bg-muted size-11 items-center justify-center rounded-md">
-                <Icon as={BookMarked} className="text-primary size-5" />
+              <View className="size-11 items-center justify-center rounded-md bg-muted">
+                <Icon as={BookMarked} className="size-5 text-primary" />
               </View>
               <View className="flex-1 gap-0.5">
                 <CardTitle>{draft.title}</CardTitle>
@@ -120,7 +120,7 @@ export default function SavedRecipesScreen() {
             <CardContent className="pt-2">
               <Button
                 disabled={isRunning}
-                icon={<Icon as={Save} className="text-primary-foreground size-4.5" />}
+                icon={<Icon as={Save} className="size-4.5 text-primary-foreground" />}
                 onPress={() => setSaveOpen(true)}
                 size="lg"
               >
@@ -183,14 +183,14 @@ export default function SavedRecipesScreen() {
             }}
             className="min-h-72"
             description="Recipes you save will stay here so you can quickly build the grocery list again."
-            icon={<Icon as={BookMarked} className="text-primary size-8" strokeWidth={2} />}
+            icon={<Icon as={BookMarked} className="size-8 text-primary" strokeWidth={2} />}
             title="No saved recipes yet"
           />
         )}
 
         {recipes.length > 0 ? (
           <Button
-            icon={<Icon as={Plus} className="text-secondary-foreground size-4.5" />}
+            icon={<Icon as={Plus} className="size-4.5 text-secondary-foreground" />}
             onPress={() => router.push("/chat")}
             size="lg"
             variant="secondary"

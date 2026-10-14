@@ -9,7 +9,7 @@ export interface LabelProps extends React.ComponentPropsWithoutRef<typeof Text> 
 export function Label({ className, ...props }: LabelProps) {
   return (
     <Text
-      className={cn("text-foreground mb-2 text-sm leading-none font-medium", className)}
+      className={cn("mb-2 text-sm leading-none font-medium text-foreground", className)}
       {...props}
     />
   );

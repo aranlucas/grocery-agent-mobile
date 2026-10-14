@@ -4,7 +4,7 @@ import { View, Text } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const avatarVariants = cva("bg-muted items-center justify-center overflow-hidden rounded-full", {
+const avatarVariants = cva("items-center justify-center overflow-hidden rounded-full bg-muted", {
   variants: {
     size: {
       sm: "h-8 w-8",
@@ -17,7 +17,7 @@ const avatarVariants = cva("bg-muted items-center justify-center overflow-hidden
   },
 });
 
-const avatarTextVariants = cva("text-muted-foreground font-medium", {
+const avatarTextVariants = cva("font-medium text-muted-foreground", {
   variants: {
     size: {
       sm: "text-xs",

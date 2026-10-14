@@ -36,9 +36,9 @@ export default function GroceryHomeScreen() {
           </Text>
           <Text variant="h2">Good meals start here.</Text>
         </View>
-        <Card className="border-primary/20 bg-primary-surface gap-4 p-5">
+        <Card className="gap-4 border-primary/20 bg-primary-surface p-5">
           <View className="flex-row items-center gap-3">
-            <Icon as={MessageSquareText} className="text-primary size-6" />
+            <Icon as={MessageSquareText} className="size-6 text-primary" />
             <Text variant="h4" className="flex-1">
               What’s on the menu?
             </Text>
@@ -47,7 +47,7 @@ export default function GroceryHomeScreen() {
           <Button
             testID="home-plan"
             onPress={() => router.push("/chat")}
-            iconAfter={<Icon as={ArrowRight} className="text-primary-foreground size-5" />}
+            iconAfter={<Icon as={ArrowRight} className="size-5 text-primary-foreground" />}
           >
             Plan in chat
           </Button>

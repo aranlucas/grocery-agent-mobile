@@ -58,7 +58,7 @@ export function GroceryListItemRow({
             )
           }
         >
-          <Icon as={Trash2} className="text-muted-foreground size-5" />
+          <Icon as={Trash2} className="size-5 text-muted-foreground" />
         </Pressable>
       </View>
       {showSeparator ? <Separator className="ml-13 w-auto" /> : null}

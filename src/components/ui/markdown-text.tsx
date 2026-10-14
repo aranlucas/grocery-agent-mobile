@@ -98,7 +98,7 @@ function renderBlock(node: MarkdownNode, key: string, context?: RenderContext): 
         <View
           key={key}
           className={cn(
-            "border-border rounded-lg border bg-background/60 p-3",
+            "rounded-lg border border-border bg-background/60 p-3",
             !context?.isLast && "mb-3",
           )}
         >
@@ -117,7 +117,7 @@ function renderBlock(node: MarkdownNode, key: string, context?: RenderContext): 
         <View
           key={key}
           className={cn(
-            "border-border gap-1 rounded-md border-l-4 bg-background/60 py-1.5 pl-3",
+            "gap-1 rounded-md border-l-4 border-border bg-background/60 py-1.5 pl-3",
             !context?.isLast && "mb-3",
           )}
         >
@@ -130,7 +130,7 @@ function renderBlock(node: MarkdownNode, key: string, context?: RenderContext): 
         </View>
       );
     case "thematicBreak":
-      return <View key={key} className={cn("bg-border h-px", !context?.isLast && "mb-3")} />;
+      return <View key={key} className={cn("h-px bg-border", !context?.isLast && "mb-3")} />;
     case "table":
       return renderTable(node, key, context?.isLast);
     case "math":
@@ -168,7 +168,7 @@ function renderListItem(
             item.checked ? "border-primary bg-primary" : "border-border",
           )}
         >
-          {item.checked ? <Icon as={Check} className="text-primary-foreground size-3" /> : null}
+          {item.checked ? <Icon as={Check} className="size-3 text-primary-foreground" /> : null}
         </View>
       ) : (
         <Text className={cn("w-4", bodyTextClassName)} variant={null}>
@@ -198,13 +198,13 @@ function renderTable(node: MarkdownNode, key: string, isLast?: boolean): ReactNo
       horizontal
       showsHorizontalScrollIndicator={false}
     >
-      <View className="border-border overflow-hidden rounded-lg border">
+      <View className="overflow-hidden rounded-lg border border-border">
         {rows.map((row, rowIndex) => (
           <View
             key={`${key}-row-${rowIndex}`}
             className={cn(
               "flex-row",
-              rowIndex > 0 && "border-border border-t",
+              rowIndex > 0 && "border-t border-border",
               rowIndex === 0 && "bg-muted",
             )}
           >
@@ -213,7 +213,7 @@ function renderTable(node: MarkdownNode, key: string, isLast?: boolean): ReactNo
                 key={`${key}-cell-${rowIndex}-${colIndex}`}
                 className={cn(
                   "min-w-24 justify-center px-2.5 py-2",
-                  colIndex > 0 && "border-border border-l",
+                  colIndex > 0 && "border-l border-border",
                 )}
               >
                 <Text
@@ -264,7 +264,7 @@ function renderInlineNode(node: MarkdownNode, key: string): ReactNode {
       return (
         <Text
           key={key}
-          className="bg-muted text-foreground rounded px-1"
+          className="rounded bg-muted px-1 text-foreground"
           style={{ fontFamily: monospaceFont }}
           variant={null}
         >

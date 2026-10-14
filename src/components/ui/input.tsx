@@ -21,7 +21,7 @@ export const Input = forwardRef<NativeInputRef, InputProps>(function Input(
     <View
       className={cn(
         "min-h-14 flex-row items-center rounded-xl",
-        variant === "default" && "border-input bg-card border",
+        variant === "default" && "border border-input bg-card",
         focused && "border-primary",
         className,
       )}

@@ -25,15 +25,16 @@
     "build:production-apk:android": "node ./scripts/android-release.mjs build",
     "publish:production-apk:android": "node ./scripts/android-release.mjs publish",
     "lint": "expo lint --max-warnings 0",
-    "fmt": "oxfmt --threads=2 --write .",
-    "fmt:check": "oxfmt --threads=2 --check .",
+    "fmt": "pnpm styles:prepare && oxfmt --threads=2 --write .",
+    "fmt:check": "pnpm styles:prepare && oxfmt --threads=2 --check .",
     "typecheck": "GOMAXPROCS=2 tsc --noEmit -p tsconfig.json",
     "check": "pnpm lint && pnpm fmt:check && pnpm typecheck",
     "lint:fix": "expo lint --fix --max-warnings 0",
     "validate": "pnpm check && pnpm test && pnpm exec expo install --check",
     "test": "vitest run",
     "review:ui": "node scripts/ui-review.mjs",
-    "postinstall": "node ./scripts/postinstall.mjs"
+    "postinstall": "node ./scripts/postinstall.mjs && pnpm styles:prepare",
+    "styles:prepare": "uniwind generate-artifacts --css ./src/global.css --dts ./src/uniwind-types.d.ts"
   },
   "dependencies": {
     "@clerk/expo": "4.10.1",

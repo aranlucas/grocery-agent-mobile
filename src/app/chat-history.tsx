@@ -52,17 +52,17 @@ const ChatHistoryRow = memo(function ChatHistoryRow({
       accessibilityRole="button"
       accessibilityState={{ disabled, selected }}
       className={cn(
-        "active:bg-muted min-h-19 flex-row items-center gap-3 px-4 py-3",
+        "min-h-19 flex-row items-center gap-3 px-4 py-3 active:bg-muted",
         selected && "bg-muted",
       )}
       disabled={disabled}
       onPress={() => void onResume(thread.id)}
     >
-      <View className="bg-muted size-11 items-center justify-center rounded-2xl">
+      <View className="size-11 items-center justify-center rounded-2xl bg-muted">
         {opening ? (
           <Spinner accessibilityLabel="Opening chat" size="sm" />
         ) : (
-          <Icon as={MessageSquareText} className="text-secondary size-5" />
+          <Icon as={MessageSquareText} className="size-5 text-secondary" />
         )}
       </View>
       <View className="flex-1 gap-0.5">
@@ -74,7 +74,7 @@ const ChatHistoryRow = memo(function ChatHistoryRow({
           {selected ? " · Current" : ""}
         </Text>
       </View>
-      <Icon as={ChevronRight} className="text-muted-foreground size-5" />
+      <Icon as={ChevronRight} className="size-5 text-muted-foreground" />
     </Pressable>
   );
 });
@@ -85,7 +85,7 @@ const ChatHistoryEmpty = memo(function ChatHistoryEmpty({ onStart }: { onStart: 
       action={{ label: "Start a chat", onPress: onStart }}
       className="flex-1 p-2"
       description="Your Grocery Agent conversations will appear here after you send a message."
-      icon={<Icon as={MessageSquareText} className="text-primary size-8" />}
+      icon={<Icon as={MessageSquareText} className="size-8 text-primary" />}
       title="No previous chats"
     />
   );

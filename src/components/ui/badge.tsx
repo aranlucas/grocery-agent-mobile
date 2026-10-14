@@ -8,7 +8,7 @@ const badgeVariants = cva("flex-row items-center rounded-full px-2.5 py-0.5", {
     variant: {
       default: "bg-primary",
       secondary: "bg-secondary",
-      outline: "border-border border bg-transparent",
+      outline: "border border-border bg-transparent",
       destructive: "bg-destructive",
     },
   },

@@ -190,7 +190,7 @@ export default function SharedListScreen() {
         }
       >
         <View className="gap-1">
-          <Text className="text-primary font-extrabold" selectable variant="small">
+          <Text className="font-extrabold text-primary" selectable variant="small">
             {householdName}
           </Text>
           <Text variant="muted">Changes are visible to everyone in this household.</Text>
@@ -227,7 +227,7 @@ export default function SharedListScreen() {
                   <CardTitle selectable>{activeList.title}</CardTitle>
                   <ListProgress items={activeList.items} />
                 </View>
-                <Icon as={ListPlus} className="text-primary size-5.5" />
+                <Icon as={ListPlus} className="size-5.5 text-primary" />
               </CardHeader>
               <CardContent className="p-0">
                 {activeList.items.length ? (
@@ -258,7 +258,7 @@ export default function SharedListScreen() {
                   <EmptyState
                     className="p-4"
                     description="Add the first grocery item below."
-                    icon={<Icon as={ListPlus} className="text-primary size-6" />}
+                    icon={<Icon as={ListPlus} className="size-6 text-primary" />}
                     title="No items yet"
                   />
                 )}
@@ -281,7 +281,7 @@ export default function SharedListScreen() {
               <Button
                 accessibilityLabel="Add item"
                 disabled={!addItemForm.formState.isValid || mutateItem.isPending}
-                icon={<Icon as={Plus} className="text-primary-foreground size-5.5" />}
+                icon={<Icon as={Plus} className="size-5.5 text-primary-foreground" />}
                 loading={addItemForm.formState.isSubmitting || busy === "add-item"}
                 onPress={() => void submitAddItem()}
                 size="icon"
@@ -290,7 +290,7 @@ export default function SharedListScreen() {
             <Button
               variant="outline"
               onPress={() => setCreateOpen(true)}
-              icon={<Icon as={Plus} className="text-primary size-5" />}
+              icon={<Icon as={Plus} className="size-5 text-primary" />}
             >
               Create another list
             </Button>
@@ -322,7 +322,7 @@ export default function SharedListScreen() {
               <EmptyState
                 className="p-0"
                 description={`Create the first list for ${householdName}.`}
-                icon={<Icon as={ListPlus} className="text-primary size-7" />}
+                icon={<Icon as={ListPlus} className="size-7 text-primary" />}
                 title="Start a shared list"
               />
             </CardHeader>

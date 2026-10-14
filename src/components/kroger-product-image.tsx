@@ -33,7 +33,7 @@ export function KrogerProductImage({
   return (
     <View
       accessibilityLabel={showImage ? `${name} product image` : undefined}
-      className={`${imageSize[size].frame} border-border bg-muted shrink-0 items-center justify-center overflow-hidden border`}
+      className={`${imageSize[size].frame} shrink-0 items-center justify-center overflow-hidden border border-border bg-muted`}
     >
       {imageUrl && showImage ? (
         <Image
