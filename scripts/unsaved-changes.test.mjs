@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { test } from "node:test";
+import { test } from "vitest";
 import { runInNewContext } from "node:vm";
 
 const require = createRequire(import.meta.url);
@@ -72,7 +72,7 @@ function editor(canGoBack = true) {
   };
 }
 
-void test("canceling removal retains edits; discarding replays the original SDK 57 action", () => {
+test("canceling removal retains edits; discarding replays the original SDK 57 action", () => {
   const app = editor();
   app.render();
   const action = { type: "GO_BACK", source: "editor" };
@@ -83,7 +83,7 @@ void test("canceling removal retains edits; discarding replays the original SDK 
   assert.deepEqual(app.events, ["discard", action]);
 });
 
-void test("saving navigates after the removal guard updates even before dirty reset", () => {
+test("saving navigates after the removal guard updates even before dirty reset", () => {
   const app = editor();
   const leave = app.render();
   leave(() => {
@@ -96,7 +96,7 @@ void test("saving navigates after the removal guard updates even before dirty re
 });
 
 for (const canGoBack of [true, false]) {
-  void test(`Android discard ${canGoBack ? "goes back" : "exits a root deep link"} after prevention updates`, () => {
+  test(`Android discard ${canGoBack ? "goes back" : "exits a root deep link"} after prevention updates`, () => {
     const app = editor(canGoBack);
     app.render();
     assert.equal(app.hardwareBack(), true);

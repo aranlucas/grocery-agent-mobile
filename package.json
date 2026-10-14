@@ -31,7 +31,7 @@
     "check": "pnpm lint && pnpm fmt:check && pnpm typecheck",
     "lint:fix": "expo lint --fix --max-warnings 0",
     "validate": "pnpm check && pnpm test && pnpm exec expo install --check",
-    "test": "node --test scripts/*.test.mjs",
+    "test": "vitest run",
     "review:ui": "node scripts/ui-review.mjs",
     "postinstall": "node ./scripts/postinstall.mjs"
   },
@@ -99,7 +99,8 @@
     "react-test-renderer": "19.3.0",
     "supports-color": "11.0.0",
     "typescript": "~6.0.3",
-    "utf-8-validate": "6.0.6"
+    "utf-8-validate": "6.0.6",
+    "vitest": "5.0.3"
   },
   "packageManager": "pnpm@12.11.2",
   "expo": {
