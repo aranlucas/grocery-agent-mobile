@@ -211,7 +211,7 @@ export default function SavedRecipeScreen() {
           {recipe.steps.length ? (
             recipe.steps.map((step, index) => (
               <View className="flex-row items-start gap-3" key={index}>
-                <View className="size-8 items-center justify-center rounded-full bg-primary-surface">
+                <View className="bg-primary-surface size-8 items-center justify-center rounded-full">
                   <Text variant="small" className="text-primary">
                     {index + 1}
                   </Text>
@@ -232,7 +232,7 @@ export default function SavedRecipeScreen() {
           </View>
         ) : null}
         <Button
-          icon={<Icon as={Pencil} className="size-5 text-primary" />}
+          icon={<Icon as={Pencil} className="text-primary size-5" />}
           variant="outline"
           onPress={() => {
             updateRecipe.reset();
@@ -242,7 +242,7 @@ export default function SavedRecipeScreen() {
           Edit recipe
         </Button>
         <Button
-          icon={<Icon as={BookOpen} className="size-5 text-primary-foreground" />}
+          icon={<Icon as={BookOpen} className="text-primary-foreground size-5" />}
           onPress={() =>
             router.push({
               pathname: "/chat",
@@ -330,7 +330,7 @@ export default function SavedRecipeScreen() {
         <CardHeader className="flex-row items-center justify-between p-4 pb-2">
           <CardTitle>Ingredients</CardTitle>
           <Button
-            icon={<Icon as={Plus} className="size-4 text-secondary-foreground" />}
+            icon={<Icon as={Plus} className="text-secondary-foreground size-4" />}
             onPress={() => ingredients.append({ name: "", note: "", quantity: "", unit: "" })}
             size="sm"
             variant="secondary"
@@ -343,7 +343,7 @@ export default function SavedRecipeScreen() {
             <Text variant="muted">Add an ingredient to start your recipe.</Text>
           ) : null}
           {ingredients.fields.map((ingredient, index) => (
-            <View className="gap-3 border-t border-border pt-4" key={ingredient.id}>
+            <View className="border-border gap-3 border-t pt-4" key={ingredient.id}>
               <View className="flex-row items-center gap-2">
                 <FormInput
                   accessibilityLabel={`Ingredient ${index + 1}`}
@@ -361,7 +361,7 @@ export default function SavedRecipeScreen() {
                   className="min-h-14 min-w-14 items-center justify-center active:opacity-60"
                   onPress={() => ingredients.remove(index)}
                 >
-                  <Icon as={Trash2} className="size-5 text-muted-foreground" />
+                  <Icon as={Trash2} className="text-muted-foreground size-5" />
                 </Pressable>
               </View>
               <View className="flex-row gap-3">
@@ -397,7 +397,7 @@ export default function SavedRecipeScreen() {
         <CardHeader className="flex-row items-center justify-between p-4 pb-2">
           <CardTitle>Steps</CardTitle>
           <Button
-            icon={<Icon as={Plus} className="size-4 text-secondary-foreground" />}
+            icon={<Icon as={Plus} className="text-secondary-foreground size-4" />}
             onPress={() => setValue("steps", [...steps, ""], { shouldDirty: true })}
             size="sm"
             variant="secondary"
@@ -411,7 +411,7 @@ export default function SavedRecipeScreen() {
           ) : null}
           {steps.map((_, index) => (
             <View className="flex-row items-start gap-2" key={`step-${index}`}>
-              <View className="mt-2 size-7 items-center justify-center rounded-full bg-muted">
+              <View className="bg-muted mt-2 size-7 items-center justify-center rounded-full">
                 <Text className="font-bold" variant="small">
                   {String(index + 1)}
                 </Text>
@@ -439,7 +439,7 @@ export default function SavedRecipeScreen() {
                   )
                 }
               >
-                <Icon as={Trash2} className="size-5 text-muted-foreground" />
+                <Icon as={Trash2} className="text-muted-foreground size-5" />
               </Pressable>
             </View>
           ))}
@@ -463,7 +463,7 @@ export default function SavedRecipeScreen() {
       ) : null}
 
       <Button
-        icon={<Icon as={Save} className="size-5 text-primary-foreground" />}
+        icon={<Icon as={Save} className="text-primary-foreground size-5" />}
         disabled={!isDirty}
         loading={isSubmitting || updateRecipe.isPending}
         onPress={() => void submit()}

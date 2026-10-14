@@ -20,7 +20,7 @@ export const Textarea = forwardRef<NativeInputRef, TextareaProps>(function Texta
     <View
       className={cn(
         "min-h-24 rounded-xl",
-        variant === "default" && "border border-input bg-card",
+        variant === "default" && "border-input bg-card border",
         focused && "border-primary",
         className,
       )}

@@ -21,12 +21,12 @@ export function HeaderActionButton({
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       className={cn(
-        "min-h-14 min-w-14 items-center justify-center rounded-full active:bg-muted",
+        "active:bg-muted min-h-14 min-w-14 items-center justify-center rounded-full",
         className,
       )}
       onPress={onPress}
     >
-      <Icon as={icon} className="size-5 text-foreground" />
+      <Icon as={icon} className="text-foreground size-5" />
     </Pressable>
   );
 }

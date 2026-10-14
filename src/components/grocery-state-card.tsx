@@ -54,8 +54,8 @@ export function GroceryStateCard({
   return (
     <Card>
       <CardHeader className="flex-row items-center gap-2.5 pb-0">
-        <View className="size-11 items-center justify-center rounded-full bg-muted">
-          <Icon as={ShoppingBasket} className="size-5.5 text-primary" />
+        <View className="bg-muted size-11 items-center justify-center rounded-full">
+          <Icon as={ShoppingBasket} className="text-primary size-5.5" />
         </View>
         <View className="flex-1 gap-0.5">
           <CardTitle>{connected ? "Kroger grocery plan" : "Your grocery plan"}</CardTitle>
@@ -80,9 +80,9 @@ export function GroceryStateCard({
         ) : null}
 
         {state.recipe ? (
-          <View className="gap-2 rounded-2xl bg-muted p-3">
+          <View className="bg-muted gap-2 rounded-2xl p-3">
             <View className="flex-row items-center gap-2">
-              <Icon as={BookMarked} className="size-4.5 text-primary" />
+              <Icon as={BookMarked} className="text-primary size-4.5" />
               <Text className="flex-1" variant="large">
                 {state.recipe.title}
               </Text>
@@ -98,7 +98,7 @@ export function GroceryStateCard({
             {onSaveRecipe ? (
               <Button
                 disabled={adding}
-                icon={<Icon as={Save} className="size-4.5 text-secondary-foreground" />}
+                icon={<Icon as={Save} className="text-secondary-foreground size-4.5" />}
                 onPress={onSaveRecipe}
                 size="sm"
                 variant="secondary"
@@ -125,7 +125,7 @@ export function GroceryStateCard({
         {list.length || cart.length ? (
           <Pressable
             accessibilityRole={onOpenList ? "button" : undefined}
-            className="min-h-14 flex-row items-center justify-between gap-3 rounded-2xl bg-primary-surface px-4 py-3 active:opacity-70"
+            className="bg-primary-surface min-h-14 flex-row items-center justify-between gap-3 rounded-2xl px-4 py-3 active:opacity-70"
             disabled={!onOpenList}
             onPress={onOpenList}
           >
@@ -144,7 +144,7 @@ export function GroceryStateCard({
               )}
               {skipped.length ? <Text variant="muted">{skipped.length} in pantry</Text> : null}
             </View>
-            <Icon as={ArrowRight} className="size-5 text-secondary" />
+            <Icon as={ArrowRight} className="text-secondary size-5" />
           </Pressable>
         ) : null}
       </CardContent>
@@ -155,7 +155,7 @@ export function GroceryStateCard({
             <Button
               className="w-full sm:w-auto sm:flex-1"
               disabled={adding || state.status !== "ready"}
-              icon={<Icon as={Save} className="size-4.5 text-secondary-foreground" />}
+              icon={<Icon as={Save} className="text-secondary-foreground size-4.5" />}
               onPress={onSaveList}
               size="lg"
               variant="secondary"
@@ -166,7 +166,7 @@ export function GroceryStateCard({
           {connected && onAddToCart ? (
             <Button
               className="w-full sm:w-auto sm:flex-1"
-              icon={<Icon as={ShoppingCart} className="size-4.5 text-primary-foreground" />}
+              icon={<Icon as={ShoppingCart} className="text-primary-foreground size-4.5" />}
               loading={adding}
               disabled={!matches.length || state.status !== "ready"}
               onPress={onAddToCart}

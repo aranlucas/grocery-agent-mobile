@@ -30,11 +30,11 @@ export function Price({
   return (
     <View className={cn("flex-row items-baseline", className)} {...props}>
       {prefix && (
-        <Text className={cn("me-1 text-sm text-muted-foreground", textClassName)}>{prefix}</Text>
+        <Text className={cn("text-muted-foreground me-1 text-sm", textClassName)}>{prefix}</Text>
       )}
       <Text
         className={cn(
-          "text-lg font-semibold text-foreground",
+          "text-foreground text-lg font-semibold",
           strikethrough && "text-muted-foreground line-through",
           textClassName,
         )}

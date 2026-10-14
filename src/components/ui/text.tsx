@@ -11,10 +11,10 @@ const textVariants = cva("text-foreground", {
       h3: "text-2xl leading-snug font-semibold tracking-tight",
       h4: "text-lg leading-snug font-semibold",
       p: "text-base leading-6",
-      lead: "text-lg leading-7 text-muted-foreground",
+      lead: "text-muted-foreground text-lg leading-7",
       large: "text-base leading-6 font-semibold",
       small: "text-sm leading-5 font-medium",
-      muted: "text-sm leading-5 text-muted-foreground",
+      muted: "text-muted-foreground text-sm leading-5",
     },
   },
   defaultVariants: {

@@ -25,7 +25,7 @@ export function EmptyState({
       {icon && (
         <View
           accessible={false}
-          className="size-16 items-center justify-center rounded-2xl bg-primary-surface"
+          className="bg-primary-surface size-16 items-center justify-center rounded-2xl"
         >
           {icon}
         </View>

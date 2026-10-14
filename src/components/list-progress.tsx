@@ -18,10 +18,10 @@ export function ListProgress({ items }: { items: GroceryListItem[] }) {
           accessibilityRole="progressbar"
           accessibilityLabel="Shopping progress"
           accessibilityValue={{ min: 0, max: items.length, now: done }}
-          className="h-1.5 overflow-hidden rounded-full bg-muted"
+          className="bg-muted h-1.5 overflow-hidden rounded-full"
         >
           <View
-            className="h-full rounded-full bg-primary"
+            className="bg-primary h-full rounded-full"
             style={{ width: `${(done / items.length) * 100}%` }}
           />
         </View>

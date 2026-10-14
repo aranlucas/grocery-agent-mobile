@@ -186,7 +186,7 @@ export default function SavedListScreen() {
           accessibilityLabel="Save list title"
           loading={isSubmitting}
           disabled={mutateList.isPending || !dirtyFields.title}
-          icon={<Icon as={Save} className="size-4.5 text-primary" />}
+          icon={<Icon as={Save} className="text-primary size-4.5" />}
           onPress={() => void saveTitle()}
           variant="outline"
         >
@@ -252,7 +252,7 @@ export default function SavedListScreen() {
           accessibilityLabel="Add grocery item"
           loading={addItemForm.formState.isSubmitting}
           disabled={mutateList.isPending}
-          icon={<Icon as={Plus} className="size-5 text-primary-foreground" />}
+          icon={<Icon as={Plus} className="text-primary-foreground size-5" />}
           onPress={() => void submitAddItem()}
           size="icon"
         />

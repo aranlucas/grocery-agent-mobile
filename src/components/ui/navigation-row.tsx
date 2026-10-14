@@ -25,10 +25,10 @@ export function NavigationRow({
       accessibilityRole="button"
       accessibilityLabel={description ? `${title}. ${description}` : title}
       onPress={onPress}
-      className="min-h-18 flex-row items-center gap-3 px-4 py-4 active:bg-muted"
+      className="active:bg-muted min-h-18 flex-row items-center gap-3 px-4 py-4"
     >
-      <View accessible={false} className="size-10 items-center justify-center rounded-xl bg-muted">
-        <Icon as={icon} className={cn("size-5 text-primary", destructive && "text-destructive")} />
+      <View accessible={false} className="bg-muted size-10 items-center justify-center rounded-xl">
+        <Icon as={icon} className={cn("text-primary size-5", destructive && "text-destructive")} />
       </View>
       <View className="min-w-0 flex-1 gap-1">
         <Text variant="large" className={destructive ? "text-destructive" : undefined}>
@@ -36,7 +36,7 @@ export function NavigationRow({
         </Text>
         {description ? <Text variant="muted">{description}</Text> : null}
       </View>
-      <Icon as={ChevronRight} className="size-5 text-muted-foreground" />
+      <Icon as={ChevronRight} className="text-muted-foreground size-5" />
     </Pressable>
   );
 }

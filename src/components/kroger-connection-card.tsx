@@ -19,8 +19,8 @@ export function KrogerConnectionCard({
     <View className="gap-2">
       <Card>
         <CardHeader className="flex-row items-center gap-3 pb-0">
-          <View className="size-11 items-center justify-center rounded-2xl bg-muted">
-            <Icon as={ShoppingCart} className="size-6 text-primary" />
+          <View className="bg-muted size-11 items-center justify-center rounded-2xl">
+            <Icon as={ShoppingCart} className="text-primary size-6" />
           </View>
           <View className="flex-1 gap-0.5">
             <CardTitle>Shop with Kroger</CardTitle>
@@ -33,7 +33,7 @@ export function KrogerConnectionCard({
           <Button
             accessibilityLabel="Connect Kroger"
             className="flex-1"
-            iconAfter={<Icon as={ChevronRight} className="size-5 text-secondary-foreground" />}
+            iconAfter={<Icon as={ChevronRight} className="text-secondary-foreground size-5" />}
             loading={isLoading}
             onPress={() => {
               clearError();

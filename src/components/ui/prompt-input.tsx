@@ -66,7 +66,7 @@ export function PromptInput({
   return (
     <Ctx.Provider value={{ text, setText, send, streaming, dark }}>
       <View
-        className={cn("rounded-3xl border border-input bg-background px-3 pt-3 pb-2", className)}
+        className={cn("border-input rounded-3xl border bg-background px-3 pt-3 pb-2", className)}
         {...props}
       >
         {children}

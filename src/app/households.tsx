@@ -163,7 +163,7 @@ export default function HouseholdsScreen() {
             <EmptyState
               className="p-0"
               description="Create one below or join with an invite code."
-              icon={<Icon as={Users} className="size-7 text-primary" />}
+              icon={<Icon as={Users} className="text-primary size-7" />}
               title="No shared households yet"
             />
           </CardContent>
@@ -195,14 +195,14 @@ export default function HouseholdsScreen() {
                       {household.role === "owner" ? "Owner" : "Member"}
                     </CardDescription>
                   </View>
-                  <Icon as={ChevronRight} className="size-5 text-muted-foreground" />
+                  <Icon as={ChevronRight} className="text-muted-foreground size-5" />
                 </Pressable>
               </CardHeader>
               {household.role === "owner" ? (
                 <CardContent className="pt-0">
                   {invite ? (
-                    <View className="gap-3 rounded-2xl bg-muted p-3">
-                      <Icon as={Users} className="size-5 text-primary" />
+                    <View className="bg-muted gap-3 rounded-2xl p-3">
+                      <Icon as={Users} className="text-primary size-5" />
                       <View className="flex-1 gap-0.5">
                         <Text variant="muted">Invite code</Text>
                         <Text className="tracking-widest" selectable variant="large">
@@ -211,7 +211,7 @@ export default function HouseholdsScreen() {
                       </View>
                       <Button
                         variant="outline"
-                        icon={<Icon as={Share2} className="size-4 text-primary" />}
+                        icon={<Icon as={Share2} className="text-primary size-4" />}
                         onPress={() => {
                           setInviteError("");
                           void Share.share({
@@ -288,8 +288,8 @@ export default function HouseholdsScreen() {
       {formMode === "create" ? (
         <Card>
           <CardHeader className="flex-row items-center gap-3 pb-0">
-            <View className="size-11 items-center justify-center rounded-2xl bg-muted">
-              <Icon as={Home} className="size-5 text-primary" />
+            <View className="bg-muted size-11 items-center justify-center rounded-2xl">
+              <Icon as={Home} className="text-primary size-5" />
             </View>
             <View className="flex-1 gap-0.5">
               <CardTitle>Create a household</CardTitle>
@@ -328,8 +328,8 @@ export default function HouseholdsScreen() {
       ) : (
         <Card>
           <CardHeader className="flex-row items-center gap-3 pb-0">
-            <View className="size-11 items-center justify-center rounded-2xl bg-muted">
-              <Icon as={Users} className="size-5 text-primary" />
+            <View className="bg-muted size-11 items-center justify-center rounded-2xl">
+              <Icon as={Users} className="text-primary size-5" />
             </View>
             <View className="flex-1 gap-0.5">
               <CardTitle>Join with an invite</CardTitle>

@@ -57,7 +57,7 @@ export function AlertDialogContent({
   return (
     <View
       accessibilityViewIsModal
-      className={cn("w-full max-w-3xl bg-card p-4 sm:p-6", className)}
+      className={cn("bg-card w-full max-w-3xl p-4 sm:p-6", className)}
       {...props}
     >
       {children}
@@ -79,7 +79,7 @@ export function AlertDialogTitle({
   return (
     <Text
       accessibilityRole="header"
-      className={cn("text-xl leading-7 font-semibold text-card-foreground", className)}
+      className={cn("text-card-foreground text-xl leading-7 font-semibold", className)}
       {...props}
     />
   );
@@ -90,7 +90,7 @@ export function AlertDialogDescription({
   ...props
 }: React.ComponentPropsWithoutRef<typeof Text> & { className?: string }) {
   return (
-    <Text className={cn("mt-2 text-base leading-6 text-muted-foreground", className)} {...props} />
+    <Text className={cn("text-muted-foreground mt-2 text-base leading-6", className)} {...props} />
   );
 }
 

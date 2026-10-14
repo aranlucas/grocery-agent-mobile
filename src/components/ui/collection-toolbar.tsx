@@ -18,8 +18,8 @@ export function SearchField({
   placeholder: string;
 }) {
   return (
-    <View className="flex-row items-center rounded-xl border border-input bg-card pl-4">
-      <Icon as={Search} className="size-5 text-muted-foreground" />
+    <View className="border-input bg-card flex-row items-center rounded-xl border pl-4">
+      <Icon as={Search} className="text-muted-foreground size-5" />
       <Input
         testID="collection-search"
         variant="ghost"
@@ -38,7 +38,7 @@ export function SearchField({
           variant="ghost"
           size="icon"
           onPress={() => onChange("")}
-          icon={<Icon as={X} className="size-5 text-muted-foreground" />}
+          icon={<Icon as={X} className="text-muted-foreground size-5" />}
         />
       ) : null}
     </View>
@@ -94,7 +94,7 @@ export function CollectionToolbar({
         size="sm"
         accessibilityLabel={`Sort: ${sort === "recent" ? "recently updated" : "A to Z"}. Change sort order`}
         onPress={() => onSort(sort === "recent" ? "title" : "recent")}
-        icon={<Icon as={ArrowDownWideNarrow} className="size-4 text-primary" />}
+        icon={<Icon as={ArrowDownWideNarrow} className="text-primary size-4" />}
       >
         {sort === "recent" ? "Recently updated" : "A to Z"}
       </Button>

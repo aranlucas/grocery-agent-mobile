@@ -18,7 +18,7 @@ const alertVariants = cva("rounded-lg border p-4", {
   },
 });
 
-const alertTitleVariants = cva("text-base font-semibold mb-1", {
+const alertTitleVariants = cva("mb-1 text-base font-semibold", {
   variants: {
     variant: {
       default: "text-foreground",
@@ -81,5 +81,5 @@ export interface AlertDescriptionProps extends React.ComponentPropsWithoutRef<ty
 }
 
 export function AlertDescription({ className, ...props }: AlertDescriptionProps) {
-  return <Text className={cn("text-sm leading-5 text-muted-foreground", className)} {...props} />;
+  return <Text className={cn("text-muted-foreground text-sm leading-5", className)} {...props} />;
 }

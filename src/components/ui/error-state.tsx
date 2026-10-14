@@ -29,7 +29,7 @@ export function ErrorState({
     );
   return (
     <EmptyState
-      icon={<Icon as={CloudOff} className="size-7 text-muted-foreground" />}
+      icon={<Icon as={CloudOff} className="text-muted-foreground size-7" />}
       title={title}
       description={message}
       action={{ label: retryLabel, onPress: onRetry }}

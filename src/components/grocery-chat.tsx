@@ -185,7 +185,7 @@ export function GroceryChat() {
           </View>
         }
       />
-      <SafeArea className="flex-none border-t border-border" edges={["bottom"]}>
+      <SafeArea className="border-border flex-none border-t" edges={["bottom"]}>
         <View className="w-full max-w-3xl self-center px-4 py-3 sm:px-6">
           <ChatComposer
             key={`${activeThreadId ?? "grocery"}:${prompt}`}
@@ -216,8 +216,8 @@ const ChatEmptyState = memo(function ChatEmptyState({
 }) {
   return (
     <View className="gap-4 py-6">
-      <View className="size-14 items-center justify-center rounded-2xl bg-muted">
-        <Icon as={Sparkles} className="size-6.5 text-primary" />
+      <View className="bg-muted size-14 items-center justify-center rounded-2xl">
+        <Icon as={Sparkles} className="text-primary size-6.5" />
       </View>
       <Text variant="h3">A good plan starts with you.</Text>
       <Text className="text-muted-foreground">
@@ -246,7 +246,7 @@ function messageKey(message: DisplayMessage) {
 const UserMessage = memo(function UserMessage({ content, id }: { content: string; id: string }) {
   return (
     <View className="w-full items-end" nativeID={id}>
-      <View className="max-w-9/10 rounded-2xl rounded-br-sm bg-primary-surface px-4 py-3">
+      <View className="bg-primary-surface max-w-9/10 rounded-2xl rounded-br-sm px-4 py-3">
         <Text selectable>{content}</Text>
       </View>
     </View>
@@ -328,7 +328,7 @@ const ChatComposer = memo(function ChatComposer({
       rules={{ validate: (value) => value.trim().length > 0 }}
       render={({ field }) => (
         <PromptInput
-          className="flex-row items-end gap-2 rounded-2xl bg-card p-2"
+          className="bg-card flex-row items-end gap-2 rounded-2xl p-2"
           clearOnSend={false}
           onChangeText={field.onChange}
           onSend={() => void submit()}
@@ -410,7 +410,7 @@ function ReasoningSection({
       open={expanded}
       label={reasoningLabel}
     >
-      <View className="ml-2 self-start border-l border-border py-1 pl-3.5">
+      <View className="border-border ml-2 self-start border-l py-1 pl-3.5">
         <Text className="leading-5" variant="muted">
           {content}
         </Text>
@@ -440,9 +440,9 @@ function ToolCallSection({
       label={`${label} · ${status === "running" ? "Running" : status === "failed" ? "Failed" : "Done"}`}
     >
       {expanded ? (
-        <View className="ml-2 max-h-39 border-l border-border py-1 pl-3.5">
+        <View className="border-border ml-2 max-h-39 border-l py-1 pl-3.5">
           <ScrollView nestedScrollEnabled>
-            <Text className="mb-0.5 font-semibold text-muted-foreground" variant="small">
+            <Text className="text-muted-foreground mb-0.5 font-semibold" variant="small">
               Input
             </Text>
             <Text className="mb-2 leading-4.5" selectable variant="muted">
@@ -450,7 +450,7 @@ function ToolCallSection({
             </Text>
             {status !== "running" ? (
               <>
-                <Text className="mb-0.5 font-semibold text-muted-foreground" variant="small">
+                <Text className="text-muted-foreground mb-0.5 font-semibold" variant="small">
                   Result
                 </Text>
                 <Text className="mb-2 leading-4.5" selectable variant="muted">

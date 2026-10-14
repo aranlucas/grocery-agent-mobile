@@ -106,7 +106,7 @@ export default function SavedListsScreen() {
         />
       ) : !queryError ? (
         <EmptyState
-          icon={<Icon as={ListChecks} className="size-7 text-primary" />}
+          icon={<Icon as={ListChecks} className="text-primary size-7" />}
           title="Keep a list for next time"
           description="Plan in chat, then save your grocery list. You can edit it and check items off as you shop."
           action={{ label: "Plan a grocery list", onPress: () => router.push("/chat") }}

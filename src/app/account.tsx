@@ -66,7 +66,7 @@ export default function AccountScreen() {
       </View>
       <Card className="gap-4">
         <View className="flex-row gap-3">
-          <Icon as={ShoppingBasket} className="size-6 text-primary" />
+          <Icon as={ShoppingBasket} className="text-primary size-6" />
           <View className="flex-1 gap-1">
             <CardTitle>Kroger</CardTitle>
             <CardDescription>
@@ -162,7 +162,7 @@ export default function AccountScreen() {
       </View>
       {pageError ? <Alert title={pageError} variant="destructive" /> : null}
       <Button
-        icon={<Icon as={LogOut} className="size-5 text-primary" />}
+        icon={<Icon as={LogOut} className="text-primary size-5" />}
         variant="outline"
         loading={signingOut}
         onPress={() => {

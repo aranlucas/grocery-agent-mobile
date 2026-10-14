@@ -168,7 +168,7 @@ function GroceryListContent() {
           }}
           className="w-full max-w-3xl flex-1 self-center bg-background"
           description="Ask Grocery Agent for a recipe, meal plan, or budget-friendly list."
-          icon={<Icon as={ShoppingBasket} className="size-9 text-primary" />}
+          icon={<Icon as={ShoppingBasket} className="text-primary size-9" />}
           title="Your first plan starts in chat"
         />
       </Screen>
@@ -225,7 +225,7 @@ function GroceryListContent() {
         {error ? <Alert title={error} variant="destructive" /> : null}
         {saveList.data ? <Alert title={`${saveList.data.title} saved`} variant="success" /> : null}
         <Button
-          icon={<Icon as={Save} className="size-5 text-secondary-foreground" />}
+          icon={<Icon as={Save} className="text-secondary-foreground size-5" />}
           disabled={!list.length || isRunning || state.status !== "ready"}
           size="lg"
           variant="secondary"
@@ -235,7 +235,7 @@ function GroceryListContent() {
         </Button>
         {connected ? (
           <Button
-            icon={<Icon as={ShoppingCart} className="size-5 text-primary-foreground" />}
+            icon={<Icon as={ShoppingCart} className="text-primary-foreground size-5" />}
             loading={isRunning}
             disabled={!state.product_matches?.length || state.status !== "ready"}
             size="lg"

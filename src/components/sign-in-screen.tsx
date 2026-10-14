@@ -280,7 +280,7 @@ export function SignInScreen() {
                         icon={
                           <Icon
                             as={passwordVisible ? EyeOff : Eye}
-                            className="size-4 text-primary"
+                            className="text-primary size-4"
                           />
                         }
                       >
