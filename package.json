@@ -34,6 +34,7 @@
     "test": "vitest run",
     "review:ui": "node scripts/ui-review.mjs",
     "postinstall": "node ./scripts/postinstall.mjs && pnpm styles:prepare",
+    "prepare": "husky",
     "styles:prepare": "uniwind generate-artifacts --css ./src/global.css --dts ./src/uniwind-types.d.ts",
     "lint:tailwind": "oxlint --config .oxlintrc.json src scripts --deny-warnings"
   },
@@ -96,6 +97,8 @@
     "eslint": "^10.12.0",
     "eslint-config-expo": "~57.0.2",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "oxfmt": "0.73.0",
     "oxlint": "1.88.0",
     "oxlint-tailwindcss": "1.16.0",
@@ -105,6 +108,15 @@
     "typescript": "~6.0.3",
     "utf-8-validate": "6.0.6",
     "vitest": "5.0.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}": [
+      "oxlint --config .oxlintrc.json --deny-warnings --fix",
+      "oxfmt --no-error-on-unmatched-pattern"
+    ],
+    "*.{json,jsonc,json5,css,scss,md,mdx,yml,yaml,html,toml,vue,svelte,astro,graphql}": [
+      "oxfmt --no-error-on-unmatched-pattern"
+    ]
   },
   "packageManager": "pnpm@12.11.2",
   "expo": {
