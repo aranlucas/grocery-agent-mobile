@@ -2,16 +2,17 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
+    patterns:
+      - "*"
+    multi-ecosystem-group: weekly-dependencies
+multi-ecosystem-groups:
+  weekly-dependencies:
     schedule:
       interval: weekly
       day: thursday
-      time: "06:00"
+      time: 06:00
       timezone: America/Los_Angeles
-    open-pull-requests-limit: 5
-    groups:
-      github-actions:
-        patterns:
-          - "*"
+    open-pull-requests-limit: 1
 
 # The app uses pnpm 12. Dependabot currently documents support through pnpm 10.
 # See CONTRIBUTING.md for the app dependency review and Expo compatibility gates.
