@@ -82,14 +82,17 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist/feel-pilot
-          npm pack @react-native-feel/deploy@0.3.0 --ignore-scripts --pack-destination "$RUNNER_TEMP"
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output "$RUNNER_TEMP/react-native-feel-deploy-0.3.0.tgz" \
+            https://registry.npmjs.org/@react-native-feel/deploy/-/deploy-0.3.0.tgz
           python3 - "$RUNNER_TEMP/react-native-feel-deploy-0.3.0.tgz" <<'PY'
           import base64, hashlib, sys
           expected = 'BKb5rzPVnUEO7wPxoL6oT3COW7wku0m8YbXrRYLVGd/obSyCBo4hk0dbSsNh9NwTCptNC87dwIFBZoj4fIe9bw=='
           actual = base64.b64encode(hashlib.sha512(open(sys.argv[1], 'rb').read()).digest()).decode()
           assert actual == expected, 'Deploy tarball integrity mismatch'
           PY
-          npm install --prefix "$RUNNER_TEMP/feel-deploy" --ignore-scripts --no-audit --no-fund \
+          mkdir -p "$RUNNER_TEMP/feel-deploy"
+          pnpm --dir "$RUNNER_TEMP/feel-deploy" add --ignore-scripts \
             "$RUNNER_TEMP/react-native-feel-deploy-0.3.0.tgz"
           node "$RUNNER_TEMP/feel-deploy/node_modules/@react-native-feel/deploy/dist/bin/rnd.js" \
             config --platform ios --profile feel-simulator --json > dist/feel-pilot/resolved-profile.json
