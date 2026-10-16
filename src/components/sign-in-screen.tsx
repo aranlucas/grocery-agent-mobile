@@ -18,7 +18,14 @@ import { readableError } from "@/lib/auth";
 
 WebBrowser.maybeCompleteAuthSession();
 
-type Mode = "sign-in" | "sign-up" | "verify" | "reset-request" | "reset-code" | "reset-password";
+type Mode =
+  | "sign-in"
+  | "sign-in-code"
+  | "sign-up"
+  | "verify"
+  | "reset-request"
+  | "reset-code"
+  | "reset-password";
 type AuthFormValues = { email: string; password: string; code: string };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u;
@@ -49,7 +56,7 @@ export function SignInScreen() {
   });
   const busy = oauthBusy || isSubmitting || codeBusy;
   const verificationEmail = destinationEmail || getValues("email");
-  const isCode = mode === "verify" || mode === "reset-code";
+  const isCode = mode === "verify" || mode === "reset-code" || mode === "sign-in-code";
   const isCredentials = mode === "sign-in" || mode === "sign-up";
   const changeMode = (nextMode: Mode) => {
     reset({ code: "", email: getValues("email") || destinationEmail, password: "" });
@@ -76,9 +83,11 @@ export function SignInScreen() {
     clearErrors("root");
     try {
       const result =
-        mode === "verify"
-          ? await signUp.verifications.sendEmailCode()
-          : await signIn.resetPasswordEmailCode.sendCode();
+        mode === "sign-in-code"
+          ? await signIn.mfa.sendEmailCode()
+          : mode === "verify"
+            ? await signUp.verifications.sendEmailCode()
+            : await signIn.resetPasswordEmailCode.sendCode();
       if (result.error) throw result.error;
       setNotice("A new code is on its way. Check your inbox and spam folder.");
       setResendPending(true);
@@ -138,13 +147,35 @@ export function SignInScreen() {
         return;
       }
       if (mode === "sign-in") {
-        const created = await signIn.create({
+        const created = await signIn.password({
           identifier: values.email.trim(),
           password: values.password,
         });
         if (created.error) throw created.error;
+        if (
+          (signIn.status === "needs_client_trust" || signIn.status === "needs_second_factor") &&
+          signIn.supportedSecondFactors?.some((factor) => factor.strategy === "email_code")
+        ) {
+          const sent = await signIn.mfa.sendEmailCode();
+          if (sent.error) throw sent.error;
+          setResendPending(true);
+          setDestinationEmail(values.email.trim());
+          setMode("sign-in-code");
+          return;
+        }
         if (signIn.status !== "complete") {
           throw new Error("Additional verification is required. Try signing in with Google.");
+        }
+        const finalized = await signIn.finalize();
+        if (finalized.error) throw finalized.error;
+        return;
+      }
+
+      if (mode === "sign-in-code") {
+        const verified = await signIn.mfa.verifyEmailCode({ code: values.code.trim() });
+        if (verified.error) throw verified.error;
+        if (signIn.status !== "complete") {
+          throw new Error("That code could not be verified. Please try again.");
         }
         const finalized = await signIn.finalize();
         if (finalized.error) throw finalized.error;
@@ -333,15 +364,17 @@ export function SignInScreen() {
             >
               {mode === "sign-in"
                 ? "Sign in"
-                : mode === "sign-up"
-                  ? "Create account"
-                  : mode === "reset-request"
-                    ? "Send reset code"
-                    : mode === "reset-code"
-                      ? "Verify code"
-                      : mode === "reset-password"
-                        ? "Save password and sign in"
-                        : "Verify email"}
+                : mode === "sign-in-code"
+                  ? "Verify and sign in"
+                  : mode === "sign-up"
+                    ? "Create account"
+                    : mode === "reset-request"
+                      ? "Send reset code"
+                      : mode === "reset-code"
+                        ? "Verify code"
+                        : mode === "reset-password"
+                          ? "Save password and sign in"
+                          : "Verify email"}
             </Button>
           </View>
 
@@ -358,7 +391,15 @@ export function SignInScreen() {
               <Button
                 variant="ghost"
                 disabled={busy}
-                onPress={() => changeMode(mode === "verify" ? "sign-up" : "reset-request")}
+                onPress={() =>
+                  changeMode(
+                    mode === "sign-in-code"
+                      ? "sign-in"
+                      : mode === "verify"
+                        ? "sign-up"
+                        : "reset-request",
+                  )
+                }
               >
                 Use a different email
               </Button>

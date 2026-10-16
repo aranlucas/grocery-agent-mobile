@@ -16,7 +16,11 @@ credentials.json
 .agents/skills/devtools-bidirectional
 .agents/skills/devtools-event-client
 .agents/skills/devtools-instrumentation
+.agents/skills/dotenv
+.agents/skills/dotenvx
 .claude/skills/devtools-bidirectional
 .claude/skills/devtools-event-client
 .claude/skills/devtools-instrumentation
+.claude/skills/dotenv
+.claude/skills/dotenvx
 # @generated expo skills end

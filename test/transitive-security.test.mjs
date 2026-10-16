@@ -6,8 +6,8 @@ import { test } from "vitest";
 
 const require = createRequire(import.meta.url);
 const routerRequire = createRequire(require.resolve("expo-router"));
-const queryRequire = createRequire(routerRequire.resolve("query-string"));
-const queryString = routerRequire("query-string");
+const { parseQueryParams } = routerRequire("expo-router/build/fork/getStateFromPath-forks.js");
+const { stringifySearchParams } = routerRequire("expo-router/build/utils/queryParams.js");
 
 function readPackageManifest(entry, name) {
   let directory = dirname(entry);
@@ -24,41 +24,29 @@ function readPackageManifest(entry, name) {
   }
 }
 
-test("Expo Router query strings use the patched decoder with CommonJS interop", () => {
-  const decoder = queryRequire("decode-uri-component");
-  const [major, minor] = readPackageManifest(
-    queryRequire.resolve("decode-uri-component"),
-    "decode-uri-component",
-  )
-    .version.split(".")
-    .map(Number);
-  assert.ok(major > 0 || minor >= 5, "decode-uri-component must include the CVE-2026-45822 fix");
-  assert.equal(typeof decoder.default, "function");
+test("Expo Router parses query strings without the removed decoder dependency", () => {
+  const routerManifest = readPackageManifest(require.resolve("expo-router"), "expo-router");
+  assert.equal(routerManifest.dependencies?.["query-string"], undefined);
+  const lockfile = readFileSync(new URL("../pnpm-lock.yaml", import.meta.url), "utf8");
+  assert.doesNotMatch(lockfile, /^  ['"]?(?:query-string|decode-uri-component)@/mu);
+  const parse = (query) => parseQueryParams(`/chat?${query}`, { name: "chat" });
   assert.deepEqual(
-    { ...queryString.parse("name=hello%20world&utf8=%F0%9F%91%8B&plus=a+b") },
+    { ...parse("name=hello%20world&utf8=%F0%9F%91%8B&plus=a+b") },
     { name: "hello world", utf8: "👋", plus: "a b" },
   );
-  assert.deepEqual({ ...queryString.parse("a=1&a=2") }, { a: ["1", "2"] });
+  assert.deepEqual({ ...parse("a=1&a=2") }, { a: ["1", "2"] });
   assert.deepEqual(
-    { ...queryString.parse(queryString.stringify({ name: "hello world", utf8: "👋" })) },
+    { ...parse(stringifySearchParams({ name: "hello world", utf8: "👋" })) },
     { name: "hello world", utf8: "👋" },
   );
-  assert.doesNotThrow(() => queryString.parse(`x=${"%E0%A4%A".repeat(10000)}`));
+  assert.doesNotThrow(() => parse(`x=${"%E0%A4%A".repeat(10000)}`));
 });
 
-test("Expo config plugins generate Xcode project IDs with patched UUID", () => {
+test("Expo config plugins generate unique Xcode project IDs", () => {
   const expoRequire = createRequire(require.resolve("expo"));
   const pluginsRequire = createRequire(expoRequire.resolve("@expo/config-plugins"));
-  const xcodePath = pluginsRequire.resolve("xcode");
-  const xcodeRequire = createRequire(xcodePath);
-  const [major, minor, patch] = xcodeRequire("uuid/package.json").version.split(".").map(Number);
-  assert.ok(major > 11 || (major === 11 && (minor > 1 || (minor === 1 && patch >= 1))));
-  const uuid = xcodeRequire("uuid");
-  for (const name of ["v3", "v5"]) {
-    assert.throws(() => uuid[name]("test", uuid[name].DNS, new Uint8Array(15)), RangeError);
-    assert.throws(() => uuid[name]("test", uuid[name].DNS, new Uint8Array(16), 1), RangeError);
-  }
-  assert.throws(() => uuid.v6({}, new Uint8Array(15)), RangeError);
+  // Xcode uses v4() without an output buffer. The v3/v5/v6 buffer-bounds
+  // advisory (GHSA-w5hq-g745-h8pq) does not affect this build-time path.
   const project = pluginsRequire("xcode").project("example.pbxproj");
   project.hash = { project: { objects: {} } };
   const ids = new Set(Array.from({ length: 1000 }, () => project.generateUuid()));
