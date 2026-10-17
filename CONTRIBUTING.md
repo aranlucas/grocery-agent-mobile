@@ -26,7 +26,7 @@ verify runtime behavior. Use `pnpm fmt` to fix formatting before validation.
 `pnpm test` runs the script tests in Vitest, including the actual grocery controller's
 send, retry, stop, and thread-transition commands with mocked Clerk/CopilotKit
 adapters. Run just those lifecycle tests with
-`pnpm exec vitest run scripts/grocery-agent.test.mjs`. They do not exercise native UI or
+`pnpm exec vitest run test/grocery-agent.test.mjs`. They do not exercise native UI or
 live grocery services. For changes to native flows, record emulator/device
 results in the pull request: keyboard avoidance, Android
 back navigation, accessibility labels, dark mode, reduced motion, and narrow and
