@@ -2,7 +2,6 @@
 
 - Use Uniwind with Tailwind v4 semantic tokens; do not add NativeWind or basic `StyleSheet.create` styling.
 - Prefer the source-owned AniUI and React Native Reusables primitives in `src/components/ui/`. Add registry components selectively, normalize them to app conventions, and do not run `aniui init` over the configured app.
-- Use React Hook Form and the shared form adapters for submit flows; keep transient search, selection, disclosure, and focus state local.
 - Let Expo Router own native headers and toolbars. Keep CopilotKit, markdown, Clerk, and grocery-commerce behavior in domain components rather than replacing them with generic blocks.
 - Default to centered `max-w-3xl` content, `p-4 sm:p-6` gutters, responsive stacking, automatic scroll insets, and at least `min-h-14 min-w-14` for standalone touch targets.
 - Verify affected native flows on an emulator, including keyboard avoidance, Android back behavior, accessibility labels, dark mode, reduced motion, and narrow and wide layouts.
@@ -79,3 +78,22 @@ Run `npx @expo/agent-cli skills:sync` after changing dependencies to refresh thi
 
 Commands end with a `Suggested next:` section — suggested follow-up commands, not required steps. Run one only when it serves your current goal.
 <!-- END EXPO AGENT CLI MANAGED BLOCK -->
+
+## Scripts: native first
+
+Before adding a script file (`scripts/`, `bin/`, `tools/`, root `*.sh|*.py|*.mjs`) or a package script that runs one, take the first rung that works:
+
+1. A flag or subcommand of a tool the repo already uses (`<tool> --help`).
+2. Declarative config for that tool (`app.config.js`, `metro.config.js`, `eslint.config.js`, `oxfmt.config.ts`, `pnpm-workspace.yaml`, `vitest.config.mts`).
+3. A maintained plugin for that tool.
+4. A one-line package.json script that calls a native command.
+5. A test in the existing runner (Vitest), for anything that asserts.
+6. A custom script, only for behavior specific to this repo. Its first comment names the native rung it couldn't use and why. It has a test in the existing runner, and the PR that adds it quotes that comment.
+
+## Code: libraries first
+
+Before hand-writing general-purpose code, use a well-maintained library: actively released, widely adopted, typed, and a fit for this stack. Reach for one already in the dependencies first. Write custom code for domain logic and for the glue no library covers. A PR that adds a dependency says why it was picked; a PR that hand-writes something a library covers names the library and why it didn't fit.
+
+- Server state → TanStack Query (@tanstack/react-query) useQuery/useMutation.
+- Forms → React Hook Form and the shared form adapters for submit flows; keep transient search, selection, disclosure, and focus state local.
+- Typed household HTTP clients → openapi-fetch.
