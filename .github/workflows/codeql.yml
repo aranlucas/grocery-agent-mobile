@@ -9,7 +9,6 @@ on:
       - synchronize
       - reopened
       - ready_for_review
-      - converted_to_draft
   schedule:
     - cron: "23 8 * * 1"
   workflow_dispatch:

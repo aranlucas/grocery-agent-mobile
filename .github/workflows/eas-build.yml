@@ -15,7 +15,6 @@ on:
       - synchronize
       - reopened
       - ready_for_review
-      - converted_to_draft
     paths:
       - .github/workflows/eas-build.yml
       - .node-version
