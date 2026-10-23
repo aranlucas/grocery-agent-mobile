@@ -4,11 +4,17 @@
 name: Feel iOS Simulator Pilot
 
 run-name: >-
-  ios feel-simulator build
-  [eas:dispatch_id=${{ inputs.dispatch_id || github.run_id }};platform=ios;profile=feel-simulator;distribution=internal;simulator=true]
+  ios feel-simulator build [eas:dispatch_id=${{ inputs.dispatch_id ||
+  github.run_id
+  }};platform=ios;profile=feel-simulator;distribution=internal;simulator=true]
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     paths:
       - .github/workflows/eas-build.yml
       - .node-version
@@ -45,16 +51,17 @@ permissions:
 
 concurrency:
   group: feel-simulator-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     if: >-
-      (github.event_name == 'pull_request' &&
+      ((github.event_name == 'pull_request' &&
        github.event.pull_request.head.repo.full_name == github.repository &&
        github.head_ref == 'pilot/feel-deploy-ios-simulator') ||
       (github.event_name == 'workflow_dispatch' &&
-       github.ref == 'refs/heads/pilot/feel-deploy-ios-simulator')
+       github.ref == 'refs/heads/pilot/feel-deploy-ios-simulator')) &&
+      github.event.pull_request.draft != true
     runs-on: macos-26
     timeout-minutes: 90
     env:
