@@ -5,6 +5,11 @@ updates:
     patterns:
       - "*"
     multi-ecosystem-group: weekly-dependencies
+  - package-ecosystem: npm
+    directory: /
+    patterns:
+      - "*"
+    multi-ecosystem-group: weekly-dependencies
 multi-ecosystem-groups:
   weekly-dependencies:
     schedule:
@@ -14,5 +19,4 @@ multi-ecosystem-groups:
       timezone: America/Los_Angeles
     open-pull-requests-limit: 1
 
-# The app uses pnpm 12. Dependabot currently documents support through pnpm 10.
 # See CONTRIBUTING.md for the app dependency review and Expo compatibility gates.
