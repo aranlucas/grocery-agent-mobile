@@ -4,12 +4,18 @@
 name: Feel iOS Simulator Pilot
 
 run-name: >-
-  ios feel-simulator build
-  [eas:dispatch_id=${{ inputs.dispatch_id || github.run_id }};platform=ios;profile=feel-simulator;distribution=internal;simulator=true]
+  ios feel-simulator build [eas:dispatch_id=${{ inputs.dispatch_id ||
+  github.run_id
+  }};platform=ios;profile=feel-simulator;distribution=internal;simulator=true]
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - converted_to_draft
     paths:
       - .github/workflows/eas-build.yml
       - .node-version
