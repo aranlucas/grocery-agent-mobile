@@ -34,7 +34,8 @@
     "postinstall": "pnpm styles:prepare",
     "prepare": "husky",
     "styles:prepare": "uniwind generate-artifacts --css ./src/global.css --dts ./src/uniwind-types.d.ts",
-    "lint:tailwind": "oxlint --config .oxlintrc.json src scripts --deny-warnings"
+    "lint:tailwind": "oxlint --config .oxlintrc.json src scripts --deny-warnings",
+    "format": "oxfmt --write ."
   },
   "dependencies": {
     "@clerk/expo": "4.14.0",
