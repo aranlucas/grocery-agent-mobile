@@ -35,6 +35,16 @@ jobs:
           cache: true
           require-lockfile: true
 
+      # Uniwind's Metro FileStore uses os.tmpdir()/metro-cache. Keep its native
+      # content-addressed invalidation and skip-cache handling for generated CSS.
+      - name: Restore Metro transform cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/metro-cache
+          key: ${{ runner.os }}-${{ runner.arch }}-metro-${{ hashFiles('pnpm-lock.yaml', 'metro.config.js', 'babel.config.js', 'app.config.js', '.node-version') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-metro-${{ hashFiles('pnpm-lock.yaml', 'metro.config.js', 'babel.config.js', 'app.config.js', '.node-version') }}-
+
       - parallel:
           - name: Lint
             run: pnpm lint && pnpm fmt:check
