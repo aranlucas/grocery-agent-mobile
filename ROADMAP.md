@@ -2,13 +2,7 @@
 
 Updated 2026-10-26. Proposed sequence, not delivery dates. Success targets below are unvalidated pilot gates, not adoption or revenue results.
 
-## User and current baseline
-
 A household wants to finish the weekly shop from a phone, adapt the plan when something changes, and avoid buying the same item twice.
-
-The app already includes meal planning, saved recipes/lists, household sharing and optional Kroger product/cart connection. The next increments should improve the complete planning-and-shopping journey rather than re-add those features.
-
-Planning source: [README](README.md) at `246b57a6f527`. This is a focused planning pass, not a new comprehensive code audit or live-service validation.
 
 ## Prioritized releases
 
@@ -29,4 +23,4 @@ Collect the baseline before implementation. Use voluntary feedback and aggregate
 
 Define which service owns each plan/list before connecting Shopping MCP, Pantry Pulse and Janella Cookbook; similar names do not establish shared storage or identity. Use explicit versioned handoffs. Keep purchases user-controlled and preserve the distinction between estimated and checkout totals.
 
-Use existing libraries and native test commands. Attach reliability work to the feature acceptance it enables. Update this file with shipped user outcomes and observed pilot results; refactors or passing tests alone do not demonstrate product value.
+Update this file with shipped user outcomes and observed pilot results.
