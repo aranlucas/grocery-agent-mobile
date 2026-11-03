@@ -26,14 +26,14 @@ Start with a request like:
 
 ## Run the mobile app
 
-Requirements: Node.js from .node-version, pnpm from package.json, and an Expo development build for native features. Expo Go is not compatible with this project. Android builds need an Android SDK; local iOS builds need macOS and Xcode.
+Requirements: Node.js from [.node-version](.node-version), pnpm from [package.json](package.json), and an Expo development build for native features. Expo Go is not compatible with this project. Android builds need an Android SDK; local iOS builds need macOS and Xcode.
 
 ```sh
 pnpm install
 cp .env.example .env.local
 ```
 
-Set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in .env.local. The CopilotKit runtime URL defaults to the production Go gateway; you can override it with EXPO_PUBLIC_COPILOTKIT_RUNTIME_URL. EXPO_PUBLIC_SENTRY_DSN and EXPO_PUBLIC_GROCERY_MARKETING_URL are optional.
+Set `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` in `.env.local`. With no runtime URL override, a `pk_test_` key selects the development gateway; other keys use the production gateway. Set `EXPO_PUBLIC_COPILOTKIT_RUNTIME_URL` explicitly to override that choice. `EXPO_PUBLIC_SENTRY_DSN` and `EXPO_PUBLIC_GROCERY_MARKETING_URL` are optional.
 
 Start the development server:
 
@@ -41,16 +41,14 @@ Start the development server:
 pnpm start
 ```
 
-Use the Expo development build on a device or emulator. The repository also provides pnpm android, pnpm ios, and pnpm web scripts. `pnpm web` serves the browser build at `https://grocery-mobile.localhost` through [Portless](https://github.com/vercel-labs/portless) (a dev dependency); its first run may ask for `sudo` to bind port 443 and trust a local certificate.
+Use `pnpm exec expo-agent-cli dev --android` or `pnpm exec expo-agent-cli dev --ios` to prepare and open a native development build. `pnpm web` serves the browser build at `https://grocery-mobile.localhost` through [Portless](https://github.com/vercel-labs/portless) (a dev dependency); its first run may ask for `sudo` to bind port 443 and trust a local certificate.
 
-## Find the main pieces
+## Contribute and release
 
-- src/app/ contains the chat, lists, saved recipes, households, history, and account routes.
-- src/components/grocery-chat.tsx and src/components/grocery-agent-provider.tsx connect chat to the gateway.
-- src/hooks/use-grocery-agent.ts manages agent runs.
-- src/hooks/use-household-api.ts handles household sharing.
-- src/lib/ and src/components/ contain Kroger connection, saved resources, and list/cart flows.
-- docs/ux/ contains the design system and recorded verification evidence.
+See [contributing](CONTRIBUTING.md) for validation and dependency maintenance,
+[Android releases](RELEASING.md) for signing and publication, and the
+[roadmap](ROADMAP.md) for proposed product priorities. UI changes follow the
+[design rationale](docs/ux/design-system.md) and [review procedure](docs/ux/verification.md).
 
 Run the repository checks sequentially:
 
@@ -59,7 +57,7 @@ pnpm check
 pnpm test
 ```
 
-Husky’s `pre-push` hook runs Expo’s SDK-compatible dependency alignment. If Expo
+Husky’s `pre-push` hook runs Expo’s SDK-compatible dependency alignment and Doctor. If Expo
 updates `package.json` or `pnpm-lock.yaml`, the push stops so you can review and
 commit both files, then push again. Existing staged or unstaged dependency edits
 are left untouched; commit or stash them before pushing. Network or resolver
