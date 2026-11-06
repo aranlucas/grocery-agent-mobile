@@ -300,6 +300,7 @@ export default function HouseholdsScreen() {
           </CardHeader>
           <CardContent>
             <FormInput
+              disabled={createForm.formState.isSubmitting}
               control={createForm.control}
               label="Household name"
               name="name"
@@ -340,6 +341,7 @@ export default function HouseholdsScreen() {
           </CardHeader>
           <CardContent>
             <FormInput
+              disabled={joinForm.formState.isSubmitting}
               control={joinForm.control}
               label="Invite code"
               name="inviteCode"

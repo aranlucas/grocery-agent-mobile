@@ -218,7 +218,13 @@ function cartItems(value: unknown): CartItem[] {
   return value.filter((item): item is CartItem => {
     if (!item || typeof item !== "object") return false;
     const record = item as Record<string, unknown>;
-    return typeof record.name === "string" && typeof record.quantity === "number";
+    return (
+      typeof record.name === "string" &&
+      typeof record.quantity === "number" &&
+      Number.isFinite(record.quantity) &&
+      (record.price === undefined ||
+        (typeof record.price === "number" && Number.isFinite(record.price)))
+    );
   });
 }
 

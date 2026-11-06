@@ -249,6 +249,7 @@ export default function SharedListScreen() {
             <View className="flex-row items-start gap-2.5">
               <FormInput
                 containerClassName="flex-1"
+                disabled={addItemForm.formState.isSubmitting}
                 control={addItemForm.control}
                 name="name"
                 rules={{
@@ -309,6 +310,7 @@ export default function SharedListScreen() {
             </CardHeader>
             <CardContent className="p-5">
               <FormInput
+                disabled={createListForm.formState.isSubmitting}
                 control={createListForm.control}
                 label="List title"
                 name="title"
@@ -356,6 +358,7 @@ export default function SharedListScreen() {
             <AlertDialogTitle>New shared list</AlertDialogTitle>
           </AlertDialogHeader>
           <FormInput
+            disabled={createListForm.formState.isSubmitting}
             control={createListForm.control}
             name="title"
             label="List title"

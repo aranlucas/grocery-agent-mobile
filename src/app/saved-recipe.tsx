@@ -293,6 +293,7 @@ export default function SavedRecipeScreen() {
       <Card className="p-0">
         <CardContent className="gap-3 p-4">
           <FormInput
+            disabled={isSubmitting}
             accessibilityLabel="Recipe title"
             control={control}
             label="Title"
@@ -303,6 +304,7 @@ export default function SavedRecipeScreen() {
             }}
           />
           <FormTextarea
+            disabled={isSubmitting}
             accessibilityLabel="Recipe description"
             control={control}
             label="Description"
@@ -310,6 +312,7 @@ export default function SavedRecipeScreen() {
             placeholder="Short description"
           />
           <FormInput
+            disabled={isSubmitting}
             accessibilityLabel="Recipe servings"
             control={control}
             label="Servings"
@@ -317,6 +320,7 @@ export default function SavedRecipeScreen() {
             placeholder="Servings"
           />
           <FormInput
+            disabled={isSubmitting}
             accessibilityLabel="Recipe tags"
             control={control}
             label="Tags"
@@ -331,6 +335,7 @@ export default function SavedRecipeScreen() {
           <CardTitle>Ingredients</CardTitle>
           <Button
             icon={<Icon as={Plus} className="size-4 text-secondary-foreground" />}
+            disabled={isSubmitting}
             onPress={() => ingredients.append({ name: "", note: "", quantity: "", unit: "" })}
             size="sm"
             variant="secondary"
@@ -346,6 +351,7 @@ export default function SavedRecipeScreen() {
             <View className="gap-3 border-t border-border pt-4" key={ingredient.id}>
               <View className="flex-row items-center gap-2">
                 <FormInput
+                  disabled={isSubmitting}
                   accessibilityLabel={`Ingredient ${index + 1}`}
                   containerClassName="flex-1"
                   control={control}
@@ -359,6 +365,7 @@ export default function SavedRecipeScreen() {
                   accessibilityLabel={`Remove ingredient ${index + 1}`}
                   accessibilityRole="button"
                   className="min-h-14 min-w-14 items-center justify-center active:opacity-60"
+                  disabled={isSubmitting}
                   onPress={() => ingredients.remove(index)}
                 >
                   <Icon as={Trash2} className="size-5 text-muted-foreground" />
@@ -366,6 +373,7 @@ export default function SavedRecipeScreen() {
               </View>
               <View className="flex-row gap-3">
                 <FormInput
+                  disabled={isSubmitting}
                   accessibilityLabel={`Ingredient ${index + 1} quantity`}
                   containerClassName="min-w-0 flex-1"
                   control={control}
@@ -374,6 +382,7 @@ export default function SavedRecipeScreen() {
                   placeholder="2"
                 />
                 <FormInput
+                  disabled={isSubmitting}
                   accessibilityLabel={`Ingredient ${index + 1} unit`}
                   containerClassName="min-w-0 flex-1"
                   control={control}
@@ -383,6 +392,7 @@ export default function SavedRecipeScreen() {
                 />
               </View>
               <FormInput
+                disabled={isSubmitting}
                 accessibilityLabel={`Ingredient ${index + 1} note`}
                 control={control}
                 name={`ingredients.${index}.note`}
@@ -398,6 +408,7 @@ export default function SavedRecipeScreen() {
           <CardTitle>Steps</CardTitle>
           <Button
             icon={<Icon as={Plus} className="size-4 text-secondary-foreground" />}
+            disabled={isSubmitting}
             onPress={() => setValue("steps", [...steps, ""], { shouldDirty: true })}
             size="sm"
             variant="secondary"
@@ -417,6 +428,7 @@ export default function SavedRecipeScreen() {
                 </Text>
               </View>
               <FormTextarea
+                disabled={isSubmitting}
                 accessibilityLabel={`Step ${index + 1}`}
                 className="flex-1"
                 containerClassName="flex-1"
@@ -428,6 +440,7 @@ export default function SavedRecipeScreen() {
                 }}
               />
               <Pressable
+                disabled={isSubmitting}
                 accessibilityLabel={`Remove step ${index + 1}`}
                 accessibilityRole="button"
                 className="mt-2 min-h-14 min-w-14 items-center justify-center active:opacity-60"
@@ -449,6 +462,7 @@ export default function SavedRecipeScreen() {
       <Card className="p-0">
         <CardContent className="p-4">
           <FormTextarea
+            disabled={isSubmitting}
             accessibilityLabel="Recipe notes"
             control={control}
             label="Notes"

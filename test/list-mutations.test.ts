@@ -1,11 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 import { expect, test, vi } from "vitest";
-import { listMutationOptions } from "../src/lib/list-mutations";
+import type { HouseholdApi } from "../src/lib/household-api";
+import { type ListMutation, listMutationOptions } from "../src/lib/list-mutations";
 import { groceryQueryKeys } from "../src/lib/query-keys";
 
 // An edit must refresh both representations of a list without expiring another
 // user's or household's data. Use the real mutation cache and query client.
-test.each([
+test.each<[ListMutation, string, unknown[]]>([
   [{ type: "add", name: "Milk" }, "addItems", ["list", [{ name: "Milk" }]]],
   [
     { type: "toggle", itemId: "milk", checked: true },
@@ -26,16 +27,19 @@ test.each([
       groceryQueryKeys.list("user", "other-list"),
     ];
     for (const key of [...related, ...unrelated]) queryClient.setQueryData(key, []);
-    const mutation = queryClient
-      .getMutationCache()
-      .build(
+    const mutation = queryClient.getMutationCache().build(
+      queryClient,
+      listMutationOptions({
+        api: api as unknown as HouseholdApi,
         queryClient,
-        listMutationOptions({ api, queryClient, userId: "user", householdId: undefined }),
-      );
+        userId: "user",
+        householdId: undefined,
+      }),
+    );
     await mutation.execute({ ...edit, listId: "list" });
     expect(api[method]).toHaveBeenCalledExactlyOnceWith(...args);
-    for (const key of related) expect(queryClient.getQueryState(key).isInvalidated).toBe(true);
-    for (const key of unrelated) expect(queryClient.getQueryState(key).isInvalidated).toBe(false);
+    for (const key of related) expect(queryClient.getQueryState(key)!.isInvalidated).toBe(true);
+    for (const key of unrelated) expect(queryClient.getQueryState(key)!.isInvalidated).toBe(false);
     queryClient.clear();
   },
 );
@@ -53,7 +57,7 @@ test("failed edits preserve cached data and remain errors for retry", async () =
         deleteItem: async () => {
           throw failure;
         },
-      },
+      } as unknown as HouseholdApi,
       queryClient,
       userId: "user",
       householdId: null,
@@ -64,6 +68,6 @@ test("failed edits preserve cached data and remain errors for retry", async () =
   );
   expect(mutation.state.status).toBe("error");
   expect(queryClient.getQueryData(key)).toEqual(cached);
-  expect(queryClient.getQueryState(key).isInvalidated).toBe(false);
+  expect(queryClient.getQueryState(key)!.isInvalidated).toBe(false);
   queryClient.clear();
 });

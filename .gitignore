@@ -18,9 +18,20 @@ credentials.json
 .agents/skills/devtools-instrumentation
 .agents/skills/dotenv
 .agents/skills/dotenvx
+.agents/skills/e2e
 .claude/skills/devtools-bidirectional
 .claude/skills/devtools-event-client
 .claude/skills/devtools-instrumentation
 .claude/skills/dotenv
 .claude/skills/dotenvx
+.claude/skills/e2e
+.grok/skills/devtools-bidirectional
+.grok/skills/devtools-event-client
+.grok/skills/devtools-instrumentation
+.grok/skills/dotenv
+.grok/skills/dotenvx
+.grok/skills/e2e
 # @generated expo skills end
+
+# Deterministic native regression evidence
+.e2e/

@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createFormControl } from "react-hook-form";
+import { createFormControl, type ReadFormState } from "react-hook-form";
 import { MutationObserver, QueryClient } from "@tanstack/react-query";
-import { createSingleSubmit } from "@/lib/form-submit.ts";
+import { createSingleSubmit } from "@/lib/form-submit";
 
 function deferred() {
-  return Promise.withResolvers();
+  return Promise.withResolvers<void>();
 }
 
 function formWithName(name = "Milk") {
@@ -20,14 +20,15 @@ test("keyboard and button submissions in one render produce one mutation", async
   const started = deferred();
   const client = new QueryClient();
   let calls = 0;
-  let submitting = false;
+  let submitting: boolean | undefined = false;
   const unsubscribe = form.subscribe({
-    formState: { isSubmitting: true },
+    // RHF emits this flag at runtime but omits it from ReadFormState.
+    formState: { isSubmitting: true } as Partial<ReadFormState> & { isSubmitting: true },
     callback: (state) => {
       submitting = state.isSubmitting;
     },
   });
-  const mutation = new MutationObserver(client, {
+  const mutation = new MutationObserver<void, Error, string>(client, {
     mutationFn: async () => {
       calls++;
       started.resolve();

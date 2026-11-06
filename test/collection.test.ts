@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { filterCollection } from "@/lib/collection.ts";
-const rows = [
+import { filterCollection } from "@/lib/collection";
+const rows: {
+  resource: {
+    id: string;
+    title: string;
+    updated_at: number;
+    household_id: string | null;
+    tags: string[];
+  };
+  location: string;
+}[] = [
   {
     resource: {
       id: "p",
