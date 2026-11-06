@@ -8,7 +8,7 @@ const { parseQueryParams } = routerRequire("expo-router/build/fork/getStateFromP
 const { stringifySearchParams } = routerRequire("expo-router/build/utils/queryParams.js");
 
 test("Expo Router preserves Unicode and repeated query parameters and tolerates malformed escapes", () => {
-  const parse = (query) => parseQueryParams(`/chat?${query}`, { name: "chat" });
+  const parse = (query: string) => parseQueryParams(`/chat?${query}`, { name: "chat" });
   assert.deepEqual(
     { ...parse("name=hello%20world&utf8=%F0%9F%91%8B&plus=a+b") },
     { name: "hello world", utf8: "👋", plus: "a b" },

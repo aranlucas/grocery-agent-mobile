@@ -5,12 +5,19 @@ import { expect, test } from "vitest";
 
 // Evaluate the actual composer with a controlled form boundary, as the unsaved
 // navigation tests do. UI hosts are inert; the asynchronous submission runs.
-function composer(initialMessage, onSend) {
+type Outcome = { status: "success" | "failed" };
+type ComposerProps = {
+  initialMessage: string;
+  isRunning: boolean;
+  onSend: (message: string) => Promise<Outcome>;
+  onStop: () => Promise<void>;
+};
+function composer(initialMessage: string, onSend: ComposerProps["onSend"]) {
   const file = readFileSync(new URL("../src/components/grocery-chat.tsx", import.meta.url), "utf8");
   const start = file.indexOf("const ChatComposer =");
   const end = file.indexOf("\nfunction formatReasoningDuration", start);
   let value = initialMessage;
-  let submit;
+  let submit!: () => Promise<void>;
   const source = ts.transpileModule(
     file.slice(start, end) + "\nglobalThis.Composer = ChatComposer;",
     {
@@ -18,8 +25,9 @@ function composer(initialMessage, onSend) {
     },
   ).outputText;
   const context = {
+    Composer: undefined as unknown as (props: ComposerProps) => null,
     exports: {},
-    memo: (component) => component,
+    memo: <T>(component: T) => component,
     require: () => ({ jsx: () => null, jsxs: () => null }),
     FormField: () => null,
     Keyboard: { dismiss() {} },
@@ -30,7 +38,7 @@ function composer(initialMessage, onSend) {
       reset: (values = { message: initialMessage }) => {
         value = values.message;
       },
-      handleSubmit: (callback) => {
+      handleSubmit: (callback: (values: { message: string }) => Promise<void>) => {
         submit = () => callback({ message: value });
         return submit;
       },
@@ -40,7 +48,7 @@ function composer(initialMessage, onSend) {
   context.Composer({ initialMessage, isRunning: false, onSend, onStop: async () => {} });
   return {
     send: () => submit(),
-    type: (text) => {
+    type: (text: string) => {
       value = text;
     },
     get value() {
@@ -58,7 +66,7 @@ test("sending a route prompt clears the composer instead of repeating it", async
 test.each(["", "My next message"])(
   "failed send preserves newer draft %j or restores failed input",
   async (draft) => {
-    const result = Promise.withResolvers();
+    const result = Promise.withResolvers<Outcome>();
     const form = composer("Failed message", () => result.promise);
     const sending = form.send();
     form.type(draft);

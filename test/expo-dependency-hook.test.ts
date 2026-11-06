@@ -5,7 +5,7 @@ import { join, resolve } from "node:path";
 import { afterEach, expect, test } from "vitest";
 
 const hook = resolve(".husky/pre-push");
-const directories = [];
+const directories: string[] = [];
 
 afterEach(() => {
   for (const directory of directories.splice(0))
@@ -15,7 +15,8 @@ afterEach(() => {
 function fixture(mode = "aligned") {
   const directory = mkdtempSync(join(tmpdir(), "expo-hook-"));
   directories.push(directory);
-  const git = (...args) => execFileSync("git", args, { cwd: directory, encoding: "utf8" });
+  const git = (...args: string[]) =>
+    execFileSync("git", args, { cwd: directory, encoding: "utf8" });
   git("init", "--quiet");
   git("config", "core.hooksPath", "/dev/null");
   git("config", "user.name", "Hook test");
@@ -46,8 +47,8 @@ esac
   );
   return {
     git,
-    read: (file) => readFileSync(join(directory, file), "utf8"),
-    write: (file, content) => writeFileSync(join(directory, file), content),
+    read: (file: string) => readFileSync(join(directory, file), "utf8"),
+    write: (file: string, content: string) => writeFileSync(join(directory, file), content),
     run: () =>
       spawnSync("sh", [hook], {
         cwd: directory,

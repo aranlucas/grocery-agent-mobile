@@ -20,8 +20,9 @@
     },
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["react", "react-native", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "test/**/*.mjs"],
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "metro.config.js", "android", "ios"]
 }

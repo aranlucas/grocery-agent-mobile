@@ -14,38 +14,43 @@ const source = ts.transpileModule(
 // Exercise the actual hook with a deterministic render/effect boundary. SDK 57's
 // removal callback supplies an action, and its prevention hook returns void.
 function editor(canGoBack = true) {
-  const events = [];
-  let state = null;
-  let effects;
-  let buttons;
-  let hardwareBack;
-  let prevented;
-  let removalCallback;
+  type Leave = () => void;
+  type Removal = { data: { action: unknown } };
+  type DialogButton = { style?: string; onPress?: Leave };
+  const events: unknown[] = [];
+  let state: Leave | null = null;
+  let effects: (() => unknown)[];
+  let buttons: DialogButton[];
+  let hardwareBack!: () => boolean;
+  let prevented: boolean;
+  let removalCallback!: (event: Removal) => void;
   const navigation = {
-    dispatch: (action) => events.push(action),
+    dispatch: (action: unknown) => events.push(action),
     canGoBack: () => canGoBack,
     goBack: () => events.push("back"),
   };
   const modules = {
     react: {
-      useCallback: (callback) => callback,
-      useState: () => [state, (update) => (state = update())],
-      useEffect: (callback) => effects.push(callback),
+      useCallback: <T>(callback: T) => callback,
+      useState: () => [state, (update: () => Leave) => (state = update())],
+      useEffect: (callback: () => unknown) => effects.push(callback),
     },
     "expo-router/react-navigation": {
-      usePreventRemove: (prevent, callback) => {
+      usePreventRemove: (prevent: boolean, callback: (event: Removal) => void) => {
         removalCallback = callback;
         effects.push(() => (prevented = prevent));
       },
     },
     "expo-router": {
       useNavigation: () => navigation,
-      useFocusEffect: (callback) => effects.push(callback),
+      useFocusEffect: (callback: () => unknown) => effects.push(callback),
     },
     "react-native": {
-      Alert: { alert: (_title, _message, actions) => (buttons = actions) },
+      Alert: {
+        alert: (_title: string, _message: string, actions: DialogButton[]) => (buttons = actions),
+      },
       BackHandler: {
-        addEventListener: (_event, callback) => {
+        addEventListener: (_event: string, callback: () => boolean) => {
           hardwareBack = callback;
           return { remove() {} };
         },
@@ -53,8 +58,10 @@ function editor(canGoBack = true) {
       },
     },
   };
-  const exports = {};
-  runInNewContext(source, { exports, require: (name) => modules[name] });
+  const exports = {} as {
+    useUnsavedChanges: typeof import("../src/hooks/use-unsaved-changes").useUnsavedChanges;
+  };
+  runInNewContext(source, { exports, require: (name: keyof typeof modules) => modules[name] });
   return {
     events,
     render(dirty = true) {
@@ -63,8 +70,8 @@ function editor(canGoBack = true) {
       effects.forEach((effect) => effect());
       return leave;
     },
-    remove: (action) => removalCallback({ data: { action } }),
-    discard: () => buttons.find((button) => button.style === "destructive").onPress(),
+    remove: (action: unknown) => removalCallback({ data: { action } }),
+    discard: () => buttons.find((button) => button.style === "destructive")!.onPress!(),
     hardwareBack: () => hardwareBack(),
     get prevented() {
       return prevented;

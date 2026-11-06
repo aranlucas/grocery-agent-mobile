@@ -19,6 +19,7 @@ const resolved = {
 test("simulator environment discards credentials and private service settings", () => {
   const env = buildEnvironment(resolved.buildProfile, {
     PATH: "/usr/bin",
+    NODE_ENV: "test",
     GH_TOKEN: "private-token",
     SENTRY_AUTH_TOKEN: "private-token",
     EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_live_private",
@@ -71,7 +72,7 @@ test("dispatch rejects credential-bearing env, custom prebuild commands, and oth
     env_json: JSON.stringify(common.env),
     ref: "pilot/feel-deploy-ios-simulator",
   };
-  const check = (value) =>
+  const check = (value: Record<string, string>) =>
     validateDispatch(value, resolved.buildProfile, "refs/heads/pilot/feel-deploy-ios-simulator");
   assert.doesNotThrow(() => check(plan));
   assert.throws(() => check({ ...plan, env_json: '{"GH_TOKEN":"private-token"}' }));

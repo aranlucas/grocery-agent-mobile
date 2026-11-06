@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
-const adapters = fileURLToPath(new URL("./test/helpers/grocery-agent.mjs", import.meta.url));
+const adapters = fileURLToPath(new URL("./test/helpers/grocery-agent.ts", import.meta.url));
 
 export default defineConfig({
   resolve: {
@@ -12,7 +12,7 @@ export default defineConfig({
     ],
   },
   test: {
-    include: ["test/**/*.test.{mjs,ts}"],
+    include: ["test/**/*.test.ts"],
     environment: "node",
     fileParallelism: false,
     maxWorkers: 1,

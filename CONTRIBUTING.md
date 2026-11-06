@@ -17,7 +17,7 @@ public configuration; it does not produce a signed app or verify native behavior
 Use `pnpm fmt` to fix formatting.
 
 The grocery controller lifecycle tests can be run separately with
-`pnpm exec vitest run test/grocery-agent.test.mjs`. They use mocked Clerk/CopilotKit
+`pnpm exec vitest run test/grocery-agent.test.ts`. They use mocked Clerk/CopilotKit
 adapters and do not exercise native UI or live services. For native changes,
 follow the [UI review procedure](docs/ux/verification.md) and record actual
 platform coverage in the pull request. Scale checks to the change; documentation

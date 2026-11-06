@@ -2,16 +2,17 @@ import assert from "node:assert/strict";
 import { onTestFinished, test } from "vitest";
 import { createElement } from "react";
 import { act, create } from "react-test-renderer";
-import { createSession, SessionContext } from "@test/helpers/grocery-agent.mjs";
+import { createSession, SessionContext } from "@test/helpers/grocery-agent";
 
 // Vitest resolves Metro aliases and the same deterministic external adapters
 // through its test-only configuration; native SDKs stay outside these tests.
-const { useGroceryAgentController } = await import("@/hooks/use-grocery-agent.ts");
-globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+const { useGroceryAgentController } = await import("@/hooks/use-grocery-agent");
+(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT =
+  true;
 
 async function mountController(session = createSession()) {
-  let current;
-  let renderer;
+  let current!: ReturnType<typeof useGroceryAgentController>;
+  let renderer!: ReturnType<typeof create>;
   function Probe() {
     current = useGroceryAgentController(session.onRunComplete);
     return null;
@@ -34,15 +35,23 @@ async function mountController(session = createSession()) {
     get current() {
       return current;
     },
-    async start(command) {
-      let promise;
+    async start(
+      command: (
+        controller: ReturnType<typeof useGroceryAgentController>,
+      ) => Promise<import("@/hooks/use-grocery-agent").GroceryOperationOutcome>,
+    ) {
+      let promise!: Promise<import("@/hooks/use-grocery-agent").GroceryOperationOutcome>;
       await act(async () => {
         promise = command(current);
       });
       return { promise };
     },
-    async finish(command) {
-      let outcome;
+    async finish(
+      command: (
+        controller: ReturnType<typeof useGroceryAgentController>,
+      ) => Promise<import("@/hooks/use-grocery-agent").GroceryOperationOutcome>,
+    ) {
+      let outcome!: import("@/hooks/use-grocery-agent").GroceryOperationOutcome;
       await act(async () => {
         outcome = await command(current);
       });
@@ -53,7 +62,7 @@ async function mountController(session = createSession()) {
 
 test("rapid sends reserve during auth; stopping prevents a late SDK run", async () => {
   const session = createSession();
-  const token = Promise.withResolvers();
+  const token = Promise.withResolvers<string | null>();
   session.auth.getToken = () => token.promise;
   const control = await mountController(session);
   const first = await control.start((agent) => agent.send("  Milk  "));
@@ -82,7 +91,7 @@ test("emitted run failure rolls back and exposes the same input for retry", asyn
     session.emit(error, { threadId: agent.threadId });
   };
   const outcome = await control.finish((agent) => agent.send("  Milk  "));
-  assert.equal(outcome.status, "failed");
+  assert(outcome.status === "failed");
   assert.equal(outcome.error, error);
   assert.deepEqual(session.snapshot(), before);
   assert.equal(control.current.failedInput, "Milk");
@@ -90,7 +99,7 @@ test("emitted run failure rolls back and exposes the same input for retry", asyn
   assert.equal(session.subscriptions, 0);
   session.handlers.run = async () => {};
   assert.deepEqual(await control.finish((agent) => agent.retry()), { status: "success" });
-  assert.equal(session.agent.messages.at(-1).content, "Milk");
+  assert.equal(session.agent.messages.at(-1)?.content, "Milk");
   assert.equal(session.calls.run, 2);
   assert.equal(session.calls.completed, 1);
   assert.equal(control.current.failure, null);
@@ -123,7 +132,7 @@ test("rejected runs restore conversation state and clean up subscriptions", asyn
 test("opening a thread joins the stopped run and restores it if connection fails", async () => {
   const control = await mountController();
   const { session } = control;
-  const run = Promise.withResolvers();
+  const run = Promise.withResolvers<void>();
   session.handlers.run = () => run.promise;
   const sending = await control.start((agent) => agent.send("Milk"));
   const before = session.snapshot();
@@ -144,7 +153,7 @@ test("opening a thread joins the stopped run and restores it if connection fails
   });
   assert.equal(session.calls.connect, 1);
   assert.deepEqual(session.snapshot(), before);
-  assert.equal(control.current.failure.operation, "open-thread");
+  assert.equal(control.current.failure?.operation, "open-thread");
   assert.equal(control.current.failedInput, null);
   assert.equal(session.subscriptions, 0);
 });
@@ -152,7 +161,7 @@ test("opening a thread joins the stopped run and restores it if connection fails
 for (const authOutcome of ["resolved", "rejected"]) {
   test(`stopping a thread open during ${authOutcome} auth restores the chat without an error`, async () => {
     const session = createSession();
-    const token = Promise.withResolvers();
+    const token = Promise.withResolvers<string | null>();
     session.auth.getToken = () => token.promise;
     const control = await mountController(session);
     const before = session.snapshot();
@@ -174,7 +183,7 @@ for (const authOutcome of ["resolved", "rejected"]) {
 test("stopping a rejected SDK connection is cancellation, not a failed thread open", async () => {
   const control = await mountController();
   const before = control.session.snapshot();
-  const connection = Promise.withResolvers();
+  const connection = Promise.withResolvers<void>();
   control.session.handlers.connect = () => connection.promise;
   const opening = await control.start((agent) => agent.openThread("another-thread"));
   const stop = await control.start((agent) => agent.stop());
@@ -191,7 +200,7 @@ test("stopping a rejected SDK connection is cancellation, not a failed thread op
 
 test("new chat waits for the old run; its late rejection cannot restore the old chat", async () => {
   const control = await mountController();
-  const run = Promise.withResolvers();
+  const run = Promise.withResolvers<void>();
   control.session.handlers.run = () => run.promise;
   const sending = await control.start((agent) => agent.send("Milk"));
   const starting = await control.start((agent) => agent.startNewChat());
@@ -229,7 +238,7 @@ test("late errors from an old thread do not roll back a newer thread connection"
 
 test("unmount while refreshing auth prevents a late send", async () => {
   const session = createSession();
-  const token = Promise.withResolvers();
+  const token = Promise.withResolvers<string | null>();
   session.auth.getToken = () => token.promise;
   const control = await mountController(session);
   const sending = await control.start((agent) => agent.send("Milk"));
@@ -243,7 +252,7 @@ test("unmount while refreshing auth prevents a late send", async () => {
 
 test("unmount stops the in-flight run and ignores its late completion", async () => {
   const control = await mountController();
-  const run = Promise.withResolvers();
+  const run = Promise.withResolvers<void>();
   control.session.handlers.run = () => run.promise;
   const sending = await control.start((agent) => agent.send("Milk"));
   await control.unmount();
@@ -257,7 +266,7 @@ test("unmount stops the in-flight run and ignores its late completion", async ()
 test("a disposed thread open cannot restore its snapshot over a remounted controller", async () => {
   const session = createSession();
   const oldController = await mountController(session);
-  const connection = Promise.withResolvers();
+  const connection = Promise.withResolvers<void>();
   session.handlers.connect = () => connection.promise;
   const opening = await oldController.start((agent) => agent.openThread("abandoned-thread"));
   await oldController.unmount();
@@ -281,10 +290,10 @@ test("blank commands, retry without a failure, and idle stop leave the chat alon
   const control = await mountController();
   const before = control.session.snapshot();
   for (const command of [
-    (agent) => agent.send("  "),
-    (agent) => agent.openThread("  "),
-    (agent) => agent.retry(),
-    (agent) => agent.stop(),
+    (agent: ReturnType<typeof useGroceryAgentController>) => agent.send("  "),
+    (agent: ReturnType<typeof useGroceryAgentController>) => agent.openThread("  "),
+    (agent: ReturnType<typeof useGroceryAgentController>) => agent.retry(),
+    (agent: ReturnType<typeof useGroceryAgentController>) => agent.stop(),
   ]) {
     assert.deepEqual(await control.finish(command), { status: "stopped", reason: "noop" });
   }
@@ -300,8 +309,8 @@ test("replacing the SDK agent cancels old work without stopping the replacement"
   const control = await mountController();
   const { session } = control;
   const oldAgent = session.agent;
-  const stoppedAgents = [];
-  const run = Promise.withResolvers();
+  const stoppedAgents: import("./helpers/grocery-agent").FixtureAgent[] = [];
+  const run = Promise.withResolvers<void>();
   session.handlers.run = () => run.promise;
   session.handlers.stop = (agent) => stoppedAgents.push(agent);
   const sending = await control.start((agent) => agent.send("Milk"));

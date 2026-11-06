@@ -11,8 +11,8 @@ test.each([null, "3.50", {}, NaN, Infinity])(
       ],
     });
     expect(state.cart).toEqual([{ name: "Eggs", quantity: 1, price: 4.5 }]);
-    expect(state.cart.map((item) => item.price?.toFixed(2))).toEqual(["4.50"]);
-    expect(cartSubtotal(state.cart)).toBe(4.5);
+    expect(state.cart!.map((item) => item.price?.toFixed(2))).toEqual(["4.50"]);
+    expect(cartSubtotal(state.cart!)).toBe(4.5);
   },
 );
 
