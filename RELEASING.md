@@ -34,7 +34,6 @@ GitHub provides the release token automatically through `github.token` with `con
 
 ## Local command limitation
 
-The legacy `publish:production-apk:android` package script resolves Git operations
-from two directories above the app and can overwrite assets on an existing
-release. Use the workflow above for this standalone repository; do not use that
-local publish helper until its repository scope and overwrite policy are repaired.
+The legacy `publish:production-apk:android` package script runs Git operations
+from the app repository and can overwrite assets on an existing release. Use the workflow above for this standalone repository; do not use that
+local publish helper until its overwrite policy is repaired.

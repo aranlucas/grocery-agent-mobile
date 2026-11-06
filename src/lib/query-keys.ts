@@ -6,7 +6,7 @@ export const groceryQueryKeys = {
     ["kroger-connection-callback", userId] as const,
   households: (userId: string | null | undefined) => ["grocery-households", userId] as const,
   lists: (userId: string | null | undefined, householdId: string | null | undefined) =>
-    ["grocery-lists", userId, householdId] as const,
+    ["grocery-lists", userId, householdId ?? "personal"] as const,
   list: (userId: string | null | undefined, listId: string | null | undefined) =>
     ["grocery-list", userId, listId] as const,
   recipes: (userId: string | null | undefined, householdId?: string | null) =>

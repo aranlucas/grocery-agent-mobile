@@ -1,5 +1,7 @@
 // Grocery agent contract types, trimmed from the agents gateway contract generator.
 
+export const GROCERY_AGENT_ID = "grocery";
+
 export type CartItem = {
   name: string;
   quantity: number;

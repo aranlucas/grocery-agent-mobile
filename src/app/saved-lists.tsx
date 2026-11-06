@@ -4,11 +4,8 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  CollectionToolbar,
-  type CollectionScope,
-  type CollectionSort,
-} from "@/components/ui/collection-toolbar";
+import { CollectionToolbar } from "@/components/ui/collection-toolbar";
+import type { CollectionScope, CollectionSort } from "@/lib/collection";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Icon } from "@/components/ui/icon";

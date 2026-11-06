@@ -6,11 +6,8 @@ import { View } from "react-native";
 import { useGroceryAgent } from "@/components/grocery-agent-provider";
 import { SaveResourceDialog } from "@/components/save-resource-dialog";
 import { Alert } from "@/components/ui/alert";
-import {
-  CollectionToolbar,
-  type CollectionScope,
-  type CollectionSort,
-} from "@/components/ui/collection-toolbar";
+import { CollectionToolbar } from "@/components/ui/collection-toolbar";
+import type { CollectionScope, CollectionSort } from "@/lib/collection";
 import { ErrorState } from "@/components/ui/error-state";
 import { NavigationRow } from "@/components/ui/navigation-row";
 import { RefreshControl } from "@/components/ui/refresh-control";

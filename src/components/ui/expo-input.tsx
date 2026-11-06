@@ -13,7 +13,6 @@ export type NativeInputProps = Omit<TextInputProps, "value" | "ref"> &
     "aria-invalid"?: boolean;
   };
 
-/** Adapt RHF's controlled strings to Expo UI's native observable state. */
 export const NativeInput = forwardRef<NativeInputRef, NativeInputProps>(function NativeInput(
   {
     value,

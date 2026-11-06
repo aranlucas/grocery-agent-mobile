@@ -1,5 +1,6 @@
-import type { CollectionScope, CollectionSort } from "@/components/ui/collection-toolbar";
-import type { SavedResource } from "@/hooks/use-saved-resources";
+export type CollectionScope = "all" | "personal" | "household";
+export type CollectionSort = "recent" | "title";
+export type SavedResource<T> = { resource: T; location: string };
 
 type Collectable = { title: string; updated_at: number; household_id?: string | null };
 

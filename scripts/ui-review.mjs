@@ -18,8 +18,7 @@ for (const name of [
   "plugins",
 ])
   cpSync(join(source, name), join(target, name), { recursive: true });
-for (const name of ["node_modules", "packages"])
-  symlinkSync(join(source, name), join(target, name), "dir");
+symlinkSync(join(source, "node_modules"), join(target, "node_modules"), "dir");
 cpSync(join(source, "scripts/ui-review/fixtures.jsx"), join(target, "src/review-fixtures.jsx"));
 cpSync(join(source, "scripts/ui-review/clerk.jsx"), join(target, "src/review-clerk.jsx"));
 for (const name of [

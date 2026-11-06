@@ -7,7 +7,6 @@ type IconProps = LucideProps & {
   as: LucideIcon;
 } & React.RefAttributes<LucideIcon>;
 
-/** Lucide icon wrapper with Uniwind `className` support. */
 function Icon({ as: IconComponent, className, size, ...props }: IconProps) {
   const styles = useResolveClassNames(cn("text-foreground", className));
   const classSize = typeof styles.width === "number" ? styles.width : undefined;

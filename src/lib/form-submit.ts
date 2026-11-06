@@ -1,6 +1,5 @@
 import type { FieldValues, UseFormHandleSubmit } from "react-hook-form";
 
-/** Share one submission gate across all handlers belonging to a form. */
 export function createSingleSubmit<T extends FieldValues>(
   handleSubmit: UseFormHandleSubmit<T>,
 ): UseFormHandleSubmit<T> {

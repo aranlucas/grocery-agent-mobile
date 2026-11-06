@@ -5,8 +5,7 @@ import { Chip } from "@/components/ui/chip";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 
-export type CollectionScope = "all" | "personal" | "household";
-export type CollectionSort = "recent" | "title";
+import type { CollectionScope, CollectionSort } from "@/lib/collection";
 
 export function SearchField({
   value,
