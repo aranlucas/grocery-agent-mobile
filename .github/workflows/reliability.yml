@@ -107,5 +107,6 @@ jobs:
         with:
           name: native-editor-evidence-${{ matrix.revision }}
           path: .e2e
-          if-no-files-found: warn
+          include-hidden-files: true
+          if-no-files-found: error
           retention-days: 7

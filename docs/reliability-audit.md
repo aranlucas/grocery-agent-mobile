@@ -35,7 +35,7 @@ Published npm metadata verified `e2e@0.23.0` (tester-army/e2e), Node `^22.22.3 |
 
 ## Evidence and outcome
 
-Implementation, independent review, CI and PR evidence pending. No local tests/builds run.
+PR: [#49](https://github.com/aranlucas/grocery-agent-mobile/pull/49). Independent review and implementation are complete. No local tests/builds run.
 
 Independent review (same-provider child, static only) confirmed all three defect classes and rejected additional speculative findings. Implementation review found and resolved the mobile fixture import typing issue; requested baseline proof for pending-save behavior and item reopening assertions have been added. No remaining concrete production-code objection was reported. Editor controls preserve submitted values because the shared native adapter uses `editable=false` rather than RHF payload omission.
 
@@ -44,3 +44,5 @@ Pinned integration: `e2e@0.23.0`, `@e2e-dev/mobile@0.12.6` (compatible peer rang
 CI includes exact unit negative controls (seven expected failures, two passes on baseline), sequential native baseline/fixed builds, and report uploads. Native baseline must fail specifically at `toBeDisabled`; arbitrary setup failures do not count as successful reproduction. The native journey currently covers dark mode, accessible locators, keyboard text entry, pending edit protection, failed-save retention, retry, navigation and reopening persisted state. Wide/reduced-motion behavior and live Clerk/Kroger remain limitations unless further CI evidence is added.
 
 Follow-up: all Vitest test files and their shared adapter now use TypeScript; discovery, CI negative-control paths and contributor instructions have been updated. Explicit test fixture types preserve the assertions under strict checking. `@types/react-test-renderer` supplies the maintained renderer declarations rather than a custom ambient shim. The baseline regression job passed on `bb77bb7` ([CI run](https://github.com/aranlucas/grocery-agent-mobile/actions/runs/42299224626)); this establishes expected pre-fix failures, not full-suite or native success.
+
+At head `bfa2995`, [full CI](https://github.com/aranlucas/grocery-agent-mobile/actions/runs/42300030510) passed lint, formatting, strict typechecking, unit tests, Expo dependency checks and Android/iOS exports. [Reliability CI](https://github.com/aranlucas/grocery-agent-mobile/actions/runs/42300030480) verified the seven expected unit baseline failures, the native baseline failure at `expect.toBeDisabled`, and the complete fixed native journey passing. Final log inspection found that upload-artifact excludes hidden directories by default; explicitly include the controlled `.e2e` directory and fail if evidence is missing. Validation of this artifact fix is pending.
