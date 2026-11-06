@@ -152,6 +152,7 @@ export default function SavedListScreen() {
       ) : null}
       <View className="gap-3">
         <FormInput
+          disabled={isSubmitting}
           accessibilityLabel="Grocery list title"
           control={control}
           label="List title"
@@ -217,6 +218,7 @@ export default function SavedListScreen() {
 
       <View className="flex-row items-center gap-2">
         <FormInput
+          disabled={addItemForm.formState.isSubmitting}
           accessibilityLabel="New grocery item"
           className="flex-1"
           containerClassName="flex-1"

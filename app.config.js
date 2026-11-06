@@ -39,6 +39,21 @@ function configure({ config }) {
       },
     };
   }
+  if (process.env.GROCERY_E2E === "1") {
+    if (process.env.CI !== "1") throw new Error("GROCERY_E2E is restricted to CI.");
+    return {
+      ...baseConfig,
+      name: "Grocery Reliability Fixture",
+      scheme: "grocery-e2e",
+      android: { ...baseConfig.android, package: "dev.agents.grocery.e2e" },
+      plugins: baseConfig.plugins.map((plugin) =>
+        plugin === "expo-build-properties"
+          ? [plugin, { android: { usesCleartextTraffic: true } }]
+          : plugin,
+      ),
+      extra: { ...baseExtra, copilotKitRuntimeUrl: "http://localhost:8855" },
+    };
+  }
   const clerkPublishableKey = envOrFallback(
     "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY",
     baseExtra.clerkPublishableKey,

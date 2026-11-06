@@ -308,6 +308,7 @@ const ChatComposer = memo(function ChatComposer({
   const {
     control,
     handleSubmit,
+    getValues,
     reset,
     formState: { isSubmitting },
   } = useSubmitForm<{ message: string }>({ defaultValues: { message: initialMessage } });
@@ -316,9 +317,9 @@ const ChatComposer = memo(function ChatComposer({
     if (!content || isRunning) return;
 
     Keyboard.dismiss();
-    reset();
+    reset({ message: "" });
     const outcome = await onSend(content);
-    if (outcome.status === "failed") reset({ message: content });
+    if (outcome.status === "failed" && !getValues("message")) reset({ message: content });
   });
 
   return (

@@ -67,11 +67,12 @@ Before using or modifying a package listed below, read its relevant skill for pa
 
 | Package | Skill | Read |
 | --- | --- | --- |
-| &#64;tanstack/devtools-event-client | devtools-bidirectional | [.agents/skills/devtools-bidirectional/SKILL.md](.agents/skills/devtools-bidirectional/SKILL.md), [.claude/skills/devtools-bidirectional/SKILL.md](.claude/skills/devtools-bidirectional/SKILL.md) |
-| &#64;tanstack/devtools-event-client | devtools-event-client | [.agents/skills/devtools-event-client/SKILL.md](.agents/skills/devtools-event-client/SKILL.md), [.claude/skills/devtools-event-client/SKILL.md](.claude/skills/devtools-event-client/SKILL.md) |
-| &#64;tanstack/devtools-event-client | devtools-instrumentation | [.agents/skills/devtools-instrumentation/SKILL.md](.agents/skills/devtools-instrumentation/SKILL.md), [.claude/skills/devtools-instrumentation/SKILL.md](.claude/skills/devtools-instrumentation/SKILL.md) |
-| dotenv | dotenv | [.agents/skills/dotenv/SKILL.md](.agents/skills/dotenv/SKILL.md), [.claude/skills/dotenv/SKILL.md](.claude/skills/dotenv/SKILL.md) |
-| dotenv | dotenvx | [.agents/skills/dotenvx/SKILL.md](.agents/skills/dotenvx/SKILL.md), [.claude/skills/dotenvx/SKILL.md](.claude/skills/dotenvx/SKILL.md) |
+| &#64;tanstack/devtools-event-client | devtools-bidirectional | [.agents/skills/devtools-bidirectional/SKILL.md](.agents/skills/devtools-bidirectional/SKILL.md), [.claude/skills/devtools-bidirectional/SKILL.md](.claude/skills/devtools-bidirectional/SKILL.md), [.grok/skills/devtools-bidirectional/SKILL.md](.grok/skills/devtools-bidirectional/SKILL.md) |
+| &#64;tanstack/devtools-event-client | devtools-event-client | [.agents/skills/devtools-event-client/SKILL.md](.agents/skills/devtools-event-client/SKILL.md), [.claude/skills/devtools-event-client/SKILL.md](.claude/skills/devtools-event-client/SKILL.md), [.grok/skills/devtools-event-client/SKILL.md](.grok/skills/devtools-event-client/SKILL.md) |
+| &#64;tanstack/devtools-event-client | devtools-instrumentation | [.agents/skills/devtools-instrumentation/SKILL.md](.agents/skills/devtools-instrumentation/SKILL.md), [.claude/skills/devtools-instrumentation/SKILL.md](.claude/skills/devtools-instrumentation/SKILL.md), [.grok/skills/devtools-instrumentation/SKILL.md](.grok/skills/devtools-instrumentation/SKILL.md) |
+| dotenv | dotenv | [.agents/skills/dotenv/SKILL.md](.agents/skills/dotenv/SKILL.md), [.claude/skills/dotenv/SKILL.md](.claude/skills/dotenv/SKILL.md), [.grok/skills/dotenv/SKILL.md](.grok/skills/dotenv/SKILL.md) |
+| dotenv | dotenvx | [.agents/skills/dotenvx/SKILL.md](.agents/skills/dotenvx/SKILL.md), [.claude/skills/dotenvx/SKILL.md](.claude/skills/dotenvx/SKILL.md), [.grok/skills/dotenvx/SKILL.md](.grok/skills/dotenvx/SKILL.md) |
+| e2e | e2e | [.agents/skills/e2e/SKILL.md](.agents/skills/e2e/SKILL.md), [.claude/skills/e2e/SKILL.md](.claude/skills/e2e/SKILL.md), [.grok/skills/e2e/SKILL.md](.grok/skills/e2e/SKILL.md) |
 
 Run `npx @expo/agent-cli skills:sync` after changing dependencies to refresh this index. Run `npx @expo/agent-cli skills:list` to see available package skills.
 <!-- END EXPO PACKAGE SKILLS -->
