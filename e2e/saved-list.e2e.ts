@@ -79,7 +79,7 @@ test("failed save retains the draft; retry persists it and items survive reopeni
   await screen.getByRole("button", "Add grocery item").tap();
   await expect(screen.getByText("Milk")).toBeVisible();
   await expect(item).toHaveValue("");
-  await device.hideKeyboard();
+  await device.dismissKeyboard();
   await device.back();
   await screen.getByRole("button", "Open fixture list").tap();
   await expect(screen.getByText("Milk")).toBeVisible();
