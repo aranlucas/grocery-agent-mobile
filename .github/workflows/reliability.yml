@@ -31,7 +31,7 @@ jobs:
           git show 4e6f4773a1f4d8a7b9ce4f3672d96cbca571dfd2:src/lib/grocery-state.ts > src/lib/grocery-state.ts
           git show 4e6f4773a1f4d8a7b9ce4f3672d96cbca571dfd2:src/components/grocery-chat.tsx > src/components/grocery-chat.tsx
           set +e
-          pnpm exec vitest run test/cart-boundary.test.mjs test/chat-composer.test.mjs --reporter=json --outputFile=baseline.json
+          pnpm exec vitest run test/cart-boundary.test.ts test/chat-composer.test.mjs --reporter=json --outputFile=baseline.json
           result=$?
           set -e
           test "$result" -eq 1

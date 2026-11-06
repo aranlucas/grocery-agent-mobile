@@ -12,7 +12,7 @@ export default defineConfig({
     ],
   },
   test: {
-    include: ["test/**/*.test.mjs"],
+    include: ["test/**/*.test.{mjs,ts}"],
     environment: "node",
     fileParallelism: false,
     maxWorkers: 1,
