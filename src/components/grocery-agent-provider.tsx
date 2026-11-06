@@ -2,7 +2,7 @@ import { type Thread, useThreads } from "@copilotkit/react-native/headless";
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 import { useGroceryAgentController } from "@/hooks/use-grocery-agent";
 
-const AGENT_ID = "grocery";
+import { GROCERY_AGENT_ID } from "@/lib/grocery-contracts";
 
 type GroceryAgentContextValue = ReturnType<typeof useGroceryAgentController> & {
   threads: Thread[];
@@ -19,7 +19,7 @@ const GroceryAgentContext = createContext<GroceryAgentContextValue | null>(null)
 
 export function GroceryAgentProvider({ children }: { children: ReactNode }) {
   const threadStore = useThreads({
-    agentId: AGENT_ID,
+    agentId: GROCERY_AGENT_ID,
     enabled: true,
     limit: 25,
   });

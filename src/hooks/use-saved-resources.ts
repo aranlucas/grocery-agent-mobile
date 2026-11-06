@@ -1,12 +1,8 @@
+import type { SavedResource } from "@/lib/collection";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useHouseholdApi } from "@/hooks/use-household-api";
 import type { Household, HouseholdApi } from "@/lib/household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
-
-export type SavedResource<T> = {
-  resource: T;
-  location: string;
-};
 
 type ResourceQueryKey = (
   userId: string | null | undefined,

@@ -52,7 +52,7 @@ const GroceryItemRow = memo(function GroceryItemRow({
   );
 });
 
-function GroceryListContent() {
+export default function GroceryListScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ save?: string | string[] }>();
   const requestSave = Array.isArray(params.save) ? params.save[0] : params.save;
@@ -274,8 +274,4 @@ function GroceryListContent() {
       />
     </>
   );
-}
-
-export default function GroceryListScreen() {
-  return <GroceryListContent />;
 }

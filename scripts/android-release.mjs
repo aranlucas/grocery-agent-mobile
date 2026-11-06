@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const appDirectory = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
-const repositoryDirectory = path.resolve(appDirectory, "../..");
+const repositoryDirectory = appDirectory;
 const environmentPath = path.join(appDirectory, ".env.production.local");
 const [command, version] = process.argv.slice(2).filter((argument) => argument !== "--");
 

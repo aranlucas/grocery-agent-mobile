@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm, type FieldValues, type UseFormProps } from "react-hook-form";
 import { createSingleSubmit } from "@/lib/form-submit";
 
-/** React Hook Form with duplicate submissions suppressed for the form's lifetime. */
 export function useSubmitForm<T extends FieldValues>(props: UseFormProps<T>) {
   "use no memo";
   // RHF replaces its formState proxy each render. Compiler memoization of the

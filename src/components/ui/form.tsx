@@ -1,9 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import {
-  Controller,
   useController,
-  type ControllerProps,
   type FieldPath,
   type FieldValues,
   type UseControllerProps,
@@ -15,12 +13,7 @@ import { Text } from "@/components/ui/text";
 import { Textarea, type TextareaProps } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-export function FormField<
-  TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: ControllerProps<TFieldValues, TName>) {
-  return <Controller {...props} />;
-}
+export { Controller as FormField } from "react-hook-form";
 
 function FormItem({ className, ...props }: React.ComponentPropsWithoutRef<typeof View>) {
   return <View className={cn("gap-1.5", className)} {...props} />;

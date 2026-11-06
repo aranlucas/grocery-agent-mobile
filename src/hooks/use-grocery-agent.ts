@@ -1,3 +1,4 @@
+import { GROCERY_AGENT_ID } from "@/lib/grocery-contracts";
 import { useAuth } from "@clerk/expo";
 import { useAgent, useCopilotKit, type UseAgentUpdate } from "@copilotkit/react-native/headless";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -50,7 +51,7 @@ const stopped = (reason: "cancelled" | "busy" | "noop"): GroceryOperationOutcome
 
 export function useGroceryAgentController(onRunComplete: () => void) {
   const { agent } = useAgent({
-    agentId: "grocery",
+    agentId: GROCERY_AGENT_ID,
     updates: RUN_STATUS_UPDATES,
     throttleMs: 50,
   });
@@ -133,7 +134,7 @@ export function useGroceryAgentController(onRunComplete: () => void) {
               operation.sdkStarted = true;
               return observeCopilotOperation({
                 source: copilotkit as unknown as CopilotErrorSource,
-                agentId: "grocery",
+                agentId: GROCERY_AGENT_ID,
                 threadId: agent.threadId,
                 fatalCodes: RUN_FATAL_CODES,
                 isStopped: () => operation.cancellation.signal.aborted,
@@ -285,7 +286,7 @@ export function useGroceryAgentController(onRunComplete: () => void) {
               operation.sdkStarted = true;
               return observeCopilotOperation({
                 source: copilotkit as unknown as CopilotErrorSource,
-                agentId: "grocery",
+                agentId: GROCERY_AGENT_ID,
                 threadId: nextThreadId,
                 fatalCodes: CONNECT_FATAL_CODES,
                 isStopped: () => operation.cancellation.signal.aborted,
@@ -337,7 +338,7 @@ export function useGroceryAgentController(onRunComplete: () => void) {
 
 export function useGroceryState() {
   const { agent } = useAgent({
-    agentId: "grocery",
+    agentId: GROCERY_AGENT_ID,
     updates: STATE_UPDATES,
     throttleMs: 50,
   });
@@ -353,7 +354,7 @@ export function useGroceryState() {
 
 export function useGroceryMessages() {
   const { agent } = useAgent({
-    agentId: "grocery",
+    agentId: GROCERY_AGENT_ID,
     updates: MESSAGE_UPDATES,
     throttleMs: 50,
   });

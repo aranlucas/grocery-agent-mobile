@@ -1,3 +1,4 @@
+import { listMutationOptions } from "@/lib/list-mutations";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { ListPlus, Plus } from "lucide-react-native";
@@ -29,11 +30,6 @@ import { useHouseholdApi } from "@/hooks/use-household-api";
 import { type GroceryList } from "@/lib/household-api";
 import { groceryQueryKeys } from "@/lib/query-keys";
 import { firstParam } from "@/lib/utils";
-
-type ItemMutation =
-  | { type: "add"; listId: string; name: string }
-  | { type: "toggle"; listId: string; itemId: string; checked: boolean }
-  | { type: "delete"; listId: string; itemId: string };
 
 type CreateListForm = { title: string };
 type AddItemForm = { name: string };
@@ -98,25 +94,12 @@ export default function SharedListScreen() {
     },
   });
 
+  const mutationOptions = listMutationOptions({ api, queryClient, userId, householdId });
   const mutateItem = useMutation({
-    mutationFn: async (mutation: ItemMutation) => {
-      switch (mutation.type) {
-        case "add":
-          return api.addItems(mutation.listId, [{ name: mutation.name }]);
-        case "toggle":
-          return api.updateItem(mutation.listId, mutation.itemId, {
-            checked: mutation.checked,
-          });
-        case "delete":
-          return api.deleteItem(mutation.listId, mutation.itemId);
-      }
-    },
-    onSuccess: async (_, mutation) => {
+    ...mutationOptions,
+    onSuccess: async (data, mutation) => {
       if (mutation.type === "add") addItemForm.reset();
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: groceryQueryKeys.list(userId, mutation.listId) }),
-        queryClient.invalidateQueries({ queryKey: listsKey }),
-      ]);
+      await mutationOptions.onSuccess(data, mutation);
     },
   });
 
@@ -155,10 +138,8 @@ export default function SharedListScreen() {
         : "";
   const busy = createList.isPending
     ? "create-list"
-    : mutateItem.isPending
-      ? mutateItem.variables.type === "add"
-        ? "add-item"
-        : `item:${mutateItem.variables.itemId}`
+    : mutateItem.isPending && mutateItem.variables.type === "add"
+      ? "add-item"
       : "";
   const loading =
     Boolean(householdId) &&

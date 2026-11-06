@@ -1,3 +1,4 @@
+import { listMutationOptions } from "@/lib/list-mutations";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Plus, Save } from "lucide-react-native";
@@ -54,42 +55,21 @@ export default function SavedListScreen() {
       reset({ title: list.title }, { keepDirtyValues });
     }
   }, [keepDirtyValues, list, reset]);
+  const mutationOptions = listMutationOptions({
+    api,
+    queryClient,
+    userId,
+    householdId: list?.household_id,
+  });
   const mutateList = useMutation({
-    mutationFn: async (
-      mutation:
-        | { type: "title"; title: string }
-        | { type: "add"; name: string }
-        | { type: "toggle"; itemId: string; checked: boolean }
-        | { type: "delete"; itemId: string },
-    ) => {
-      switch (mutation.type) {
-        case "title":
-          return api.updateList(listId, { title: mutation.title });
-        case "add":
-          await api.addItems(listId, [{ name: mutation.name }]);
-          return undefined;
-        case "toggle":
-          await api.updateItem(listId, mutation.itemId, {
-            checked: mutation.checked,
-          });
-          return undefined;
-        case "delete":
-          await api.deleteItem(listId, mutation.itemId);
-          return undefined;
-      }
-    },
+    ...mutationOptions,
     onSuccess: async (updatedList, mutation) => {
       if (mutation.type === "title" && updatedList) {
         queryClient.setQueryData(listKey, updatedList);
         resetField("title", { defaultValue: updatedList.title });
       }
       if (mutation.type === "add") addItemForm.reset();
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: listKey }),
-        queryClient.invalidateQueries({
-          queryKey: groceryQueryKeys.lists(userId, list?.household_id),
-        }),
-      ]);
+      await mutationOptions.onSuccess(updatedList, mutation);
       if (mutation.type === "title" && updatedList) {
         allowNavigation(() => {
           if (router.canGoBack()) router.back();
@@ -100,14 +80,14 @@ export default function SavedListScreen() {
   });
   const saveTitle = handleSubmit(async ({ title }) => {
     try {
-      await mutateList.mutateAsync({ type: "title", title: title.trim() });
+      await mutateList.mutateAsync({ type: "title", listId, title: title.trim() });
     } catch {
       // Mutation state displays the error; retain the input for retry.
     }
   });
   const submitAddItem = addItemForm.handleSubmit(async ({ name }) => {
     try {
-      await mutateList.mutateAsync({ type: "add", name: name.trim() });
+      await mutateList.mutateAsync({ type: "add", listId, name: name.trim() });
     } catch {
       // Mutation state displays the error; retain the input for retry.
     }
@@ -215,10 +195,11 @@ export default function SavedListScreen() {
                 key={item.id}
                 item={item}
                 busy={mutateList.isPending}
-                onDelete={() => mutateList.mutate({ type: "delete", itemId: item.id })}
+                onDelete={() => mutateList.mutate({ type: "delete", listId, itemId: item.id })}
                 onToggle={(checked) =>
                   mutateList.mutate({
                     type: "toggle",
+                    listId,
                     itemId: item.id,
                     checked,
                   })

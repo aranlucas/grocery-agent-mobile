@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { View, useColorScheme } from "react-native";
+import { View } from "react-native";
 import {
   NativeInput,
   type NativeInputProps,
@@ -15,7 +15,6 @@ type PromptInputCtx = {
   setText: (t: string) => void;
   send: () => void;
   streaming?: boolean;
-  dark: boolean;
 };
 const Ctx = createContext<PromptInputCtx | null>(null);
 
@@ -48,7 +47,6 @@ export function PromptInput({
   ...props
 }: PromptInputProps) {
   const [internal, setInternal] = useState("");
-  const dark = useColorScheme() === "dark";
   const text = value ?? internal;
 
   const setText = (t: string) => {
@@ -64,7 +62,7 @@ export function PromptInput({
   };
 
   return (
-    <Ctx.Provider value={{ text, setText, send, streaming, dark }}>
+    <Ctx.Provider value={{ text, setText, send, streaming }}>
       <View
         className={cn("rounded-3xl border border-input bg-background px-3 pt-3 pb-2", className)}
         {...props}
@@ -101,23 +99,6 @@ export const PromptInputTextarea = React.forwardRef<NativeInputRef, PromptInputT
     );
   },
 );
-
-export interface PromptInputToolbarProps extends React.ComponentPropsWithoutRef<typeof View> {
-  className?: string;
-}
-
-export function PromptInputToolbar({ className, ...props }: PromptInputToolbarProps) {
-  return <View className={cn("flex-row items-center gap-1 pt-2", className)} {...props} />;
-}
-
-export function PromptInputSpacer() {
-  return <View className="flex-1" />;
-}
-
-export type PromptInputButtonProps = ButtonProps;
-export function PromptInputButton(props: PromptInputButtonProps) {
-  return <Button variant="ghost" size="icon" {...props} />;
-}
 
 export interface PromptInputSendProps extends ButtonProps {
   emptyFallback?: React.ReactNode;
