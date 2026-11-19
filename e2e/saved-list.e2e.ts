@@ -66,7 +66,7 @@ test("failed save retains the draft; retry persists it and items survive reopeni
   // A cold emulator can put the System UI dialog over the fixture's home screen.
   await openFixtureList.or(systemUiAnr).first().waitFor({ state: "visible" });
   if (await systemUiAnr.isVisible()) {
-    await screen.getByTestId("android:id/aerr_wait").tap();
+    await device.alert("dismiss");
   }
   await openFixtureList.tap();
   const title = screen.getByLabel("Grocery list title");
