@@ -61,7 +61,14 @@ test("failed save retains the draft; retry persists it and items survive reopeni
 }) => {
   await device.setAppearance("dark");
   await app.open();
-  await screen.getByRole("button", "Open fixture list").tap();
+  const openFixtureList = screen.getByRole("button", "Open fixture list");
+  const systemUiAnr = screen.getByText("System UI isn't responding");
+  // A cold emulator can put the System UI dialog over the fixture's home screen.
+  await openFixtureList.or(systemUiAnr).first().waitFor({ state: "visible" });
+  if (await systemUiAnr.isVisible()) {
+    await device.alert("dismiss");
+  }
+  await openFixtureList.tap();
   const title = screen.getByLabel("Grocery list title");
   await expect(title).toHaveValue("Weekly groceries");
   await title.fill("Weekend supplies");
@@ -71,8 +78,8 @@ test("failed save retains the draft; retry persists it and items survive reopeni
   await expect(title).toHaveValue("Weekend supplies");
   await expect(title).toBeEnabled();
   await screen.getByRole("button", "Save list title").tap();
-  await expect(screen.getByRole("button", "Open fixture list")).toBeVisible();
-  await screen.getByRole("button", "Open fixture list").tap();
+  await expect(openFixtureList).toBeVisible();
+  await openFixtureList.tap();
   await expect(title).toHaveValue("Weekend supplies");
   const item = screen.getByLabel("New grocery item");
   await item.fill("Milk");
@@ -81,7 +88,7 @@ test("failed save retains the draft; retry persists it and items survive reopeni
   await expect(item).toHaveValue("");
   await device.dismissKeyboard();
   await device.back();
-  await screen.getByRole("button", "Open fixture list").tap();
+  await openFixtureList.tap();
   await expect(screen.getByText("Milk")).toBeVisible();
   expect(titleAttempts).toBe(2);
   expect(addAttempts).toBe(1);
